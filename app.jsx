@@ -261,6 +261,37 @@ const EXPERIENCES = [
   }
 ];
 
+const DEFAULT_VIP_MEMBERS = [
+  {
+    id: 'VIP-7001',
+    name: 'Lord Sterling',
+    firstName: 'Sterling',
+    lastName: 'de Montmirail',
+    email: 'sterling@imperial.com',
+    phone: '+1 (555) 777-8899',
+    tier: 'Imperial Gold Member',
+    tierBadge: 'Imperial Gold',
+    dietary: 'Prefers Rare Vintages & Hokkaido Scallops',
+    notes: 'Requires quiet corner alcove with dedicated sommelier.',
+    memberSince: '2023',
+    perks: ['Priority Sanctuary Table Allocation', 'Dedicated Sommelier Care', 'Arrival Dom Pérignon Flute', 'Zero-Penalty Cancellation']
+  },
+  {
+    id: 'VIP-4022',
+    name: 'Elena Vance',
+    firstName: 'Elena',
+    lastName: 'Vance',
+    email: 'elena.vance@haute.com',
+    phone: '+1 (555) 234-5678',
+    tier: 'Grand Cru Patron',
+    tierBadge: 'Grand Cru Patron',
+    dietary: 'Gluten-sensitive, Pescatarian',
+    notes: 'Anniversary celebration vintage tasting.',
+    memberSince: '2025',
+    perks: ['Priority Booking Access', 'Personalized Dietary Menu', 'Complimentary Truffle Course']
+  }
+];
+
 /* ==========================================================================
    Synthesized Audio Chime (Web Audio API)
    ========================================================================== */
@@ -376,7 +407,23 @@ function RollingBackground({ speed, dim }) {
 /* ==========================================================================
    Component: Header
    ========================================================================== */
-function Header({ onNav, audioEnabled, onToggleAudio, onOpenBookings }) {
+function Header({ onNav, audioEnabled, onToggleAudio, onOpenBookings, currentUser, onOpenAuth, onLogout }) {
+  const [userDropdownOpen, setUserDropdownOpen] = useState(false);
+  const dropdownRef = useRef(null);
+
+  // Close dropdown on outside click
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setUserDropdownOpen(false);
+      }
+    }
+    if (userDropdownOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [userDropdownOpen]);
+
   return (
     <header className="luxury-header">
       <a href="#" className="brand-crest" onClick={(e) => { e.preventDefault(); onNav(1); }}>
@@ -417,6 +464,111 @@ function Header({ onNav, audioEnabled, onToggleAudio, onOpenBookings }) {
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
           <span>Find Reservation</span>
         </button>
+
+        {currentUser ? (
+          <div className="vip-user-wrapper" ref={dropdownRef}>
+            <button
+              className="vip-user-pill"
+              onClick={() => setUserDropdownOpen(!userDropdownOpen)}
+              title="VIP Member Menu"
+              aria-expanded={userDropdownOpen}
+            >
+              <div className="vip-avatar-badge">
+                {currentUser.name ? currentUser.name.charAt(0).toUpperCase() : 'V'}
+              </div>
+              <div className="vip-user-text">
+                <span className="vip-user-name">{currentUser.name}</span>
+                <span className="vip-user-tier">{currentUser.tierBadge || 'VIP Member'}</span>
+              </div>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{ transform: userDropdownOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s ease', color: 'var(--gold-400)' }}>
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </button>
+
+            {userDropdownOpen && (
+              <div className="vip-dropdown-menu">
+                <div className="vip-dropdown-header">
+                  <div className="vip-avatar-badge" style={{ width: '38px', height: '38px', fontSize: '1.1rem' }}>
+                    {currentUser.name ? currentUser.name.charAt(0).toUpperCase() : 'V'}
+                  </div>
+                  <div>
+                    <div style={{ fontFamily: 'Cinzel, serif', fontWeight: 700, fontSize: '0.95rem', color: '#fff' }}>
+                      {currentUser.name}
+                    </div>
+                    <div style={{ fontSize: '0.72rem', color: 'var(--gold-400)', letterSpacing: '1px', textTransform: 'uppercase' }}>
+                      {currentUser.tier || 'VIP Reserve Member'}
+                    </div>
+                    <div style={{ fontSize: '0.68rem', color: 'var(--text-dim)', marginTop: '2px' }}>
+                      ID: {currentUser.id || 'VIP-MEMBER'} • Since {currentUser.memberSince || '2026'}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="vip-perks-section">
+                  <div style={{ fontSize: '0.68rem', color: 'var(--gold-400)', letterSpacing: '1.5px', textTransform: 'uppercase', marginBottom: '8px', fontWeight: 600 }}>
+                    Active Privileges
+                  </div>
+                  <ul className="vip-perks-list">
+                    {(currentUser.perks || [
+                      'Priority Table Concierge Allocation',
+                      'Dedicated Sommelier Pairing Care',
+                      'Complimentary Welcome Vintage Flute',
+                      '1-Click Rapid Reservation Pre-Fill'
+                    ]).map((perk, idx) => (
+                      <li key={idx}>
+                        <span style={{ color: 'var(--gold-400)', marginRight: '6px' }}>✦</span>
+                        {perk}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                <div className="vip-dropdown-actions">
+                  <button
+                    className="btn-glass btn-glass-sm"
+                    style={{ width: '100%', justifyContent: 'flex-start' }}
+                    onClick={() => {
+                      setUserDropdownOpen(false);
+                      onOpenBookings();
+                    }}
+                  >
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                    My Reservations
+                  </button>
+
+                  <button
+                    className="btn-glass btn-glass-sm"
+                    style={{ width: '100%', justifyContent: 'flex-start' }}
+                    onClick={() => {
+                      setUserDropdownOpen(false);
+                      onNav(1);
+                    }}
+                  >
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                    Reserve New Table
+                  </button>
+
+                  <button
+                    className="btn-glass btn-glass-sm"
+                    style={{ width: '100%', justifyContent: 'flex-start', color: '#f87171', borderColor: 'rgba(248, 113, 113, 0.3)' }}
+                    onClick={() => {
+                      setUserDropdownOpen(false);
+                      onLogout();
+                    }}
+                  >
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+                    Sign Out
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        ) : (
+          <button className="btn-glass btn-glass-sm btn-glass-gold" onClick={onOpenAuth}>
+            <span style={{ color: 'var(--gold-300)', fontSize: '0.88rem' }}>✦</span>
+            <span>VIP Sign In</span>
+          </button>
+        )}
 
         <button className="btn-glass btn-glass-icon btn-glass-secondary" onClick={onToggleAudio} title="Toggle Crystal Chime Sound">
           {audioEnabled ? (
@@ -860,9 +1012,36 @@ function StepEnhancements({ booking, setBooking, onSound }) {
 /* ==========================================================================
    Component: Step 4 - Guest Details & Live Receipt
    ========================================================================== */
-function StepGuestDetails({ booking, setBooking, onConfirm, onSound }) {
-  const [form, setForm] = useState(booking.guestInfo);
+function StepGuestDetails({ booking, setBooking, onConfirm, onSound, currentUser, onOpenAuth }) {
+  const [form, setForm] = useState(() => {
+    if (currentUser) {
+      return {
+        firstName: currentUser.firstName || '',
+        lastName: currentUser.lastName || '',
+        email: currentUser.email || '',
+        phone: currentUser.phone || '',
+        dietary: currentUser.dietary || '',
+        notes: currentUser.notes || ''
+      };
+    }
+    return booking.guestInfo;
+  });
   const [agree, setAgree] = useState(true);
+
+  // Sync with currentUser if user logs in or switches account while on Step 4
+  useEffect(() => {
+    if (currentUser) {
+      setForm(prev => ({
+        ...prev,
+        firstName: currentUser.firstName || prev.firstName,
+        lastName: currentUser.lastName || prev.lastName,
+        email: currentUser.email || prev.email,
+        phone: currentUser.phone || prev.phone,
+        dietary: currentUser.dietary || prev.dietary,
+        notes: currentUser.notes || prev.notes
+      }));
+    }
+  }, [currentUser]);
 
   const table = booking.tableData || TABLES_DATABASE[1];
   const tableBase = (table.minSpend || 180) * booking.guests;
@@ -898,6 +1077,46 @@ function StepGuestDetails({ booking, setBooking, onConfirm, onSound }) {
 
       <div className="guest-form-layout">
         <form onSubmit={(e) => { e.preventDefault(); handleSubmit(); }}>
+          {currentUser ? (
+            <div className="vip-prefill-banner">
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <div className="vip-banner-icon">✦</div>
+                <div>
+                  <div style={{ fontSize: '0.86rem', fontWeight: 600, color: '#fff' }}>
+                    VIP Concierge Profile Active • <span style={{ color: 'var(--gold-300)' }}>{currentUser.tierBadge || 'Imperial Member'}</span>
+                  </div>
+                  <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                    Welcome, <strong>{currentUser.name}</strong>. Your concierge contact details & preferences are auto-populated.
+                  </div>
+                </div>
+              </div>
+              <button
+                type="button"
+                className="btn-glass btn-glass-sm btn-glass-secondary"
+                onClick={onOpenAuth}
+                title="Switch VIP Profile"
+              >
+                Switch
+              </button>
+            </div>
+          ) : (
+            <div className="vip-login-prompt-banner">
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <span style={{ color: 'var(--gold-400)', fontSize: '1.1rem' }}>✦</span>
+                <span style={{ fontSize: '0.82rem', color: 'var(--text-main)' }}>
+                  Are you a <strong>FIRE SPICE VIP Member</strong>? Sign in for 1-click booking & priority concierge privileges.
+                </span>
+              </div>
+              <button
+                type="button"
+                className="btn-glass btn-glass-sm btn-glass-gold"
+                onClick={onOpenAuth}
+              >
+                VIP Sign In
+              </button>
+            </div>
+          )}
+
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
             <div className="form-group">
               <label className="form-label">First Name *</label>
@@ -1014,6 +1233,17 @@ function StepGuestDetails({ booking, setBooking, onConfirm, onSound }) {
             )}
           </div>
 
+          {currentUser && (
+            <div className="vip-receipt-perk">
+              <div style={{ color: 'var(--gold-300)', fontWeight: 600, fontSize: '0.78rem', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <span>✦</span> {currentUser.tierBadge || 'VIP Member'} Distinction Applied
+              </div>
+              <div style={{ fontSize: '0.70rem', color: 'var(--text-muted)', marginTop: '3px' }}>
+                Priority Sanctuary Staging & Complimentary Welcome Dom Pérignon Vintage Pour.
+              </div>
+            </div>
+          )}
+
           <div className="summary-total-row">
             <div>
               <div className="summary-total-label">Estimated Guarantee</div>
@@ -1035,7 +1265,7 @@ function StepGuestDetails({ booking, setBooking, onConfirm, onSound }) {
 /* ==========================================================================
    Component: Step 5 - Confirmed VIP Pass
    ========================================================================== */
-function StepConfirmedPass({ reservation, onReset, onSound }) {
+function StepConfirmedPass({ reservation, onReset, onSound, currentUser }) {
   const canvasRef = useRef(null);
 
   useEffect(() => {
@@ -1141,7 +1371,14 @@ function StepConfirmedPass({ reservation, onReset, onSound }) {
               <h4 className="pass-brand-title">FIRE SPICE</h4>
               <div style={{ fontSize: '0.72rem', letterSpacing: '2px', color: 'var(--gold-400)', textTransform: 'uppercase' }}>Haute Dining Pass</div>
             </div>
-            <div className="pass-code-badge">{reservation.code}</div>
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '4px' }}>
+              <div className="pass-code-badge">{reservation.code}</div>
+              {(reservation.vipTier || (currentUser && currentUser.tierBadge)) && (
+                <div style={{ fontSize: '0.64rem', color: 'var(--gold-300)', letterSpacing: '1px', textTransform: 'uppercase', background: 'rgba(212, 175, 55, 0.15)', padding: '2px 8px', borderRadius: '4px', border: '1px solid rgba(212, 175, 55, 0.3)' }}>
+                  ✦ {reservation.vipTier || currentUser.tierBadge}
+                </div>
+              )}
+            </div>
           </div>
 
           <div className="pass-details-grid">
@@ -1373,12 +1610,394 @@ function BookingsModal({ isOpen, onClose, onViewPass, onSound }) {
 }
 
 /* ==========================================================================
+   Component: AuthModal (VIP Member Sign In & Registration)
+   ========================================================================== */
+function AuthModal({ isOpen, onClose, onLogin, onSound }) {
+  const [tab, setTab] = useState('signin'); // 'signin' | 'register'
+
+  // Sign In state
+  const [loginEmail, setLoginEmail] = useState('');
+  const [loginPassword, setLoginPassword] = useState('');
+  const [rememberMe, setRememberMe] = useState(true);
+
+  // Register state
+  const [regFirstName, setRegFirstName] = useState('');
+  const [regLastName, setRegLastName] = useState('');
+  const [regEmail, setRegEmail] = useState('');
+  const [regPhone, setRegPhone] = useState('');
+  const [regDietary, setRegDietary] = useState('');
+  const [regPassword, setRegPassword] = useState('');
+
+  const [errorMsg, setErrorMsg] = useState('');
+
+  if (!isOpen) return null;
+
+  const handleDemoLogin = (profile) => {
+    onLogin(profile);
+    onSound('confirm');
+    onClose();
+  };
+
+  const handleSignIn = (e) => {
+    e.preventDefault();
+    setErrorMsg('');
+    if (!loginEmail.trim()) {
+      setErrorMsg('Please enter your email or VIP Member ID.');
+      return;
+    }
+
+    const trimmed = loginEmail.trim();
+
+    // Check demo members
+    const matchedDemo = DEFAULT_VIP_MEMBERS.find(
+      m => m.email.toLowerCase() === trimmed.toLowerCase() || m.id.toLowerCase() === trimmed.toLowerCase()
+    );
+    if (matchedDemo) {
+      onLogin(matchedDemo);
+      onSound('confirm');
+      onClose();
+      return;
+    }
+
+    // Check registered members in localStorage
+    try {
+      const stored = localStorage.getItem('firespice_members_db');
+      if (stored) {
+        const list = JSON.parse(stored);
+        const found = list.find(m => m.email.toLowerCase() === trimmed.toLowerCase() || (m.id && m.id.toLowerCase() === trimmed.toLowerCase()));
+        if (found) {
+          onLogin(found);
+          onSound('confirm');
+          onClose();
+          return;
+        }
+      }
+    } catch (err) {}
+
+    // Graceful creation if any valid email is provided
+    const namePart = trimmed.split('@')[0];
+    const capitalized = namePart.charAt(0).toUpperCase() + namePart.slice(1);
+    const newMember = {
+      id: `VIP-${Math.floor(1000 + Math.random() * 9000)}`,
+      name: capitalized,
+      firstName: capitalized,
+      lastName: 'Guest',
+      email: trimmed,
+      phone: '+1 (555) 000-0000',
+      tier: 'Private Reserve Member',
+      tierBadge: 'VIP Member',
+      dietary: '',
+      notes: '',
+      memberSince: '2026',
+      perks: [
+        'Priority Sanctuary Table Allocation',
+        'Sommelier Concierge Assistance',
+        '1-Click Rapid Booking Pre-Fill'
+      ]
+    };
+    onLogin(newMember);
+    onSound('confirm');
+    onClose();
+  };
+
+  const handleRegister = (e) => {
+    e.preventDefault();
+    setErrorMsg('');
+    if (!regFirstName.trim() || !regLastName.trim()) {
+      setErrorMsg('Please provide your first and last name.');
+      return;
+    }
+    if (!regEmail.trim() || !regEmail.includes('@')) {
+      setErrorMsg('Please provide a valid email address.');
+      return;
+    }
+    if (!regPhone.trim()) {
+      setErrorMsg('Please provide a contact telephone number.');
+      return;
+    }
+
+    const memberId = `VIP-${Math.floor(5000 + Math.random() * 4999)}`;
+    const newMember = {
+      id: memberId,
+      name: `${regFirstName.trim()} ${regLastName.trim()}`,
+      firstName: regFirstName.trim(),
+      lastName: regLastName.trim(),
+      email: regEmail.trim(),
+      phone: regPhone.trim(),
+      tier: 'Private Reserve Member',
+      tierBadge: 'VIP Reserve',
+      dietary: regDietary.trim() || 'None specified',
+      notes: 'New VIP Reserve Member',
+      memberSince: '2026',
+      perks: [
+        'Priority Sanctuary Table Allocation',
+        'Complimentary Welcome Flute on First Visit',
+        'Dedicated Sommelier Care',
+        '1-Click Rapid Booking Pre-Fill'
+      ]
+    };
+
+    // Store in localStorage members db
+    try {
+      const stored = localStorage.getItem('firespice_members_db');
+      const list = stored ? JSON.parse(stored) : [];
+      list.unshift(newMember);
+      localStorage.setItem('firespice_members_db', JSON.stringify(list));
+    } catch (err) {}
+
+    onLogin(newMember);
+    onSound('confirm');
+    onClose();
+  };
+
+  return (
+    <div className="modal-backdrop open" onClick={(e) => e.target.classList.contains('modal-backdrop') && onClose()}>
+      <div className="modal-dialog auth-modal-dialog">
+        <button className="btn-glass btn-glass-icon btn-glass-sm modal-close-btn" onClick={onClose} title="Close">✕</button>
+
+        <div className="auth-crest-header">
+          <div className="crest-logo-icon" style={{ margin: '0 auto 12px' }}>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M3 18h18M4 18l2-10 5 4 5-7 4 13" />
+              <circle cx="12" cy="5" r="1.5" fill="currentColor" />
+              <circle cx="6" cy="8" r="1.5" fill="currentColor" />
+              <circle cx="18" cy="8" r="1.5" fill="currentColor" />
+            </svg>
+          </div>
+          <h3 className="font-serif" style={{ fontSize: '1.65rem', color: '#fff', letterSpacing: '2px', marginBottom: '4px' }}>
+            FIRE SPICE VIP RESERVE
+          </h3>
+          <p style={{ fontSize: '0.85rem', color: 'var(--gold-300)' }}>
+            Privileged access, curated cellar vintages, and 1-click priority concierge tables.
+          </p>
+        </div>
+
+        {/* Quick Demo Access Bar */}
+        <div className="auth-demo-bar">
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
+            <span style={{ fontSize: '0.72rem', color: 'var(--gold-400)', letterSpacing: '1px', textTransform: 'uppercase', fontWeight: 600 }}>
+              ✦ Instant VIP Demo Profiles
+            </span>
+            <span style={{ fontSize: '0.68rem', color: 'var(--text-muted)' }}>1-Click Fast Sign In</span>
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+            <button
+              type="button"
+              className="btn-glass btn-glass-sm auth-demo-pill"
+              onClick={() => handleDemoLogin(DEFAULT_VIP_MEMBERS[0])}
+            >
+              <span className="demo-pill-crown">👑</span>
+              <div style={{ textAlign: 'left', lineHeight: 1.2 }}>
+                <div style={{ color: '#fff', fontWeight: 600 }}>Lord Sterling</div>
+                <div style={{ fontSize: '0.65rem', color: 'var(--gold-300)' }}>Imperial Gold VIP</div>
+              </div>
+            </button>
+            <button
+              type="button"
+              className="btn-glass btn-glass-sm auth-demo-pill"
+              onClick={() => handleDemoLogin(DEFAULT_VIP_MEMBERS[1])}
+            >
+              <span className="demo-pill-crown">✨</span>
+              <div style={{ textAlign: 'left', lineHeight: 1.2 }}>
+                <div style={{ color: '#fff', fontWeight: 600 }}>Elena Vance</div>
+                <div style={{ fontSize: '0.65rem', color: 'var(--gold-300)' }}>Grand Cru Patron</div>
+              </div>
+            </button>
+          </div>
+        </div>
+
+        {/* Segmented Tab Switcher */}
+        <div className="auth-tabs">
+          <button
+            className={`auth-tab-btn ${tab === 'signin' ? 'active' : ''}`}
+            onClick={() => { setTab('signin'); setErrorMsg(''); onSound('click'); }}
+          >
+            VIP Member Sign In
+          </button>
+          <button
+            className={`auth-tab-btn ${tab === 'register' ? 'active' : ''}`}
+            onClick={() => { setTab('register'); setErrorMsg(''); onSound('click'); }}
+          >
+            Join VIP Reserve
+          </button>
+        </div>
+
+        {errorMsg && (
+          <div className="auth-error-badge">
+            <span style={{ color: '#f87171', marginRight: '6px' }}>⚠</span>
+            {errorMsg}
+          </div>
+        )}
+
+        {/* Sign In Form */}
+        {tab === 'signin' && (
+          <form onSubmit={handleSignIn}>
+            <div className="form-group">
+              <label className="form-label">Email Address or Member Code</label>
+              <input
+                type="text"
+                className="form-input"
+                placeholder="sterling@imperial.com or VIP-7001"
+                value={loginEmail}
+                onChange={e => setLoginEmail(e.target.value)}
+                autoFocus
+              />
+            </div>
+
+            <div className="form-group">
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
+                <label className="form-label">Secret Passcode / Password</label>
+                <span
+                  style={{ fontSize: '0.72rem', color: 'var(--gold-400)', cursor: 'pointer' }}
+                  onClick={() => alert('For immediate testing, click one of the Instant VIP Demo Profiles above!')}
+                >
+                  Forgot passcode?
+                </span>
+              </div>
+              <input
+                type="password"
+                className="form-input"
+                placeholder="••••••••••••"
+                value={loginPassword}
+                onChange={e => setLoginPassword(e.target.value)}
+              />
+            </div>
+
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
+              <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.8rem', color: 'var(--text-muted)', cursor: 'pointer' }}>
+                <input
+                  type="checkbox"
+                  checked={rememberMe}
+                  onChange={e => setRememberMe(e.target.checked)}
+                  style={{ accentColor: 'var(--gold-500)', width: '16px', height: '16px' }}
+                />
+                Remember my VIP session
+              </label>
+              <span style={{ fontSize: '0.75rem', color: 'var(--gold-300)' }}>
+                ✦ 256-bit Encrypted
+              </span>
+            </div>
+
+            <button type="submit" className="btn-glass btn-glass-gold btn-glass-lg" style={{ width: '100%' }}>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path><polyline points="10 17 15 12 10 7"></polyline><line x1="15" y1="12" x2="3" y2="12"></line></svg>
+              Sign In to Golden Sanctuary
+            </button>
+          </form>
+        )}
+
+        {/* Registration Form */}
+        {tab === 'register' && (
+          <form onSubmit={handleRegister}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px' }}>
+              <div className="form-group">
+                <label className="form-label">First Name *</label>
+                <input
+                  type="text"
+                  className="form-input"
+                  placeholder="e.g. Marcus"
+                  value={regFirstName}
+                  onChange={e => setRegFirstName(e.target.value)}
+                  required
+                />
+              </div>
+              <div className="form-group">
+                <label className="form-label">Last Name *</label>
+                <input
+                  type="text"
+                  className="form-input"
+                  placeholder="e.g. Aurelius"
+                  value={regLastName}
+                  onChange={e => setRegLastName(e.target.value)}
+                  required
+                />
+              </div>
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px' }}>
+              <div className="form-group">
+                <label className="form-label">Email Address *</label>
+                <input
+                  type="email"
+                  className="form-input"
+                  placeholder="marcus@sommelier.com"
+                  value={regEmail}
+                  onChange={e => setRegEmail(e.target.value)}
+                  required
+                />
+              </div>
+              <div className="form-group">
+                <label className="form-label">Mobile Telephone *</label>
+                <input
+                  type="tel"
+                  className="form-input"
+                  placeholder="+1 (555) 789-0123"
+                  value={regPhone}
+                  onChange={e => setRegPhone(e.target.value)}
+                  required
+                />
+              </div>
+            </div>
+
+            <div className="form-group">
+              <label className="form-label">Dietary & Cellar Preferences (Optional)</label>
+              <input
+                type="text"
+                className="form-input"
+                placeholder="e.g. Truffles, Grand Cru Burgundy, Pescatarian, Shellfish allergy"
+                value={regDietary}
+                onChange={e => setRegDietary(e.target.value)}
+              />
+            </div>
+
+            <div className="form-group">
+              <label className="form-label">Create VIP Passcode *</label>
+              <input
+                type="password"
+                className="form-input"
+                placeholder="Minimum 6 characters"
+                value={regPassword}
+                onChange={e => setRegPassword(e.target.value)}
+                required
+              />
+            </div>
+
+            <button type="submit" className="btn-glass btn-glass-gold btn-glass-lg" style={{ width: '100%', marginTop: '6px' }}>
+              <span style={{ color: 'var(--gold-300)', fontSize: '1rem' }}>✦</span>
+              Accept VIP Privileges & Register
+            </button>
+          </form>
+        )}
+
+        <div style={{ textAlign: 'center', marginTop: '20px' }}>
+          <button
+            type="button"
+            className="auth-guest-link"
+            onClick={onClose}
+          >
+            Or continue reserving as a private guest →
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ==========================================================================
    Main Application Root Component
    ========================================================================== */
 function App() {
   const [step, setStep] = useState(1);
   const [audioEnabled, setAudioEnabled] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
+  const [authModalOpen, setAuthModalOpen] = useState(false);
+  const [currentUser, setCurrentUser] = useState(() => {
+    try {
+      const stored = localStorage.getItem('firespice_user');
+      return stored ? JSON.parse(stored) : null;
+    } catch (e) {
+      return null;
+    }
+  });
   const [confirmedReservation, setConfirmedReservation] = useState(null);
 
   const [speed, setSpeed] = useState('normal'); // 'slow', 'normal', 'paused'
@@ -1401,6 +2020,34 @@ function App() {
     playChime(audioEnabled, type);
   }, [audioEnabled]);
 
+  const handleLogin = (user) => {
+    setCurrentUser(user);
+    try {
+      localStorage.setItem('firespice_user', JSON.stringify(user));
+    } catch (e) {}
+    // Automatically pre-fill the reservation details with the VIP member's info
+    setBooking(prev => ({
+      ...prev,
+      guestInfo: {
+        ...prev.guestInfo,
+        firstName: user.firstName || prev.guestInfo.firstName,
+        lastName: user.lastName || prev.guestInfo.lastName,
+        email: user.email || prev.guestInfo.email,
+        phone: user.phone || prev.guestInfo.phone,
+        dietary: user.dietary || prev.guestInfo.dietary,
+        notes: user.notes || prev.guestInfo.notes
+      }
+    }));
+  };
+
+  const handleLogout = () => {
+    setCurrentUser(null);
+    try {
+      localStorage.removeItem('firespice_user');
+    } catch (e) {}
+    onSound('click');
+  };
+
   const handleConfirmReservation = (guestInfo, total) => {
     const code = `FSP-${Math.floor(1000 + Math.random() * 9000)}-VIP`;
     const res = {
@@ -1418,6 +2065,8 @@ function App() {
       guests: booking.guests,
       occasion: booking.occasion,
       total,
+      vipTier: currentUser ? currentUser.tierBadge : null,
+      vipMemberId: currentUser ? currentUser.id : null,
       timestamp: Date.now()
     };
 
@@ -1458,6 +2107,9 @@ function App() {
         audioEnabled={audioEnabled}
         onToggleAudio={() => { setAudioEnabled(a => !a); onSound('click'); }}
         onOpenBookings={() => { setModalOpen(true); onSound('click'); }}
+        currentUser={currentUser}
+        onOpenAuth={() => { setAuthModalOpen(true); onSound('click'); }}
+        onLogout={handleLogout}
       />
 
       <HeroSection />
@@ -1473,7 +2125,16 @@ function App() {
           {step === 1 && <StepDateTime booking={booking} setBooking={setBooking} onSound={onSound} />}
           {step === 2 && <StepFloorPlan booking={booking} setBooking={setBooking} onSound={onSound} onProceed={() => { setStep(3); onSound('select'); }} />}
           {step === 3 && <StepEnhancements booking={booking} setBooking={setBooking} onSound={onSound} />}
-          {step === 4 && <StepGuestDetails booking={booking} setBooking={setBooking} onConfirm={handleConfirmReservation} onSound={onSound} />}
+          {step === 4 && (
+            <StepGuestDetails
+              booking={booking}
+              setBooking={setBooking}
+              onConfirm={handleConfirmReservation}
+              onSound={onSound}
+              currentUser={currentUser}
+              onOpenAuth={() => { setAuthModalOpen(true); onSound('click'); }}
+            />
+          )}
           {step === 5 && (
             <StepConfirmedPass
               reservation={confirmedReservation}
@@ -1483,6 +2144,7 @@ function App() {
                 onSound('click');
               }}
               onSound={onSound}
+              currentUser={currentUser}
             />
           )}
 
@@ -1500,7 +2162,7 @@ function App() {
                 {step === 1 && 'Complimentary cancellation up to 24 hours prior to service.'}
                 {step === 2 && 'All tables guaranteed for 2.5 hours of unhurried dining.'}
                 {step === 3 && 'Sommelier pairings are curated to your course selection.'}
-                {step === 4 && 'A holding guarantee is held to secure prime reservations.'}
+                {step === 4 && (currentUser ? '✦ VIP Priority Reservation Guarantee applied.' : 'A holding guarantee is held to secure prime reservations.')}
               </div>
 
               {step < 4 ? (
@@ -1532,6 +2194,13 @@ function App() {
           setConfirmedReservation(res);
           setStep(5);
         }}
+        onSound={onSound}
+      />
+
+      <AuthModal
+        isOpen={authModalOpen}
+        onClose={() => setAuthModalOpen(false)}
+        onLogin={handleLogin}
         onSound={onSound}
       />
 

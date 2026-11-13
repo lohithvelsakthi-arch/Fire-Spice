@@ -21,6 +21,12 @@ An ultra-luxury restaurant table reservation web application built with **React 
   3. **Enhancements**: Dining occasion tags and curated add-ons (Imperial Osetra Caviar, Dom Pérignon Vintage Flutes, Grand Cru Wine Flights, Floral arrangements).
   4. **Guest Ledger**: Contact information, dietary preferences, and real-time itemized guarantee bill.
   5. **Digital VIP Pass**: Embossed boarding pass with custom canvas-rendered QR code, downloadable pass, and standard `.ics` (Apple/Google/Outlook) calendar file export.
+- **VIP Member Authentication & Private Reserve System**:
+  - **VIP Sign In & Registration**: Elegant obsidian glass modal with tabbed sign-in and VIP Reserve onboarding.
+  - **1-Click VIP Demo Profiles**: Instant testing access as *Lord Sterling (Imperial Gold VIP)* or *Elena Vance (Grand Cru Patron)*.
+  - **Header Member Pill & Concierge Dropdown**: Real-time member avatar monogram, tier title, active privilege checklist, quick links to reservations, and graceful sign-out.
+  - **1-Click Concierge Pre-Fill (Step IV)**: Automatic population of guest details, telephone, and dietary preferences directly from the member's profile with VIP priority table allocation applied.
+  - **Session Persistence**: Saves member credentials and registered profiles securely in `localStorage`.
 - **Reservation Management**: Built-in modal backed by `localStorage` to look up, view, or cancel existing table reservations.
 - **Synthesized Crystal Glass Chimes**: Realistic crystal clinks and champagne toast harmonics synthesized in real-time via the browser's Web Audio API (zero audio files required).
 - **Winter Tasting Menu Compendium**: Filterable showcase of signature courses by Chef Marc Éléonore.
@@ -60,3 +66,4 @@ Then visit **`http://localhost:3000`** in your browser.
 
 ## 📜 License
 ISC License © 2026 FIRE SPICE RESTAURANT GROUP.
+
