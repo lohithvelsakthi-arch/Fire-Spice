@@ -56,11 +56,14 @@ Then visit **`http://localhost:3000`** in your browser.
 ## 📁 Project Structure
 
 ```
-├── index.html       # HTML5 entry point & script loader
-├── app.jsx          # React 18 component architecture & state
+├── index.html       # HTML5 entry point with instant luxury preloader
+├── app.jsx          # React 18 component architecture & state source
+├── bundle.js        # High-performance compiled JavaScript bundle
+├── build.js         # Zero-config local transpiler (app.jsx -> bundle.js)
 ├── styles.css       # Luxury black & gold glassmorphism stylesheet
-├── server.js        # Lightweight Node HTTP server with port fallback
-├── package.json     # Project configuration & npm start script
+├── server.js        # Lightweight Node HTTP server with automatic port fallback
+├── vendor/          # Self-hosted React 18 & ReactDOM production libraries
+├── package.json     # Project configuration & npm scripts (build, start)
 └── README.md        # Documentation
 ```
 

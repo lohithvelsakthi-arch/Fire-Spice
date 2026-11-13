@@ -2368,33 +2368,6 @@ function App() {
       />
 
       <footer className="luxury-footer">
-
-      <AmbianceController
-        speed={speed}
-        setSpeed={setSpeed}
-        dim={dim}
-        setDim={setDim}
-        onSound={onSound}
-      />
-
-      <BookingsModal
-        isOpen={modalOpen}
-        onClose={() => setModalOpen(false)}
-        onViewPass={(res) => {
-          setConfirmedReservation(res);
-          setStep(5);
-        }}
-        onSound={onSound}
-      />
-
-      <AuthModal
-        isOpen={authModalOpen}
-        onClose={() => setAuthModalOpen(false)}
-        onLogin={handleLogin}
-        onSound={onSound}
-      />
-
-      <footer className="luxury-footer">
         <div className="footer-content">
           <h3 className="font-serif" style={{ fontSize: '1.3rem', letterSpacing: '4px', color: 'var(--gold-300)', marginBottom: '8px' }}>
             FIRE SPICE ATELIER CULINAIRE

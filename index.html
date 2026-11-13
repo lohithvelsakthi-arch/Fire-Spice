@@ -13,18 +13,49 @@
   <!-- Luxury Black & Gold Glassmorphic Stylesheet -->
   <link rel="stylesheet" href="styles.css">
 
-  <!-- React 18 & ReactDOM -->
-  <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
-  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
-  
-  <!-- Babel Standalone (Compiles JSX in-browser with zero node_modules or build steps) -->
-  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <!-- React 18 & ReactDOM: High-Performance Bundles with CDN Fallback -->
+  <script src="vendor/react.production.min.js"></script>
+  <script>if (!window.React) document.write('<script src="https://unpkg.com/react@18/umd/react.production.min.js"><\/script>');</script>
+  <script src="vendor/react-dom.production.min.js"></script>
+  <script>if (!window.ReactDOM) document.write('<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"><\/script>');</script>
 </head>
 <body>
-  <!-- React App Root Container -->
-  <div id="root"></div>
+  <!-- React App Root Container with Instant Luxury Preloader -->
+  <div id="root">
+    <div id="app-preloader" class="preloader-overlay">
+      <div class="preloader-crest">
+        <span>FS</span>
+      </div>
+      <h1 class="preloader-title">FIRE SPICE</h1>
+      <p class="preloader-subtitle">HAUTE GASTRONOMIE &amp; GOLDEN LOUNGE</p>
+      <div class="preloader-bar">
+        <div class="preloader-bar-fill"></div>
+      </div>
+    </div>
+  </div>
 
-  <!-- React 18 Application Script -->
-  <script type="text/babel" src="app.jsx"></script>
+  <!-- Fail-Safe Diagnostics Script -->
+  <script>
+    window.addEventListener('error', function(e) {
+      var preloader = document.getElementById('app-preloader');
+      if (preloader) {
+        preloader.innerHTML = `
+          <div class="preloader-crest" style="border-color: #f87171;">
+            <span style="color: #f87171;">!</span>
+          </div>
+          <h2 class="preloader-title" style="font-size: 1.5rem; color: #f87171; -webkit-text-fill-color: initial;">EXPERIENCE NOTICE</h2>
+          <p style="color: #a6a39b; max-width: 440px; font-size: 0.9rem; line-height: 1.6; margin-bottom: 24px;">
+            ${e.message || 'An unexpected initialization error occurred.'}
+          </p>
+          <button onclick="window.location.reload()" class="btn-glass btn-glass-primary" style="padding: 10px 24px; cursor: pointer;">
+            Reload FIRE SPICE
+          </button>
+        `;
+      }
+    });
+  </script>
+
+  <!-- React 18 Application Bundle (Zero runtime JSX compilation delay, works in all environments) -->
+  <script src="bundle.js"></script>
 </body>
 </html>
