@@ -2,9 +2,23 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
   <title>FIRE SPICE | Haute Gastronomie & Golden Lounge • React Table Booking</title>
   
+  <!-- PWA & Mobile Web App Meta Tags -->
+  <meta name="theme-color" content="#060608">
+  <meta name="description" content="FIRE SPICE • Haute Gastronomie & Golden Lounge Table Reservation and VIP Guest Sanctuary">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="FIRE SPICE">
+  <meta name="application-name" content="FIRE SPICE">
+  <meta name="msapplication-TileColor" content="#060608">
+
+  <!-- Icons & Web App Manifest -->
+  <link rel="icon" type="image/svg+xml" href="icons/favicon.svg">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <link rel="manifest" href="manifest.json">
+
   <!-- Google Fonts: Cinzel, Cormorant Garamond & Plus Jakarta Sans -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -53,6 +67,21 @@
         `;
       }
     });
+  </script>
+
+  <!-- Service Worker Registration for PWA Offline Caching & Installation -->
+  <script>
+    if ('serviceWorker' in navigator && (window.location.protocol === 'http:' || window.location.protocol === 'https:')) {
+      window.addEventListener('load', function() {
+        navigator.serviceWorker.register('./sw.js')
+          .then(function(reg) {
+            console.log('[PWA] Service Worker registered successfully, scope:', reg.scope);
+          })
+          .catch(function(err) {
+            console.warn('[PWA] Service Worker registration failed:', err);
+          });
+      });
+    }
   </script>
 
   <!-- React 18 Application Bundle (Zero runtime JSX compilation delay, works in all environments) -->

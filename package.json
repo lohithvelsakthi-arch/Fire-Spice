@@ -8,7 +8,8 @@
     "start": "node build.js && node server.js",
     "db": "node db-cli.js users",
     "db:logins": "node db-cli.js logins",
-    "db:stats": "node db-cli.js stats"
+    "db:stats": "node db-cli.js stats",
+    "icons": "node generate_icons.js"
   },
   "keywords": [
     "restaurant",

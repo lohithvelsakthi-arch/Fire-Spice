@@ -29,6 +29,13 @@ An ultra-luxury restaurant table reservation web application built with **React 
   - **1-Click Pre-Fill (Step IV)**: Automatically secures and pre-fills the guest's Google Name and Email directly into the reservation ledger.
   - **Header Google Profile & Sign Out**: Displays verified Google badge/avatar with quick access to reservations and graceful sign out (which automatically re-locks the reservation gate).
   - **Session Persistence**: Sessions are securely saved in `localStorage` (`firespice_user`).
+- **Progressive Web App (PWA) & Mobile Installation**:
+  - **1-Click Native App Installation**: Installable on iOS (iPhone/iPad), Android, Windows, and macOS as a standalone application with dedicated home screen icon.
+  - **Zero Browser Chrome**: Launches without URL bars, tabs, or address headers for a 100% full-screen immersive fine-dining experience.
+  - **Offline Caching & Service Worker (`sw.js`)**: Caches core application shell, styles, and assets so the app boots instantaneously and reservations can be checked even with zero cellular signal.
+  - **Custom High-Resolution App Icons (`icons/`)**: Features the iconic gold "FS" crest across standard (192x192, 512x512), maskable, SVG, and Apple touch icons.
+  - **Web App Manifest (`manifest.json`)**: Configured with quick app shortcuts ("Reserve Table", "My Reservations", "Tasting Menu").
+  - **Tactile Haptic Feedback**: Mobile vibration harmonics on table selections and confirmation actions via `navigator.vibrate`.
 - **Dedicated SQLite 3 Login & User Database**:
   - **Native Zero-Dependency Database Engine**: Powered by Node.js native `node:sqlite` storing all records in a dedicated file (`database/users.db`).
   - **`users` Table**: Stores patron credentials, Google identity IDs (`google_sub`), user names, verified email addresses, password hashes (salted PBKDF2 via `node:crypto`), VIP tiers, dining perks, and total login counts.
@@ -63,18 +70,22 @@ Then visit **`http://localhost:3000`** in your browser.
 ## 📁 Project Structure
 
 ```
+├── manifest.json    # PWA Web App Manifest (standalone display, icons, shortcuts)
+├── sw.js            # Service Worker (offline precaching & app shell acceleration)
+├── icons/           # High-resolution PWA icons (192px, 512px, maskable, SVG, Apple)
+├── generate_icons.js# Native script to generate PWA icons
 ├── database/
 │   ├── db.js        # SQLite connection, schema, auth methods & audit logging
 │   └── users.db     # Dedicated SQLite 3 database file for all user logins
 ├── db-cli.js        # Interactive command-line tool to inspect users & audit logs
-├── index.html       # HTML5 entry point with instant luxury preloader
+├── index.html       # HTML5 entry point with instant luxury preloader & PWA meta
 ├── app.jsx          # React 18 component architecture & state source
 ├── bundle.js        # High-performance compiled JavaScript bundle
 ├── build.js         # Zero-config local transpiler (app.jsx -> bundle.js)
 ├── styles.css       # Luxury black & gold glassmorphism stylesheet
 ├── server.js        # Lightweight Node HTTP server with database API endpoints
 ├── vendor/          # Self-hosted React 18 & ReactDOM production libraries
-├── package.json     # Project configuration & npm scripts (build, start, db)
+├── package.json     # Project configuration & npm scripts (build, start, db, icons)
 └── README.md        # Documentation
 ```
 

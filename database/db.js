@@ -488,3 +488,4 @@ module.exports = {
   getRecentLogins,
   getDatabaseStats
 };
+

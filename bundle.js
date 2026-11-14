@@ -288,6 +288,12 @@ const DEFAULT_VIP_MEMBERS = [{
    ========================================================================== */
 let audioCtx = null;
 function playChime(enabled, type = 'click') {
+  // Tactile haptic feedback for mobile/touch devices
+  try {
+    if (typeof navigator !== 'undefined' && navigator.vibrate) {
+      if (type === 'confirm') navigator.vibrate([25, 40, 35]);else if (type === 'select') navigator.vibrate(20);else navigator.vibrate(12);
+    }
+  } catch (ve) {}
   if (!enabled) return;
   try {
     if (!audioCtx) {
@@ -423,7 +429,9 @@ function Header({
   currentUser,
   onOpenAuth,
   onLogout,
-  onOpenDatabase
+  onOpenDatabase,
+  onOpenInstall,
+  isStandalone
 }) {
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
@@ -571,7 +579,40 @@ function Header({
     y2: "4"
   })), "Tasting Menu")), /*#__PURE__*/React.createElement("div", {
     className: "header-actions"
-  }, /*#__PURE__*/React.createElement("button", {
+  }, !isStandalone && /*#__PURE__*/React.createElement("button", {
+    className: "btn-glass btn-glass-sm btn-install-app",
+    onClick: onOpenInstall,
+    title: "Install FIRE SPICE as an App on your device",
+    style: {
+      display: 'inline-flex',
+      alignItems: 'center',
+      gap: '6px',
+      color: 'var(--gold-300)',
+      borderColor: 'rgba(212, 175, 55, 0.45)',
+      background: 'rgba(212, 175, 55, 0.12)'
+    }
+  }, /*#__PURE__*/React.createElement("svg", {
+    width: "14",
+    height: "14",
+    viewBox: "0 0 24 24",
+    fill: "none",
+    stroke: "currentColor",
+    strokeWidth: "2.2"
+  }, /*#__PURE__*/React.createElement("path", {
+    d: "M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"
+  }), /*#__PURE__*/React.createElement("polyline", {
+    points: "7 10 12 15 17 10"
+  }), /*#__PURE__*/React.createElement("line", {
+    x1: "12",
+    y1: "15",
+    x2: "12",
+    y2: "3"
+  })), /*#__PURE__*/React.createElement("span", {
+    className: "install-btn-text"
+  }, "Install App")), isStandalone && /*#__PURE__*/React.createElement("div", {
+    className: "standalone-app-badge",
+    title: "Running in Standalone Native App Mode"
+  }, /*#__PURE__*/React.createElement("span", null, "✦ APP MODE")), /*#__PURE__*/React.createElement("button", {
     className: "btn-glass btn-glass-sm btn-glass-secondary",
     onClick: onOpenDatabase,
     title: "Inspect SQLite Database & Login Audit Trail",
@@ -822,7 +863,34 @@ function Header({
     d: "M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"
   }), /*#__PURE__*/React.createElement("path", {
     d: "M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"
-  })), "SQLite Database & Logs"), /*#__PURE__*/React.createElement("button", {
+  })), "SQLite Database & Logs"), !isStandalone && /*#__PURE__*/React.createElement("button", {
+    className: "btn-glass btn-glass-sm",
+    style: {
+      width: '100%',
+      justifyContent: 'flex-start',
+      color: 'var(--gold-300)'
+    },
+    onClick: () => {
+      setUserDropdownOpen(false);
+      onOpenInstall();
+    }
+  }, /*#__PURE__*/React.createElement("svg", {
+    width: "14",
+    height: "14",
+    viewBox: "0 0 24 24",
+    fill: "none",
+    stroke: "currentColor",
+    strokeWidth: "2.2"
+  }, /*#__PURE__*/React.createElement("path", {
+    d: "M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"
+  }), /*#__PURE__*/React.createElement("polyline", {
+    points: "7 10 12 15 17 10"
+  }), /*#__PURE__*/React.createElement("line", {
+    x1: "12",
+    y1: "15",
+    x2: "12",
+    y2: "3"
+  })), "Install App on Device"), /*#__PURE__*/React.createElement("button", {
     className: "btn-glass btn-glass-sm",
     style: {
       width: '100%',
@@ -3497,6 +3565,147 @@ function DatabaseModal({
 }
 
 /* ==========================================================================
+   Component: InstallModal (Progressive Web App Native Installation)
+   ========================================================================== */
+function InstallModal({
+  isOpen,
+  onClose,
+  onInstall,
+  isIos,
+  onSound
+}) {
+  if (!isOpen) return null;
+  return /*#__PURE__*/React.createElement("div", {
+    className: "modal-backdrop open",
+    onClick: e => e.target.classList.contains('modal-backdrop') && onClose()
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "modal-dialog install-modal-dialog"
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "btn-glass btn-glass-icon btn-glass-sm modal-close-btn",
+    onClick: onClose
+  }, "✕"), /*#__PURE__*/React.createElement("div", {
+    className: "install-crest-badge"
+  }, /*#__PURE__*/React.createElement("span", null, "FS")), /*#__PURE__*/React.createElement("div", {
+    className: "hero-badge",
+    style: {
+      marginBottom: '8px'
+    }
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "gold-diamond"
+  }), /*#__PURE__*/React.createElement("span", null, "NATIVE APP EXPERIENCE • PROGRESSIVE WEB APP"), /*#__PURE__*/React.createElement("span", {
+    className: "gold-diamond"
+  })), /*#__PURE__*/React.createElement("h3", {
+    className: "font-serif",
+    style: {
+      fontSize: '1.7rem',
+      color: '#fff',
+      letterSpacing: '2px',
+      marginBottom: '8px'
+    }
+  }, "INSTALL ", /*#__PURE__*/React.createElement("span", {
+    className: "gold-gradient-text"
+  }, "FIRE SPICE"), " APP"), /*#__PURE__*/React.createElement("p", {
+    style: {
+      fontSize: '0.86rem',
+      color: 'var(--text-muted)',
+      lineHeight: '1.5',
+      maxWidth: '420px',
+      margin: '0 auto 16px'
+    }
+  }, "Install FIRE SPICE on your device for instantaneous home screen launch, full-screen immersion, and offline digital boarding passes."), /*#__PURE__*/React.createElement("div", {
+    className: "install-perks-list"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "install-perk-item"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "install-perk-icon"
+  }, "✦"), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
+    className: "install-perk-title"
+  }, "1-Tap Home Screen & Desktop Launch"), /*#__PURE__*/React.createElement("div", {
+    className: "install-perk-desc"
+  }, "Launches standalone without browser URL bars, tabs, or address headers."))), /*#__PURE__*/React.createElement("div", {
+    className: "install-perk-item"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "install-perk-icon"
+  }, "✦"), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
+    className: "install-perk-title"
+  }, "Offline VIP Digital Pass & QR Codes"), /*#__PURE__*/React.createElement("div", {
+    className: "install-perk-desc"
+  }, "Access confirmed reservations and digital passes even with zero cellular signal."))), /*#__PURE__*/React.createElement("div", {
+    className: "install-perk-item"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "install-perk-icon"
+  }, "✦"), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
+    className: "install-perk-title"
+  }, "Tactile Haptics & 60 FPS Performance"), /*#__PURE__*/React.createElement("div", {
+    className: "install-perk-desc"
+  }, "Pre-cached application shell delivering instantaneous silky navigation.")))), isIos ? /*#__PURE__*/React.createElement("div", {
+    className: "ios-step-box"
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontFamily: 'Cinzel, serif',
+      fontSize: '0.82rem',
+      color: 'var(--gold-400)',
+      letterSpacing: '1px',
+      marginBottom: '10px',
+      textTransform: 'uppercase'
+    }
+  }, "How to Install on iPhone / iPad (Safari):"), /*#__PURE__*/React.createElement("div", {
+    className: "ios-step-item"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "ios-step-number"
+  }, "1"), /*#__PURE__*/React.createElement("span", null, "Tap the ", /*#__PURE__*/React.createElement("strong", null, "Share"), " button (", /*#__PURE__*/React.createElement("strong", null, "⎋"), " or ", /*#__PURE__*/React.createElement("strong", null, "↥"), ") at the bottom of Safari")), /*#__PURE__*/React.createElement("div", {
+    className: "ios-step-item"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "ios-step-number"
+  }, "2"), /*#__PURE__*/React.createElement("span", null, "Scroll down and select ", /*#__PURE__*/React.createElement("strong", null, "\"Add to Home Screen\""), " (", /*#__PURE__*/React.createElement("strong", null, "⊞"), ")")), /*#__PURE__*/React.createElement("div", {
+    className: "ios-step-item"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "ios-step-number"
+  }, "3"), /*#__PURE__*/React.createElement("span", null, "Tap ", /*#__PURE__*/React.createElement("strong", null, "\"Add\""), " in the top-right corner to place FIRE SPICE on your home screen!"))) : /*#__PURE__*/React.createElement("div", {
+    style: {
+      marginTop: '16px'
+    }
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "btn-glass btn-glass-gold btn-glass-lg",
+    style: {
+      width: '100%',
+      padding: '14px 24px',
+      fontSize: '1rem',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: '10px'
+    },
+    onClick: () => {
+      onInstall();
+      onSound('confirm');
+    }
+  }, /*#__PURE__*/React.createElement("svg", {
+    width: "18",
+    height: "18",
+    viewBox: "0 0 24 24",
+    fill: "none",
+    stroke: "currentColor",
+    strokeWidth: "2.5"
+  }, /*#__PURE__*/React.createElement("path", {
+    d: "M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"
+  }), /*#__PURE__*/React.createElement("polyline", {
+    points: "7 10 12 15 17 10"
+  }), /*#__PURE__*/React.createElement("line", {
+    x1: "12",
+    y1: "15",
+    x2: "12",
+    y2: "3"
+  })), /*#__PURE__*/React.createElement("span", null, "Install FIRE SPICE App")), /*#__PURE__*/React.createElement("p", {
+    style: {
+      fontSize: '0.74rem',
+      color: 'var(--text-dim)',
+      marginTop: '8px'
+    }
+  }, "Supported natively on Chrome, Edge, Brave, Android & Windows."))));
+}
+
+/* ==========================================================================
    Main Application Root Component
    ========================================================================== */
 function App() {
@@ -3522,6 +3731,52 @@ function App() {
   });
   const [confirmedReservation, setConfirmedReservation] = useState(null);
   const [databaseModalOpen, setDatabaseModalOpen] = useState(false);
+  const [deferredPrompt, setDeferredPrompt] = useState(null);
+  const [isStandalone, setIsStandalone] = useState(false);
+  const [installModalOpen, setInstallModalOpen] = useState(false);
+  const [isIos, setIsIos] = useState(false);
+  useEffect(() => {
+    // Detect standalone mode (already installed PWA)
+    const checkStandalone = () => {
+      const standalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+      setIsStandalone(standalone);
+    };
+    checkStandalone();
+    try {
+      window.matchMedia('(display-mode: standalone)').addEventListener('change', checkStandalone);
+    } catch (e) {}
+
+    // Detect iOS Safari
+    const ua = window.navigator.userAgent || '';
+    const isApple = /iPad|iPhone|iPod/.test(ua) && !window.MSStream;
+    setIsIos(isApple);
+
+    // Capture install prompt
+    const handleBeforeInstall = e => {
+      e.preventDefault();
+      setDeferredPrompt(e);
+    };
+    window.addEventListener('beforeinstallprompt', handleBeforeInstall);
+    return () => {
+      window.removeEventListener('beforeinstallprompt', handleBeforeInstall);
+    };
+  }, []);
+  const handleInstallClick = async () => {
+    if (deferredPrompt) {
+      try {
+        deferredPrompt.prompt();
+        const choice = await deferredPrompt.userChoice;
+        if (choice && choice.outcome === 'accepted') {
+          setDeferredPrompt(null);
+          setInstallModalOpen(false);
+        }
+      } catch (err) {
+        setInstallModalOpen(true);
+      }
+    } else {
+      setInstallModalOpen(true);
+    }
+  };
   const [speed, setSpeed] = useState('normal'); // 'slow', 'normal', 'paused'
   const [dim, setDim] = useState('comfort'); // 'rich', 'comfort', 'deep'
 
@@ -3654,7 +3909,12 @@ function App() {
     onOpenDatabase: () => {
       setDatabaseModalOpen(true);
       onSound('click');
-    }
+    },
+    onOpenInstall: () => {
+      setInstallModalOpen(true);
+      onSound('click');
+    },
+    isStandalone: isStandalone
   }), /*#__PURE__*/React.createElement(HeroSection, null), /*#__PURE__*/React.createElement("main", {
     className: "booking-console-container",
     id: "bookingConsole"
@@ -3759,6 +4019,12 @@ function App() {
     isOpen: databaseModalOpen,
     onClose: () => setDatabaseModalOpen(false),
     onSound: onSound
+  }), /*#__PURE__*/React.createElement(InstallModal, {
+    isOpen: installModalOpen,
+    onClose: () => setInstallModalOpen(false),
+    onInstall: handleInstallClick,
+    isIos: isIos,
+    onSound: onSound
   }), /*#__PURE__*/React.createElement("footer", {
     className: "luxury-footer"
   }, /*#__PURE__*/React.createElement("div", {
@@ -3785,7 +4051,17 @@ function App() {
       marginBottom: '20px',
       flexWrap: 'wrap'
     }
-  }, /*#__PURE__*/React.createElement("button", {
+  }, !isStandalone && /*#__PURE__*/React.createElement("button", {
+    className: "btn-glass btn-glass-sm btn-install-app",
+    onClick: () => {
+      setInstallModalOpen(true);
+      onSound('click');
+    },
+    style: {
+      color: 'var(--gold-300)',
+      borderColor: 'rgba(212, 175, 55, 0.45)'
+    }
+  }, "📲 Install FIRE SPICE App"), /*#__PURE__*/React.createElement("button", {
     className: "btn-glass btn-glass-sm",
     onClick: () => {
       setDatabaseModalOpen(true);

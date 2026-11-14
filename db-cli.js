@@ -116,3 +116,4 @@ switch (cmd.toLowerCase()) {
     console.log('  node db-cli.js users\n');
     break;
 }
+
