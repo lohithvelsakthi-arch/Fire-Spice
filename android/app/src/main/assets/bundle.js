@@ -3700,7 +3700,7 @@ function InstallModal({
     x2: "12",
     y2: "3"
   })), /*#__PURE__*/React.createElement("span", null, "1-Click Install App (PWA)")), /*#__PURE__*/React.createElement("a", {
-    href: "https://github.com/lohithvelsakthi-arch/Fire-Spice/releases/latest/download/FireSpice-v1.0.0.apk",
+    href: "https://github.com/lohithvelsakthi-arch/Fire-Spice/releases/latest/download/FireSpice-v1.0.1.apk",
     target: "_blank",
     rel: "noopener noreferrer",
     className: "btn-glass btn-glass-secondary",

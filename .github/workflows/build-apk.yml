@@ -3,6 +3,7 @@ name: Build FIRE SPICE Android APK
 on:
   push:
     branches: [ main ]
+    tags: [ 'v*' ]
   workflow_dispatch:
 
 permissions:
@@ -43,44 +44,42 @@ jobs:
           APK_FILE=$(find android -name "*.apk" | head -n 1)
           if [ -n "$APK_FILE" ]; then
             echo "Found APK at: $APK_FILE"
-            cp "$APK_FILE" build-output/FireSpice-v1.0.0.apk
+            cp "$APK_FILE" build-output/FireSpice-v1.0.1.apk
           else
             echo "ERROR: No APK found!"
             exit 1
           fi
-          ls -lh build-output/FireSpice-v1.0.0.apk
+          ls -lh build-output/FireSpice-v1.0.1.apk
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: FireSpice-v1.0.0-APK
-          path: build-output/FireSpice-v1.0.0.apk
+          name: FireSpice-v1.0.1-APK
+          path: build-output/FireSpice-v1.0.1.apk
           retention-days: 90
 
       - name: Create or Update GitHub Release
         uses: softprops/action-gh-release@v2
-        if: github.ref == 'refs/heads/main'
         with:
-          tag_name: v1.0.0
-          name: "FIRE SPICE Android App • Release v1.0.0"
+          tag_name: v1.0.1
+          name: "FIRE SPICE Android App • Release v1.0.1"
           prerelease: false
           draft: false
+          make_latest: true
           body: |
             ### 🍷 FIRE SPICE • Haute Gastronomie & Golden Lounge
-            **Official Android Application Release (v1.0.0)**
+            **Official Android Application Release (v1.0.1)**
 
-            #### ✨ Features:
-            - **Native Android APK Container**: Installable on any Android phone or tablet.
-            - **100% Offline Standalone Experience**: Bundled with all React 18, styling, and database assets.
-            - **Interactive 2D Seating Floor Plan**: Real-time table selection across 4 dining zones.
-            - **Google Sign-In & Email Authentication**: Protected member sanctuary table booking.
-            - **Tactile Haptics & Crystal Audio**: Realistic crystal clinks and physical vibration feedback.
+            #### 🛠️ What's New in v1.0.1:
+            - **Resolved Launch Crash**: Aligned Java package structure to `com.firespice.restaurant.MainActivity` with fail-safe startup.
+            - **Custom 24K Gold "FS" Adaptive App Icon**: Sharp high-resolution gold crest centered on obsidian noir canvas for all Android 8+ launchers.
+            - **Offline WebView Hardware Acceleration**: Embedded React 18, Glassmorphic styling, and interactive seating map.
 
             #### 📲 Installation Instructions:
-            1. Download `FireSpice-v1.0.0.apk` below directly onto your Android device.
+            1. Download `FireSpice-v1.0.1.apk` below directly onto your Android device.
             2. Tap the downloaded file in your browser or Downloads folder.
             3. If prompted, allow *"Install unknown apps"* for your browser.
             4. Tap **Install** and launch **FIRE SPICE** from your app drawer!
-          files: build-output/FireSpice-v1.0.0.apk
+          files: build-output/FireSpice-v1.0.1.apk
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

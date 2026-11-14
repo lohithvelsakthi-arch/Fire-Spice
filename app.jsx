@@ -2603,7 +2603,7 @@ function InstallModal({ isOpen, onClose, onInstall, isIos, onSound }) {
             </button>
 
             <a
-              href="https://github.com/lohithvelsakthi-arch/Fire-Spice/releases/latest/download/FireSpice-v1.0.0.apk"
+              href="https://github.com/lohithvelsakthi-arch/Fire-Spice/releases/latest/download/FireSpice-v1.0.1.apk"
               target="_blank"
               rel="noopener noreferrer"
               className="btn-glass btn-glass-secondary"
