@@ -3663,14 +3663,17 @@ function InstallModal({
     className: "ios-step-number"
   }, "3"), /*#__PURE__*/React.createElement("span", null, "Tap ", /*#__PURE__*/React.createElement("strong", null, "\"Add\""), " in the top-right corner to place FIRE SPICE on your home screen!"))) : /*#__PURE__*/React.createElement("div", {
     style: {
-      marginTop: '16px'
+      marginTop: '16px',
+      display: 'flex',
+      flexDirection: 'column',
+      gap: '10px'
     }
   }, /*#__PURE__*/React.createElement("button", {
     className: "btn-glass btn-glass-gold btn-glass-lg",
     style: {
       width: '100%',
-      padding: '14px 24px',
-      fontSize: '1rem',
+      padding: '13px 22px',
+      fontSize: '0.96rem',
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
@@ -3696,13 +3699,49 @@ function InstallModal({
     y1: "15",
     x2: "12",
     y2: "3"
-  })), /*#__PURE__*/React.createElement("span", null, "Install FIRE SPICE App")), /*#__PURE__*/React.createElement("p", {
+  })), /*#__PURE__*/React.createElement("span", null, "1-Click Install App (PWA)")), /*#__PURE__*/React.createElement("a", {
+    href: "https://github.com/lohithvelsakthi-arch/Fire-Spice/releases/latest/download/FireSpice-v1.0.0.apk",
+    target: "_blank",
+    rel: "noopener noreferrer",
+    className: "btn-glass btn-glass-secondary",
+    style: {
+      width: '100%',
+      padding: '12px 20px',
+      fontSize: '0.9rem',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: '8px',
+      color: 'var(--gold-300)',
+      borderColor: 'rgba(212, 175, 55, 0.35)'
+    },
+    onClick: () => onSound('click')
+  }, /*#__PURE__*/React.createElement("svg", {
+    width: "16",
+    height: "16",
+    viewBox: "0 0 24 24",
+    fill: "none",
+    stroke: "currentColor",
+    strokeWidth: "2"
+  }, /*#__PURE__*/React.createElement("rect", {
+    x: "5",
+    y: "2",
+    width: "14",
+    height: "20",
+    rx: "2",
+    ry: "2"
+  }), /*#__PURE__*/React.createElement("line", {
+    x1: "12",
+    y1: "18",
+    x2: "12.01",
+    y2: "18"
+  })), /*#__PURE__*/React.createElement("span", null, "Download Android APK File (.apk)")), /*#__PURE__*/React.createElement("p", {
     style: {
       fontSize: '0.74rem',
       color: 'var(--text-dim)',
-      marginTop: '8px'
+      margin: '4px 0 0'
     }
-  }, "Supported natively on Chrome, Edge, Brave, Android & Windows."))));
+  }, "Download the APK to share via WhatsApp, Google Drive, or Bluetooth with friends."))));
 }
 
 /* ==========================================================================

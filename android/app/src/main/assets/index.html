@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+  <title>FIRE SPICE | Haute Gastronomie & Golden Lounge • React Table Booking</title>
+  
+  <!-- PWA & Mobile Web App Meta Tags -->
+  <meta name="theme-color" content="#060608">
+  <meta name="description" content="FIRE SPICE • Haute Gastronomie & Golden Lounge Table Reservation and VIP Guest Sanctuary">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="FIRE SPICE">
+  <meta name="application-name" content="FIRE SPICE">
+  <meta name="msapplication-TileColor" content="#060608">
+
+  <!-- Icons & Web App Manifest -->
+  <link rel="icon" type="image/svg+xml" href="icons/favicon.svg">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <link rel="manifest" href="manifest.json">
+
+  <!-- Google Fonts: Cinzel, Cormorant Garamond & Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;800;900&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Luxury Black & Gold Glassmorphic Stylesheet -->
+  <link rel="stylesheet" href="styles.css">
+
+  <!-- React 18 & ReactDOM: High-Performance Bundles with CDN Fallback -->
+  <script src="vendor/react.production.min.js"></script>
+  <script>if (!window.React) document.write('<script src="https://unpkg.com/react@18/umd/react.production.min.js"><\/script>');</script>
+  <script src="vendor/react-dom.production.min.js"></script>
+  <script>if (!window.ReactDOM) document.write('<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"><\/script>');</script>
+</head>
+<body>
+  <!-- React App Root Container with Instant Luxury Preloader -->
+  <div id="root">
+    <div id="app-preloader" class="preloader-overlay">
+      <div class="preloader-crest">
+        <span>FS</span>
+      </div>
+      <h1 class="preloader-title">FIRE SPICE</h1>
+      <p class="preloader-subtitle">HAUTE GASTRONOMIE &amp; GOLDEN LOUNGE</p>
+      <div class="preloader-bar">
+        <div class="preloader-bar-fill"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Fail-Safe Diagnostics Script -->
+  <script>
+    window.addEventListener('error', function(e) {
+      var preloader = document.getElementById('app-preloader');
+      if (preloader) {
+        preloader.innerHTML = `
+          <div class="preloader-crest" style="border-color: #f87171;">
+            <span style="color: #f87171;">!</span>
+          </div>
+          <h2 class="preloader-title" style="font-size: 1.5rem; color: #f87171; -webkit-text-fill-color: initial;">EXPERIENCE NOTICE</h2>
+          <p style="color: #a6a39b; max-width: 440px; font-size: 0.9rem; line-height: 1.6; margin-bottom: 24px;">
+            ${e.message || 'An unexpected initialization error occurred.'}
+          </p>
+          <button onclick="window.location.reload()" class="btn-glass btn-glass-primary" style="padding: 10px 24px; cursor: pointer;">
+            Reload FIRE SPICE
+          </button>
+        `;
+      }
+    });
+  </script>
+
+  <!-- Service Worker Registration for PWA Offline Caching & Installation -->
+  <script>
+    if ('serviceWorker' in navigator && (window.location.protocol === 'http:' || window.location.protocol === 'https:')) {
+      window.addEventListener('load', function() {
+        navigator.serviceWorker.register('./sw.js')
+          .then(function(reg) {
+            console.log('[PWA] Service Worker registered successfully, scope:', reg.scope);
+          })
+          .catch(function(err) {
+            console.warn('[PWA] Service Worker registration failed:', err);
+          });
+      });
+    }
+  </script>
+
+  <!-- React 18 Application Bundle (Zero runtime JSX compilation delay, works in all environments) -->
+  <script src="bundle.js"></script>
+</body>
+</html>

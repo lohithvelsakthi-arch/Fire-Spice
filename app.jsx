@@ -2589,20 +2589,33 @@ function InstallModal({ isOpen, onClose, onInstall, isIos, onSound }) {
             </div>
           </div>
         ) : (
-          <div style={{ marginTop: '16px' }}>
+          <div style={{ marginTop: '16px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
             <button
               className="btn-glass btn-glass-gold btn-glass-lg"
-              style={{ width: '100%', padding: '14px 24px', fontSize: '1rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px' }}
+              style={{ width: '100%', padding: '13px 22px', fontSize: '0.96rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px' }}
               onClick={() => {
                 onInstall();
                 onSound('confirm');
               }}
             >
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-              <span>Install FIRE SPICE App</span>
+              <span>1-Click Install App (PWA)</span>
             </button>
-            <p style={{ fontSize: '0.74rem', color: 'var(--text-dim)', marginTop: '8px' }}>
-              Supported natively on Chrome, Edge, Brave, Android &amp; Windows.
+
+            <a
+              href="https://github.com/lohithvelsakthi-arch/Fire-Spice/releases/latest/download/FireSpice-v1.0.0.apk"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn-glass btn-glass-secondary"
+              style={{ width: '100%', padding: '12px 20px', fontSize: '0.9rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', color: 'var(--gold-300)', borderColor: 'rgba(212, 175, 55, 0.35)' }}
+              onClick={() => onSound('click')}
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>
+              <span>Download Android APK File (.apk)</span>
+            </a>
+
+            <p style={{ fontSize: '0.74rem', color: 'var(--text-dim)', margin: '4px 0 0' }}>
+              Download the APK to share via WhatsApp, Google Drive, or Bluetooth with friends.
             </p>
           </div>
         )}

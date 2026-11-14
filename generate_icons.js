@@ -185,3 +185,4 @@ console.log('Generated icon-maskable.png');
 fs.writeFileSync(path.join(ICONS_DIR, 'apple-touch-icon.png'), createPng(180));
 console.log('Generated apple-touch-icon.png');
 console.log('All icons generated successfully!');
+

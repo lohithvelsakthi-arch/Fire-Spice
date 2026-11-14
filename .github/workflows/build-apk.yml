@@ -1,0 +1,81 @@
+name: Build FIRE SPICE Android APK
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-apk:
+    name: Build Android APK
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Make Gradle executable
+        run: chmod +x android/gradlew
+
+      - name: Build Android Debug APK
+        run: |
+          cd android
+          ./gradlew assembleDebug --no-daemon --stacktrace
+
+      - name: Locate and Rename APK
+        run: |
+          mkdir -p build-output
+          if [ -f android/app/build/outputs/apk/debug/app-debug.apk ]; then
+            cp android/app/build/outputs/apk/debug/app-debug.apk build-output/FireSpice-v1.0.0.apk
+          else
+            find android/app/build/outputs/apk -name "*.apk" | head -n 1 | xargs -I {} cp {} build-output/FireSpice-v1.0.0.apk
+          fi
+          echo "APK successfully prepared:"
+          ls -lh build-output/FireSpice-v1.0.0.apk
+
+      - name: Upload APK Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: FireSpice-v1.0.0-APK
+          path: build-output/FireSpice-v1.0.0.apk
+          retention-days: 90
+
+      - name: Create or Update GitHub Release
+        uses: softprops/action-gh-release@v2
+        if: github.ref == 'refs/heads/main'
+        with:
+          tag_name: v1.0.0
+          name: "FIRE SPICE Android App • Release v1.0.0"
+          prerelease: false
+          draft: false
+          body: |
+            ### 🍷 FIRE SPICE • Haute Gastronomie & Golden Lounge
+            **Official Android Application Release (v1.0.0)**
+
+            #### ✨ Features:
+            - **Native Android APK Container**: Installable on any Android phone or tablet.
+            - **100% Offline Standalone Experience**: Bundled with all React 18, styling, and database assets.
+            - **Interactive 2D Seating Floor Plan**: Real-time table selection across 4 dining zones.
+            - **Google Sign-In & Email Authentication**: Protected member sanctuary table booking.
+            - **Tactile Haptics & Crystal Audio**: Realistic crystal clinks and physical vibration feedback.
+
+            #### 📲 Installation Instructions:
+            1. Download `FireSpice-v1.0.0.apk` below directly onto your Android device.
+            2. Tap the downloaded file in your browser or Downloads folder.
+            3. If prompted, allow *"Install unknown apps"* for your browser.
+            4. Tap **Install** and launch **FIRE SPICE** from your app drawer!
+          files: build-output/FireSpice-v1.0.0.apk
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

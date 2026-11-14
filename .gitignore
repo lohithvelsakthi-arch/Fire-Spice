@@ -19,3 +19,10 @@ Thumbs.db
 *.db-shm
 *.db-journal
 
+# Android build & local
+.gradle/
+local.properties
+android/local.properties
+android/**/build/
+android/.gradle/
+

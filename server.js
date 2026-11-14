@@ -13,6 +13,7 @@ const MIME_TYPES = {
   '.jsx': 'application/javascript; charset=utf-8',
   '.json': 'application/json',
   '.webmanifest': 'application/manifest+json; charset=utf-8',
+  '.apk': 'application/vnd.android.package-archive',
   '.png': 'image/png',
   '.jpg': 'image/jpeg',
   '.jpeg': 'image/jpeg',
@@ -172,6 +173,17 @@ const server = http.createServer(async (req, res) => {
       console.error('[API Error]:', err);
       return sendJson(res, 500, { success: false, message: err.message });
     }
+  }
+
+  // =========================================================================
+  // Direct APK Download Route (Redirects to Latest Cloud Build APK)
+  // =========================================================================
+  if (pathname === '/download/apk' || pathname === '/FireSpice.apk' || pathname === '/download/FireSpice.apk') {
+    res.writeHead(302, {
+      'Location': 'https://github.com/lohithvelsakthi-arch/Fire-Spice/releases/latest/download/FireSpice-v1.0.0.apk'
+    });
+    res.end();
+    return;
   }
 
   // =========================================================================
