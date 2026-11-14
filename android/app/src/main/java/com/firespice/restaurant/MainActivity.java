@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.ViewGroup;
 import android.view.WindowInsetsController;
 import android.view.WindowManager;
 import android.webkit.ConsoleMessage;
@@ -26,8 +27,16 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        // 1. Create and attach WebView FIRST with explicit MATCH_PARENT
+        webView = new WebView(this);
+        webView.setBackgroundColor(Color.parseColor("#060608"));
+        setContentView(webView, new ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT
+        ));
+
+        // 2. Configure system bars gracefully in isolated try-catch
         try {
-            // Luxury Obsidian Noir Status Bar & Navigation Bar
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
                 getWindow().clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
@@ -40,12 +49,15 @@ public class MainActivity extends Activity {
                     controller.setSystemBarsAppearance(0, WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS);
                 }
             }
+        } catch (Throwable t) {
+            Log.w(TAG, "System bar styling skipped: " + t.getMessage());
+        }
 
-            webView = new WebView(this);
+        // 3. Configure WebSettings safely
+        try {
             WebSettings settings = webView.getSettings();
             settings.setJavaScriptEnabled(true);
             settings.setDomStorageEnabled(true);
-            settings.setDatabaseEnabled(true);
             settings.setAllowFileAccess(true);
             settings.setAllowContentAccess(true);
             settings.setAllowFileAccessFromFileURLs(true);
@@ -56,36 +68,36 @@ public class MainActivity extends Activity {
             settings.setLoadWithOverviewMode(true);
             settings.setBuiltInZoomControls(false);
             settings.setDisplayZoomControls(false);
-
-            webView.setBackgroundColor(Color.parseColor("#060608"));
-
-            webView.setWebViewClient(new WebViewClient() {
-                @Override
-                public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
-                    return false;
-                }
-
-                @Override
-                public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
-                    Log.e(TAG, "WebView Error: " + error.toString());
-                }
-            });
-
-            webView.setWebChromeClient(new WebChromeClient() {
-                @Override
-                public boolean onConsoleMessage(ConsoleMessage consoleMessage) {
-                    Log.d(TAG, consoleMessage.message() + " -- line " + consoleMessage.lineNumber());
-                    return true;
-                }
-            });
-
-            // Load embedded offline luxury web assets
-            webView.loadUrl("file:///android_asset/index.html");
-
-            setContentView(webView);
-        } catch (Exception e) {
-            Log.e(TAG, "Initialization error", e);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                settings.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
+            }
+        } catch (Throwable t) {
+            Log.w(TAG, "WebSettings warning: " + t.getMessage());
         }
+
+        // 4. Set Clients
+        webView.setWebViewClient(new WebViewClient() {
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
+                return false;
+            }
+
+            @Override
+            public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
+                Log.e(TAG, "WebView Resource Error: " + error);
+            }
+        });
+
+        webView.setWebChromeClient(new WebChromeClient() {
+            @Override
+            public boolean onConsoleMessage(ConsoleMessage consoleMessage) {
+                Log.d(TAG, "[WebConsole] " + consoleMessage.message());
+                return true;
+            }
+        });
+
+        // 5. Load the embedded offline web assets
+        webView.loadUrl("file:///android_asset/index.html");
     }
 
     @Override
@@ -105,4 +117,3 @@ public class MainActivity extends Activity {
         super.onDestroy();
     }
 }
-

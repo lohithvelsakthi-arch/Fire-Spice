@@ -14,19 +14,19 @@ An ultra-luxury restaurant table reservation application built with **React 18**
 Experience FIRE SPICE natively on your Android device! The standalone Android APK is built and ready for direct download and sharing.
 
 ### 📥 Direct APK Download Link:
-👉 **[Download FireSpice-v1.0.1.apk](https://github.com/lohithvelsakthi-arch/Fire-Spice/releases/latest/download/FireSpice-v1.0.1.apk)**
+👉 **[Download FireSpice-v1.0.2.apk](https://github.com/lohithvelsakthi-arch/Fire-Spice/releases/latest/download/FireSpice-v1.0.2.apk)**
 
 *(Or download directly from the running web app by tapping the "App" icon in the header or visiting `http://localhost:3000/download/apk`)*
 
 ### 📲 How to Install on Any Android Phone:
-1. Tap the **[Download FireSpice-v1.0.1.apk](https://github.com/lohithvelsakthi-arch/Fire-Spice/releases/latest/download/FireSpice-v1.0.1.apk)** link on your Android smartphone.
-2. If Android displays a warning *"File might be harmful / Do you want to download FireSpice-v1.0.1.apk anyway?"*, tap **Download anyway** (standard Android security notice for direct APK files).
+1. Tap the **[Download FireSpice-v1.0.2.apk](https://github.com/lohithvelsakthi-arch/Fire-Spice/releases/latest/download/FireSpice-v1.0.2.apk)** link on your Android smartphone.
+2. If Android displays a warning *"File might be harmful / Do you want to download FireSpice-v1.0.2.apk anyway?"*, tap **Download anyway** (standard Android security notice for direct APK files).
 3. Once the download finishes, tap **Open** or find the file in your **Downloads** folder.
 4. If prompted to *"Allow installation from unknown sources"*, tap **Settings** ➔ toggle **Allow from this source** ➔ tap **Back**.
 5. Tap **Install**, then tap **Open** to launch FIRE SPICE in full obsidian-noir immersion!
 
 ### 📤 How to Share with Others:
-- **Share Link**: Send `https://github.com/lohithvelsakthi-arch/Fire-Spice/releases/latest/download/FireSpice-v1.0.1.apk` directly via WhatsApp, Telegram, SMS, or Email. Anyone who taps it gets the APK immediately.
+- **Share Link**: Send `https://github.com/lohithvelsakthi-arch/Fire-Spice/releases/latest/download/FireSpice-v1.0.2.apk` directly via WhatsApp, Telegram, SMS, or Email. Anyone who taps it gets the APK immediately.
 - **Direct File Share**: Once downloaded to your phone, you can forward the `.apk` file directly to friends via WhatsApp documents, Quick Share / Nearby Share, Bluetooth, or Google Drive.
 
 ---

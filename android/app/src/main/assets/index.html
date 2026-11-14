@@ -19,19 +19,18 @@
   <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
   <link rel="manifest" href="manifest.json">
 
-  <!-- Google Fonts: Cinzel, Cormorant Garamond & Plus Jakarta Sans -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;800;900&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  
   <!-- Luxury Black & Gold Glassmorphic Stylesheet -->
   <link rel="stylesheet" href="styles.css">
 
-  <!-- React 18 & ReactDOM: High-Performance Bundles with CDN Fallback -->
+  <!-- Google Fonts: Non-blocking load so app renders instantaneously offline -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;800;900&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;800;900&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap"></noscript>
+
+  <!-- React 18 & ReactDOM: Production Bundles -->
   <script src="vendor/react.production.min.js"></script>
-  <script>if (!window.React) document.write('<script src="https://unpkg.com/react@18/umd/react.production.min.js"><\/script>');</script>
   <script src="vendor/react-dom.production.min.js"></script>
-  <script>if (!window.ReactDOM) document.write('<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"><\/script>');</script>
 </head>
 <body>
   <!-- React App Root Container with Instant Luxury Preloader -->
@@ -84,7 +83,7 @@
     }
   </script>
 
-  <!-- React 18 Application Bundle (Zero runtime JSX compilation delay, works in all environments) -->
+  <!-- React 18 Application Bundle -->
   <script src="bundle.js"></script>
 </body>
 </html>
