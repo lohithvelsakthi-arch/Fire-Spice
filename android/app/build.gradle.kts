@@ -3,7 +3,7 @@ plugins {
 }
 
 android {
-  namespace = "com.example.firespice"
+  namespace = "com.firespice.restaurant"
   compileSdk = 35
 
   defaultConfig {
