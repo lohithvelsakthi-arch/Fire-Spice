@@ -1,0 +1,81 @@
+{
+  "name": "FIRE SPICE • Haute Gastronomie & Golden Lounge",
+  "short_name": "FIRE SPICE",
+  "description": "Haute Gastronomie & Golden Lounge Table Reservation and VIP Guest Sanctuary",
+  "id": "com.firespice.restaurant.app",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#060608",
+  "theme_color": "#060608",
+  "categories": [
+    "food",
+    "lifestyle",
+    "luxury"
+  ],
+  "icons": [
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon-maskable.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Reserve Table",
+      "short_name": "Reserve",
+      "description": "Book a luxury sanctuary table at FIRE SPICE",
+      "url": "./#bookingConsole",
+      "icons": [
+        {
+          "src": "icons/icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "My Reservations",
+      "short_name": "Bookings",
+      "description": "Access your confirmed VIP reservation boarding passes",
+      "url": "./#myBookings",
+      "icons": [
+        {
+          "src": "icons/icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "Tasting Menu",
+      "short_name": "Menu",
+      "description": "Explore Chef Marc Éléonore Winter Compendium",
+      "url": "./#tastingMenuSection",
+      "icons": [
+        {
+          "src": "icons/icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    }
+  ]
+}
+

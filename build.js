@@ -28,6 +28,12 @@ try {
   fs.writeFileSync('bundle.js', result.code, 'utf8');
   console.log('Transpilation SUCCESSFUL!');
   console.log('bundle.js generated, size:', result.code.length, 'bytes');
+
+  // Sync to www for Capacitor Android if directory exists
+  if (fs.existsSync('www')) {
+    fs.writeFileSync('www/bundle.js', result.code, 'utf8');
+    console.log('Synced bundle.js -> www/bundle.js');
+  }
 } catch (err) {
   console.error('SYNTAX/TRANSPILE ERROR:');
   console.error(err.message);
