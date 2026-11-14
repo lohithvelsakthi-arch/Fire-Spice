@@ -31,9 +31,25 @@ jobs:
         run: chmod +x android/gradlew
 
       - name: Build Android Debug APK
+        id: gradle_build
         run: |
           cd android
-          ./gradlew assembleDebug --no-daemon --stacktrace
+          ./gradlew assembleDebug --no-daemon --stacktrace 2>&1 | tee ../gradle.log
+
+      - name: Print Gradle Error Log
+        if: failure()
+        run: |
+          echo "=================== GRADLE LOG (LAST 250 LINES) ==================="
+          tail -n 250 gradle.log
+          echo "==================================================================="
+
+      - name: Upload Gradle Logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gradle-logs
+          path: gradle.log
+          retention-days: 7
 
       - name: Locate and Rename APK
         run: |
