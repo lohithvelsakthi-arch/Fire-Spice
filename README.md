@@ -29,6 +29,13 @@ An ultra-luxury restaurant table reservation web application built with **React 
   - **1-Click Pre-Fill (Step IV)**: Automatically secures and pre-fills the guest's Google Name and Email directly into the reservation ledger.
   - **Header Google Profile & Sign Out**: Displays verified Google badge/avatar with quick access to reservations and graceful sign out (which automatically re-locks the reservation gate).
   - **Session Persistence**: Sessions are securely saved in `localStorage` (`firespice_user`).
+- **Dedicated SQLite 3 Login & User Database**:
+  - **Native Zero-Dependency Database Engine**: Powered by Node.js native `node:sqlite` storing all records in a dedicated file (`database/users.db`).
+  - **`users` Table**: Stores patron credentials, Google identity IDs (`google_sub`), user names, verified email addresses, password hashes (salted PBKDF2 via `node:crypto`), VIP tiers, dining perks, and total login counts.
+  - **`login_logs` Audit Trail Table**: Logs every single login attempt in real-time with timestamp, provider (Google or Email), status (`SUCCESS` / `FAILED`), client IP address, and failure reasons.
+  - **`sessions` Table**: Tracks active authenticated sessions with cryptographic tokens and expiration timestamps.
+  - **Database Administration CLI (`db-cli.js`)**: Interactive command-line tool to inspect and manage users and login history (`npm run db`, `npm run db:logins`, `npm run db:stats`).
+  - **In-App Live Database Inspector**: An interactive gold glassmorphic modal accessible from the header, user dropdown, and footer allowing patrons and administrators to inspect live database metrics, query registered users, and review the login audit trail directly in the browser.
 - **Reservation Management**: Built-in modal backed by `localStorage` to look up, view, or cancel existing table reservations.
 - **Synthesized Crystal Glass Chimes**: Realistic crystal clinks and champagne toast harmonics synthesized in real-time via the browser's Web Audio API (zero audio files required).
 - **Winter Tasting Menu Compendium**: Filterable showcase of signature courses by Chef Marc Éléonore.
@@ -56,14 +63,18 @@ Then visit **`http://localhost:3000`** in your browser.
 ## 📁 Project Structure
 
 ```
+├── database/
+│   ├── db.js        # SQLite connection, schema, auth methods & audit logging
+│   └── users.db     # Dedicated SQLite 3 database file for all user logins
+├── db-cli.js        # Interactive command-line tool to inspect users & audit logs
 ├── index.html       # HTML5 entry point with instant luxury preloader
 ├── app.jsx          # React 18 component architecture & state source
 ├── bundle.js        # High-performance compiled JavaScript bundle
 ├── build.js         # Zero-config local transpiler (app.jsx -> bundle.js)
 ├── styles.css       # Luxury black & gold glassmorphism stylesheet
-├── server.js        # Lightweight Node HTTP server with automatic port fallback
+├── server.js        # Lightweight Node HTTP server with database API endpoints
 ├── vendor/          # Self-hosted React 18 & ReactDOM production libraries
-├── package.json     # Project configuration & npm scripts (build, start)
+├── package.json     # Project configuration & npm scripts (build, start, db)
 └── README.md        # Documentation
 ```
 

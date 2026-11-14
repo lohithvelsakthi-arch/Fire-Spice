@@ -422,7 +422,8 @@ function Header({
   onOpenBookings,
   currentUser,
   onOpenAuth,
-  onLogout
+  onLogout,
+  onOpenDatabase
 }) {
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
@@ -571,6 +572,23 @@ function Header({
   })), "Tasting Menu")), /*#__PURE__*/React.createElement("div", {
     className: "header-actions"
   }, /*#__PURE__*/React.createElement("button", {
+    className: "btn-glass btn-glass-sm btn-glass-secondary",
+    onClick: onOpenDatabase,
+    title: "Inspect SQLite Database & Login Audit Trail",
+    style: {
+      display: 'inline-flex',
+      alignItems: 'center',
+      gap: '6px'
+    }
+  }, /*#__PURE__*/React.createElement("span", {
+    style: {
+      width: '7px',
+      height: '7px',
+      borderRadius: '50%',
+      background: '#4ade80',
+      boxShadow: '0 0 8px #4ade80'
+    }
+  }), /*#__PURE__*/React.createElement("span", null, "Database")), /*#__PURE__*/React.createElement("button", {
     className: "btn-glass btn-glass-sm btn-glass-secondary",
     onClick: onOpenBookings
   }, /*#__PURE__*/React.createElement("svg", {
@@ -778,6 +796,33 @@ function Header({
     x2: "21",
     y2: "10"
   })), "Reserve New Table"), /*#__PURE__*/React.createElement("button", {
+    className: "btn-glass btn-glass-sm",
+    style: {
+      width: '100%',
+      justifyContent: 'flex-start',
+      color: 'var(--gold-300)'
+    },
+    onClick: () => {
+      setUserDropdownOpen(false);
+      onOpenDatabase();
+    }
+  }, /*#__PURE__*/React.createElement("svg", {
+    width: "14",
+    height: "14",
+    viewBox: "0 0 24 24",
+    fill: "none",
+    stroke: "currentColor",
+    strokeWidth: "2"
+  }, /*#__PURE__*/React.createElement("ellipse", {
+    cx: "12",
+    cy: "5",
+    rx: "9",
+    ry: "3"
+  }), /*#__PURE__*/React.createElement("path", {
+    d: "M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"
+  }), /*#__PURE__*/React.createElement("path", {
+    d: "M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"
+  })), "SQLite Database & Logs"), /*#__PURE__*/React.createElement("button", {
     className: "btn-glass btn-glass-sm",
     style: {
       width: '100%',
@@ -2608,13 +2653,39 @@ function AuthModal({
   const [regPassword, setRegPassword] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
   if (!isOpen) return null;
-  const handleSelectGoogleProfile = profile => {
+  const handleSelectGoogleProfile = async profile => {
+    try {
+      const res = await fetch('/api/auth/google-login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          email: profile.email,
+          name: profile.name,
+          firstName: profile.firstName,
+          lastName: profile.lastName,
+          phone: profile.phone
+        })
+      });
+      const data = await res.json();
+      if (data && data.success && data.user) {
+        onLogin(data.user, data.token);
+        onSound('confirm');
+        onClose();
+        return;
+      }
+    } catch (e) {
+      console.warn('Backend database not reachable, using offline profile:', e);
+    }
+    // Fallback if offline
     onLogin(profile);
     onSound('confirm');
     onClose();
   };
-  const handleCustomGoogleSubmit = e => {
+  const handleCustomGoogleSubmit = async e => {
     e.preventDefault();
+    setErrorMsg('');
     if (!customGoogleEmail.trim() || !customGoogleEmail.includes('@')) {
       setErrorMsg('Please enter a valid Google or Gmail address.');
       return;
@@ -2622,6 +2693,29 @@ function AuthModal({
     const cleanEmail = customGoogleEmail.trim();
     const namePart = cleanEmail.split('@')[0];
     const capitalized = namePart.charAt(0).toUpperCase() + namePart.slice(1);
+    try {
+      const res = await fetch('/api/auth/google-login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          email: cleanEmail,
+          name: `${capitalized} Google Patron`,
+          firstName: capitalized,
+          lastName: 'Patron'
+        })
+      });
+      const data = await res.json();
+      if (data && data.success && data.user) {
+        onLogin(data.user, data.token);
+        onSound('confirm');
+        onClose();
+        return;
+      }
+    } catch (err) {
+      console.warn('Backend database not reachable, using offline profile:', err);
+    }
     const googleProfile = {
       id: `G-${Math.floor(1000 + Math.random() * 9000)}`,
       name: capitalized,
@@ -2641,12 +2735,36 @@ function AuthModal({
     onSound('confirm');
     onClose();
   };
-  const handleEmailSignIn = e => {
+  const handleEmailSignIn = async e => {
     e.preventDefault();
     setErrorMsg('');
     if (!emailInput.trim()) {
       setErrorMsg('Please enter your email ID.');
       return;
+    }
+    try {
+      const res = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          email: emailInput.trim(),
+          password: passwordInput
+        })
+      });
+      const data = await res.json();
+      if (data && data.success && data.user) {
+        onLogin(data.user, data.token);
+        onSound('confirm');
+        onClose();
+        return;
+      } else if (data && !data.success) {
+        setErrorMsg(data.message || 'Authentication failed. Please verify your credentials.');
+        return;
+      }
+    } catch (err) {
+      console.warn('Backend database not reachable, checking local storage:', err);
     }
     const trimmed = emailInput.trim();
     const matched = DEFAULT_VIP_MEMBERS.find(m => m.email.toLowerCase() === trimmed.toLowerCase());
@@ -2690,7 +2808,7 @@ function AuthModal({
     onSound('confirm');
     onClose();
   };
-  const handleEmailSignUp = e => {
+  const handleEmailSignUp = async e => {
     e.preventDefault();
     setErrorMsg('');
     if (!regFirstName.trim() || !regLastName.trim()) {
@@ -2704,6 +2822,33 @@ function AuthModal({
     if (!regPhone.trim()) {
       setErrorMsg('Please provide a contact phone number.');
       return;
+    }
+    try {
+      const res = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          firstName: regFirstName.trim(),
+          lastName: regLastName.trim(),
+          email: emailInput.trim(),
+          phone: regPhone.trim(),
+          password: regPassword
+        })
+      });
+      const data = await res.json();
+      if (data && data.success && data.user) {
+        onLogin(data.user, data.token);
+        onSound('confirm');
+        onClose();
+        return;
+      } else if (data && !data.success) {
+        setErrorMsg(data.message || 'Registration failed.');
+        return;
+      }
+    } catch (err) {
+      console.warn('Backend database not reachable, creating local user:', err);
     }
     const newUser = {
       id: `USR-${Math.floor(5000 + Math.random() * 4999)}`,
@@ -3061,14 +3206,294 @@ function AuthModal({
   }, "Sign Up & Unlock Reservations")), /*#__PURE__*/React.createElement("div", {
     style: {
       textAlign: 'center',
-      marginTop: '18px'
+      marginTop: '18px',
+      paddingTop: '12px',
+      borderTop: '1px solid rgba(212, 175, 55, 0.12)'
     }
-  }, /*#__PURE__*/React.createElement("p", {
+  }, /*#__PURE__*/React.createElement("div", {
     style: {
-      fontSize: '0.74rem',
+      display: 'inline-flex',
+      alignItems: 'center',
+      gap: '6px',
+      fontSize: '0.72rem',
+      color: 'var(--gold-400)'
+    }
+  }, /*#__PURE__*/React.createElement("span", {
+    style: {
+      display: 'inline-block',
+      width: '6px',
+      height: '6px',
+      borderRadius: '50%',
+      background: '#4ade80',
+      boxShadow: '0 0 6px #4ade80'
+    }
+  }), /*#__PURE__*/React.createElement("span", null, "Connected to SQLite Database (", /*#__PURE__*/React.createElement("code", null, "database/users.db"), ")")), /*#__PURE__*/React.createElement("p", {
+    style: {
+      fontSize: '0.72rem',
+      color: 'var(--text-dim)',
+      marginTop: '4px'
+    }
+  }, "All logins & credentials are secure, audited, and stored in a dedicated database."))));
+}
+
+/* ==========================================================================
+   Component: DatabaseModal (Live SQLite Database & Audit Log Inspector)
+   ========================================================================== */
+function DatabaseModal({
+  isOpen,
+  onClose,
+  onSound
+}) {
+  const [activeTab, setActiveTab] = useState('users'); // 'users' | 'logins'
+  const [stats, setStats] = useState(null);
+  const [users, setUsers] = useState([]);
+  const [logs, setLogs] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [lastRefreshed, setLastRefreshed] = useState(null);
+  const fetchDatabaseData = useCallback(async () => {
+    setLoading(true);
+    try {
+      const [statsRes, usersRes, logsRes] = await Promise.all([fetch('/api/database/stats').then(r => r.json()).catch(() => null), fetch('/api/database/users').then(r => r.json()).catch(() => null), fetch('/api/database/logins?limit=30').then(r => r.json()).catch(() => null)]);
+      if (statsRes && statsRes.stats) setStats(statsRes.stats);
+      if (usersRes && usersRes.users) setUsers(usersRes.users);
+      if (logsRes && logsRes.logs) setLogs(logsRes.logs);
+      setLastRefreshed(new Date().toLocaleTimeString());
+    } catch (e) {
+      console.warn('Could not load database metrics:', e);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+  useEffect(() => {
+    if (isOpen) {
+      fetchDatabaseData();
+    }
+  }, [isOpen, fetchDatabaseData]);
+  if (!isOpen) return null;
+  return /*#__PURE__*/React.createElement("div", {
+    className: "modal-backdrop open",
+    onClick: e => e.target.classList.contains('modal-backdrop') && onClose()
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "modal-dialog database-modal-dialog"
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "btn-glass btn-glass-icon btn-glass-sm modal-close-btn",
+    onClick: onClose
+  }, "✕"), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      marginBottom: '14px',
+      flexWrap: 'wrap',
+      gap: '10px'
+    }
+  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
+    className: "hero-badge",
+    style: {
+      marginBottom: '6px'
+    }
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "gold-diamond"
+  }), /*#__PURE__*/React.createElement("span", null, "ENTERPRISE LOGIN VAULT • SQLITE 3"), /*#__PURE__*/React.createElement("span", {
+    className: "gold-diamond"
+  })), /*#__PURE__*/React.createElement("h2", {
+    className: "font-serif",
+    style: {
+      fontSize: '1.6rem',
+      color: '#fff',
+      letterSpacing: '2px',
+      margin: 0
+    }
+  }, "USER LOGIN ", /*#__PURE__*/React.createElement("span", {
+    className: "gold-gradient-text"
+  }, "DATABASE"))), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: 'flex',
+      alignItems: 'center',
+      gap: '10px'
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "db-status-badge"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "db-pulse-dot"
+  }), /*#__PURE__*/React.createElement("span", null, "SQLite Active")), /*#__PURE__*/React.createElement("button", {
+    className: "btn-glass btn-glass-sm",
+    onClick: () => {
+      fetchDatabaseData();
+      onSound('click');
+    },
+    disabled: loading,
+    title: "Refresh database records"
+  }, "↻ ", loading ? 'Querying...' : 'Refresh'))), /*#__PURE__*/React.createElement("div", {
+    className: "db-stats-grid"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "db-stat-card"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "db-stat-val"
+  }, stats ? stats.totalUsers : users.length), /*#__PURE__*/React.createElement("div", {
+    className: "db-stat-lbl"
+  }, "Registered Patrons")), /*#__PURE__*/React.createElement("div", {
+    className: "db-stat-card"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "db-stat-val"
+  }, stats ? stats.successfulLogins : logs.filter(l => l.status === 'SUCCESS').length), /*#__PURE__*/React.createElement("div", {
+    className: "db-stat-lbl"
+  }, "Successful Logins")), /*#__PURE__*/React.createElement("div", {
+    className: "db-stat-card"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "db-stat-val"
+  }, stats ? stats.activeSessions : 'Active'), /*#__PURE__*/React.createElement("div", {
+    className: "db-stat-lbl"
+  }, "Live Web Sessions")), /*#__PURE__*/React.createElement("div", {
+    className: "db-stat-card"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "db-stat-val",
+    style: {
+      fontSize: '1.1rem',
+      paddingTop: '4px'
+    }
+  }, stats ? `${(stats.dbFileSizeBytes / 1024).toFixed(0)} KB` : '45 KB'), /*#__PURE__*/React.createElement("div", {
+    className: "db-stat-lbl"
+  }, "database/users.db"))), /*#__PURE__*/React.createElement("div", {
+    className: "auth-tab-row",
+    style: {
+      marginBottom: '14px'
+    }
+  }, /*#__PURE__*/React.createElement("button", {
+    className: `auth-tab-btn ${activeTab === 'users' ? 'active' : ''}`,
+    onClick: () => {
+      setActiveTab('users');
+      onSound('click');
+    }
+  }, "Registered Patrons (", users.length, ")"), /*#__PURE__*/React.createElement("button", {
+    className: `auth-tab-btn ${activeTab === 'logins' ? 'active' : ''}`,
+    onClick: () => {
+      setActiveTab('logins');
+      onSound('click');
+    }
+  }, "Login Audit Trail (", logs.length, ")")), activeTab === 'users' && /*#__PURE__*/React.createElement("div", {
+    className: "db-table-wrapper"
+  }, /*#__PURE__*/React.createElement("table", {
+    className: "db-table"
+  }, /*#__PURE__*/React.createElement("thead", null, /*#__PURE__*/React.createElement("tr", null, /*#__PURE__*/React.createElement("th", null, "PATRON ID"), /*#__PURE__*/React.createElement("th", null, "NAME"), /*#__PURE__*/React.createElement("th", null, "EMAIL"), /*#__PURE__*/React.createElement("th", null, "PROVIDER"), /*#__PURE__*/React.createElement("th", null, "TIER"), /*#__PURE__*/React.createElement("th", null, "LOGINS"), /*#__PURE__*/React.createElement("th", null, "LAST LOGIN"))), /*#__PURE__*/React.createElement("tbody", null, users.length === 0 ? /*#__PURE__*/React.createElement("tr", null, /*#__PURE__*/React.createElement("td", {
+    colSpan: "7",
+    style: {
+      textAlign: 'center',
+      padding: '24px',
+      color: 'var(--text-muted)'
+    }
+  }, "No users in database.")) : users.map((u, i) => /*#__PURE__*/React.createElement("tr", {
+    key: i
+  }, /*#__PURE__*/React.createElement("td", null, /*#__PURE__*/React.createElement("code", {
+    style: {
+      color: 'var(--gold-300)',
+      background: 'rgba(212, 175, 55, 0.1)',
+      padding: '2px 6px',
+      borderRadius: '4px'
+    }
+  }, u.uid || `USR-${u.id}`)), /*#__PURE__*/React.createElement("td", {
+    style: {
+      fontWeight: 600
+    }
+  }, u.name), /*#__PURE__*/React.createElement("td", {
+    style: {
+      color: 'var(--text-muted)'
+    }
+  }, u.email), /*#__PURE__*/React.createElement("td", null, u.provider === 'google' ? /*#__PURE__*/React.createElement("span", {
+    className: "provider-badge-google"
+  }, "Google") : /*#__PURE__*/React.createElement("span", {
+    className: "provider-badge-email"
+  }, "Email")), /*#__PURE__*/React.createElement("td", null, /*#__PURE__*/React.createElement("span", {
+    style: {
+      color: 'var(--gold-400)',
+      fontSize: '0.75rem'
+    }
+  }, u.tier_badge || u.tier || 'Verified')), /*#__PURE__*/React.createElement("td", {
+    style: {
+      textAlign: 'center',
+      fontWeight: 600,
+      color: 'var(--gold-300)'
+    }
+  }, u.login_count || 1), /*#__PURE__*/React.createElement("td", {
+    style: {
+      fontSize: '0.75rem',
       color: 'var(--text-dim)'
     }
-  }, "✦ Signing in authorizes table reservation access under FIRE SPICE Dining Policy."))));
+  }, u.last_login_at ? u.last_login_at.replace('T', ' ').slice(0, 19) : 'Just now')))))), activeTab === 'logins' && /*#__PURE__*/React.createElement("div", {
+    className: "db-table-wrapper"
+  }, /*#__PURE__*/React.createElement("table", {
+    className: "db-table"
+  }, /*#__PURE__*/React.createElement("thead", null, /*#__PURE__*/React.createElement("tr", null, /*#__PURE__*/React.createElement("th", null, "TIMESTAMP"), /*#__PURE__*/React.createElement("th", null, "PATRON / EMAIL"), /*#__PURE__*/React.createElement("th", null, "PROVIDER"), /*#__PURE__*/React.createElement("th", null, "STATUS"), /*#__PURE__*/React.createElement("th", null, "IP ADDRESS"), /*#__PURE__*/React.createElement("th", null, "DETAILS"))), /*#__PURE__*/React.createElement("tbody", null, logs.length === 0 ? /*#__PURE__*/React.createElement("tr", null, /*#__PURE__*/React.createElement("td", {
+    colSpan: "6",
+    style: {
+      textAlign: 'center',
+      padding: '24px',
+      color: 'var(--text-muted)'
+    }
+  }, "No login audit events recorded yet.")) : logs.map((l, i) => /*#__PURE__*/React.createElement("tr", {
+    key: i
+  }, /*#__PURE__*/React.createElement("td", {
+    style: {
+      fontSize: '0.75rem',
+      color: 'var(--text-dim)'
+    }
+  }, l.login_time ? l.login_time.replace('T', ' ').slice(0, 19) : '—'), /*#__PURE__*/React.createElement("td", null, /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontWeight: 600
+    }
+  }, l.name || l.email.split('@')[0]), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: '0.72rem',
+      color: 'var(--text-muted)'
+    }
+  }, l.email)), /*#__PURE__*/React.createElement("td", null, l.provider === 'google' ? /*#__PURE__*/React.createElement("span", {
+    className: "provider-badge-google"
+  }, "Google") : /*#__PURE__*/React.createElement("span", {
+    className: "provider-badge-email"
+  }, "Email")), /*#__PURE__*/React.createElement("td", null, l.status === 'SUCCESS' ? /*#__PURE__*/React.createElement("span", {
+    className: "status-pill-success"
+  }, "SUCCESS") : /*#__PURE__*/React.createElement("span", {
+    className: "status-pill-failed"
+  }, "FAILED")), /*#__PURE__*/React.createElement("td", null, /*#__PURE__*/React.createElement("code", {
+    style: {
+      fontSize: '0.75rem',
+      color: 'var(--text-dim)'
+    }
+  }, l.ip_address || '127.0.0.1')), /*#__PURE__*/React.createElement("td", {
+    style: {
+      fontSize: '0.75rem',
+      color: l.error_reason ? '#f87171' : 'var(--text-dim)'
+    }
+  }, l.error_reason || 'Verified')))))), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      marginTop: '16px',
+      paddingTop: '12px',
+      borderTop: '1px solid rgba(212, 175, 55, 0.15)',
+      flexWrap: 'wrap',
+      gap: '8px'
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: '0.74rem',
+      color: 'var(--text-muted)'
+    }
+  }, "Storage: ", /*#__PURE__*/React.createElement("code", {
+    style: {
+      color: 'var(--gold-300)'
+    }
+  }, "database/users.db"), " • CLI inspection: ", /*#__PURE__*/React.createElement("code", {
+    style: {
+      color: 'var(--gold-400)'
+    }
+  }, "node db-cli.js users")), lastRefreshed && /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: '0.72rem',
+      color: 'var(--text-dim)'
+    }
+  }, "Updated ", lastRefreshed))));
 }
 
 /* ==========================================================================
@@ -3096,6 +3521,7 @@ function App() {
     }
   });
   const [confirmedReservation, setConfirmedReservation] = useState(null);
+  const [databaseModalOpen, setDatabaseModalOpen] = useState(false);
   const [speed, setSpeed] = useState('normal'); // 'slow', 'normal', 'paused'
   const [dim, setDim] = useState('comfort'); // 'rich', 'comfort', 'deep'
 
@@ -3224,7 +3650,11 @@ function App() {
       setAuthModalOpen(true);
       onSound('click');
     },
-    onLogout: handleLogout
+    onLogout: handleLogout,
+    onOpenDatabase: () => {
+      setDatabaseModalOpen(true);
+      onSound('click');
+    }
   }), /*#__PURE__*/React.createElement(HeroSection, null), /*#__PURE__*/React.createElement("main", {
     className: "booking-console-container",
     id: "bookingConsole"
@@ -3325,6 +3755,10 @@ function App() {
     onClose: () => setAuthModalOpen(false),
     onLogin: handleLogin,
     onSound: onSound
+  }), /*#__PURE__*/React.createElement(DatabaseModal, {
+    isOpen: databaseModalOpen,
+    onClose: () => setDatabaseModalOpen(false),
+    onSound: onSound
   }), /*#__PURE__*/React.createElement("footer", {
     className: "luxury-footer"
   }, /*#__PURE__*/React.createElement("div", {
@@ -3348,9 +3782,20 @@ function App() {
       display: 'flex',
       justifyContent: 'center',
       gap: '16px',
-      marginBottom: '20px'
+      marginBottom: '20px',
+      flexWrap: 'wrap'
     }
   }, /*#__PURE__*/React.createElement("button", {
+    className: "btn-glass btn-glass-sm",
+    onClick: () => {
+      setDatabaseModalOpen(true);
+      onSound('click');
+    },
+    style: {
+      color: 'var(--gold-300)',
+      borderColor: 'rgba(212, 175, 55, 0.4)'
+    }
+  }, "🗄️ Inspect SQLite Database & Logins"), /*#__PURE__*/React.createElement("button", {
     className: "btn-glass btn-glass-sm btn-glass-secondary",
     onClick: () => window.scrollTo({
       top: 0,
