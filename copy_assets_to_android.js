@@ -39,3 +39,4 @@ copyDir(path.join(srcDir, 'vendor'), path.join(targetDir, 'vendor'));
 copyDir(path.join(srcDir, 'icons'), path.join(targetDir, 'icons'));
 
 console.log('All web assets successfully synced into android/app/src/main/assets/!');
+
