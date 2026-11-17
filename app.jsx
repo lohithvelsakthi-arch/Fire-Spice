@@ -14,7 +14,8 @@ const { useState, useEffect, useRef, useMemo, useCallback } = React;
    ========================================================================== */
 const EMAILJS_PUBLIC_KEY   = '0BmVBOCZwe3Ine3da'; // EmailJS Account Public Key
 const EMAILJS_SERVICE_ID   = 'service_cvkn78a';    // EmailJS Gmail Service
-const EMAILJS_TEMPLATE_ID  = 'template_j1vh2wd';  // EmailJS Email Template
+const EMAILJS_TEMPLATE_ID  = 'template_j1vh2wd';  // EmailJS Email Template — Owner Login Alert
+const EMAILJS_BOOKING_TEMPLATE_ID = 'template_0td4ijk'; // EmailJS Template — Customer Booking Confirmation
 const OWNER_EMAIL          = 'lohithvelsakthi@gmail.com';
 
 let _emailjsInitialized = false;
@@ -72,6 +73,49 @@ async function notifyOwnerLogin(user) {
   } catch (err) {
     // Silent fail — notification errors must never interrupt the user's login
     console.warn('[FIRE SPICE] Owner notification failed (non-critical):', err);
+  }
+}
+
+/**
+ * Sends a beautiful branded booking confirmation email directly to the customer.
+ * Includes their VIP Pass Code, table, date/time, occasion & total.
+ * @param {Object} reservation - The confirmed reservation object from handleConfirmReservation
+ */
+async function sendBookingConfirmation(reservation) {
+  try {
+    ensureEmailJSInit();
+    if (typeof emailjs === 'undefined') return;
+    if (EMAILJS_PUBLIC_KEY === 'YOUR_PUBLIC_KEY') return;
+    if (EMAILJS_BOOKING_TEMPLATE_ID === 'YOUR_BOOKING_TEMPLATE_ID') {
+      console.info('[FIRE SPICE] Booking template not configured yet — skipping customer confirmation.');
+      return;
+    }
+    if (!reservation.email || !reservation.email.includes('@')) {
+      console.warn('[FIRE SPICE] No valid customer email — skipping booking confirmation.');
+      return;
+    }
+
+    const templateParams = {
+      customer_email:   reservation.email,
+      guest_name:       reservation.guestName,
+      pass_code:        reservation.code,
+      reservation_date: reservation.dateFormatted,
+      reservation_time: reservation.timeFormatted,
+      table_name:       reservation.tableName,
+      table_zone:       reservation.zone,
+      guest_count:      String(reservation.guests),
+      occasion:         reservation.occasion || 'Dining Experience',
+      dietary:          reservation.dietary || 'None reported',
+      total_amount:     `$${reservation.total}`,
+      vip_tier:         reservation.vipTier || 'Verified Member',
+      restaurant_name:  'FIRE SPICE • Haute Gastronomie & Golden Lounge',
+      contact_email:    OWNER_EMAIL,
+    };
+
+    await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_BOOKING_TEMPLATE_ID, templateParams);
+    console.info('[FIRE SPICE] ✅ Booking confirmation sent to', reservation.email, '— Pass Code:', reservation.code);
+  } catch (err) {
+    console.warn('[FIRE SPICE] Booking confirmation failed (non-critical):', err);
   }
 }
 
@@ -2893,6 +2937,9 @@ function App() {
     const list = stored ? JSON.parse(stored) : [];
     list.unshift(res);
     localStorage.setItem('firespice_reservations', JSON.stringify(list));
+
+    // Send branded booking confirmation email to customer (non-blocking)
+    sendBookingConfirmation(res);
 
     setConfirmedReservation(res);
     setStep(5);
