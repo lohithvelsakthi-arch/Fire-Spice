@@ -34,7 +34,16 @@ try {
     fs.writeFileSync('www/bundle.js', result.code, 'utf8');
     if (fs.existsSync('index.html')) fs.copyFileSync('index.html', 'www/index.html');
     if (fs.existsSync('styles.css')) fs.copyFileSync('styles.css', 'www/styles.css');
-    console.log('Synced bundle.js, index.html, styles.css -> www/');
+
+    // Sync EmailJS vendor file so it's available inside the APK
+    const emailjsSrc = 'vendor/emailjs.min.js';
+    const emailjsDst = 'www/vendor/emailjs.min.js';
+    if (fs.existsSync(emailjsSrc)) {
+      if (!fs.existsSync('www/vendor')) fs.mkdirSync('www/vendor', { recursive: true });
+      fs.copyFileSync(emailjsSrc, emailjsDst);
+    }
+
+    console.log('Synced bundle.js, index.html, styles.css, vendor/emailjs.min.js -> www/');
   }
 } catch (err) {
   console.error('SYNTAX/TRANSPILE ERROR:');

@@ -6,6 +6,76 @@
 const { useState, useEffect, useRef, useMemo, useCallback } = React;
 
 /* ==========================================================================
+   EmailJS Owner Login Notification System
+   Owner: lohithvelsakthi@gmail.com
+   Service: EmailJS (https://www.emailjs.com)
+   Setup: Replace EMAILJS_PUBLIC_KEY, EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID
+          with your actual values from https://dashboard.emailjs.com
+   ========================================================================== */
+const EMAILJS_PUBLIC_KEY   = 'YOUR_PUBLIC_KEY';    // From EmailJS → Account → Public Key
+const EMAILJS_SERVICE_ID   = 'YOUR_SERVICE_ID';    // From EmailJS → Email Services (connect Gmail)
+const EMAILJS_TEMPLATE_ID  = 'YOUR_TEMPLATE_ID';  // From EmailJS → Email Templates
+const OWNER_EMAIL          = 'lohithvelsakthi@gmail.com';
+
+let _emailjsInitialized = false;
+function ensureEmailJSInit() {
+  if (_emailjsInitialized) return;
+  if (typeof emailjs !== 'undefined' && EMAILJS_PUBLIC_KEY !== 'YOUR_PUBLIC_KEY') {
+    emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY });
+    _emailjsInitialized = true;
+  }
+}
+
+/**
+ * Sends a login-alert email to the restaurant owner whenever a patron signs in.
+ * @param {Object} user - The signed-in user object
+ */
+async function notifyOwnerLogin(user) {
+  try {
+    ensureEmailJSInit();
+    if (typeof emailjs === 'undefined') return;
+    if (EMAILJS_PUBLIC_KEY === 'YOUR_PUBLIC_KEY') {
+      console.info('[FIRE SPICE] EmailJS not configured yet — skipping owner notification.');
+      return;
+    }
+
+    const now = new Date();
+    const formattedTime = now.toLocaleString('en-IN', {
+      timeZone: 'Asia/Kolkata',
+      weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
+      hour: '2-digit', minute: '2-digit', second: '2-digit'
+    });
+
+    // Detect device/browser info
+    const ua = navigator.userAgent || 'Unknown';
+    const isMobile = /Android|iPhone|iPad/i.test(ua);
+    const deviceType = isMobile ? '📱 Mobile / Android App' : '💻 Desktop Browser';
+    const browserName = ua.match(/(Chrome|Firefox|Safari|Edge|Opera)\/[\d.]+/)?.[0] || 'Unknown Browser';
+
+    const templateParams = {
+      owner_email:   OWNER_EMAIL,
+      patron_name:   user.name || user.firstName || 'Unknown Patron',
+      patron_email:  user.email || 'N/A',
+      patron_phone:  user.phone || 'Not provided',
+      login_method:  user.provider === 'google' ? '🔵 Google Sign-In' : '📧 Email & Password',
+      patron_tier:   user.tierBadge || user.tier || 'Verified Member',
+      login_time:    formattedTime,
+      device_type:   deviceType,
+      browser:       browserName,
+      is_new_member: user._isNew ? '✅ Yes — First Sign-In!' : '🔁 Returning Patron',
+      member_since:  user.memberSince || user.member_since || '2026',
+      app_version:   'FIRE SPICE v1.0.4',
+    };
+
+    await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams);
+    console.info('[FIRE SPICE] ✅ Owner login notification sent to', OWNER_EMAIL);
+  } catch (err) {
+    // Silent fail — notification errors must never interrupt the user's login
+    console.warn('[FIRE SPICE] Owner notification failed (non-critical):', err);
+  }
+}
+
+/* ==========================================================================
    Databases: Tables, Menu, Slots & Add-ons
    ========================================================================== */
 const TABLES_DATABASE = [
@@ -2770,6 +2840,8 @@ function App() {
     try {
       localStorage.setItem('firespice_user', JSON.stringify(user));
     } catch (e) {}
+    // Fire owner login notification email (non-blocking)
+    notifyOwnerLogin(user);
     // Automatically pre-fill the reservation details with the user's info
     setBooking(prev => ({
       ...prev,
