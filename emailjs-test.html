@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>EmailJS Test — FIRE SPICE</title>
+  <script src="vendor/emailjs.min.js"></script>
+  <style>
+    body { font-family: monospace; background: #060608; color: #d4af37; padding: 30px; }
+    button { background: #d4af37; color: #000; border: none; padding: 12px 28px; font-size: 1rem; cursor: pointer; border-radius: 6px; margin: 8px 0; display: block; }
+    #log { background: #111; padding: 16px; border-radius: 8px; margin-top: 20px; color: #ccc; white-space: pre-wrap; min-height: 100px; }
+    .ok  { color: #4ade80; }
+    .err { color: #f87171; }
+    .inf { color: #60a5fa; }
+  </style>
+</head>
+<body>
+  <h2>🔔 EmailJS Notification Test — FIRE SPICE</h2>
+  <p>Click the button below to send a test email to <strong>lohithvelsakthi@gmail.com</strong></p>
+  <button onclick="runTest()">📧 Send Test Email Now</button>
+  <div id="log">Waiting...</div>
+
+<script>
+const EMAILJS_PUBLIC_KEY  = '0BmVBOCZwe3Ine3da';
+const EMAILJS_SERVICE_ID  = 'service_cvkn78a';
+const EMAILJS_TEMPLATE_ID = 'template_j1vh2wd';
+
+const log = document.getElementById('log');
+function write(msg, cls) {
+  const d = document.createElement('div');
+  d.className = cls || '';
+  d.textContent = '[' + new Date().toLocaleTimeString() + '] ' + msg;
+  log.appendChild(d);
+}
+
+// Check SDK loaded
+if (typeof emailjs === 'undefined') {
+  write('❌ EmailJS SDK failed to load! Check vendor/emailjs.min.js', 'err');
+} else {
+  write('✅ EmailJS SDK loaded successfully (v4)', 'ok');
+  try {
+    emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY });
+    write('✅ Initialized with Public Key: ' + EMAILJS_PUBLIC_KEY, 'ok');
+  } catch(e) {
+    write('❌ Init error: ' + e, 'err');
+  }
+}
+
+async function runTest() {
+  log.innerHTML = '';
+  write('🚀 Sending test email...', 'inf');
+
+  const now = new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' });
+
+  const params = {
+    owner_email:   'lohithvelsakthi@gmail.com',
+    patron_name:   'TEST PATRON',
+    patron_email:  'test@firespice.app',
+    patron_phone:  '+91 9999999999',
+    login_method:  '🔵 Google Sign-In (TEST)',
+    patron_tier:   'Test Member',
+    login_time:    now,
+    device_type:   '💻 Desktop Browser (Test)',
+    browser:       navigator.userAgent.slice(0, 60),
+    is_new_member: '✅ TEST — First Sign-In',
+    member_since:  '2026',
+    app_version:   'FIRE SPICE v1.0.5 TEST',
+  };
+
+  write('Service ID:  ' + EMAILJS_SERVICE_ID, 'inf');
+  write('Template ID: ' + EMAILJS_TEMPLATE_ID, 'inf');
+  write('Params: ' + JSON.stringify(params, null, 2), 'inf');
+
+  try {
+    const result = await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, params);
+    write('✅ SUCCESS! Email sent. Status: ' + result.status + ' — ' + result.text, 'ok');
+    write('📬 Check your inbox at lohithvelsakthi@gmail.com', 'ok');
+  } catch(err) {
+    write('❌ FAILED! Status: ' + (err.status || '?') + ' — ' + (err.text || err), 'err');
+    write('', '');
+    write('🔧 LIKELY FIXES:', 'inf');
+    if (err.status === 400) {
+      write('  → Template variable mismatch. Check template field names in EmailJS dashboard.', 'err');
+      write('  → Make sure "To Email" in template is hardcoded to: lohithvelsakthi@gmail.com', 'err');
+    } else if (err.status === 401 || err.status === 403) {
+      write('  → Invalid Public Key or Service ID. Re-check credentials.', 'err');
+    } else if (err.status === 422) {
+      write('  → Template not found. Check the Template ID.', 'err');
+    } else if (!err.status) {
+      write('  → Network error. Make sure you are connected to internet.', 'err');
+    }
+  }
+}
+</script>
+</body>
+</html>
+

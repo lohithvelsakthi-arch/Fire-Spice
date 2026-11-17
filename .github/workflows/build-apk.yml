@@ -59,42 +59,45 @@ jobs:
           APK_FILE=$(find android -name "*.apk" | head -n 1)
           if [ -n "$APK_FILE" ]; then
             echo "Found APK at: $APK_FILE"
-            cp "$APK_FILE" build-output/FireSpice-v1.0.5.apk
+            cp "$APK_FILE" build-output/FireSpice-v1.0.6.apk
           else
             echo "ERROR: No APK found!"
             exit 1
           fi
-          ls -lh build-output/FireSpice-v1.0.5.apk
+          ls -lh build-output/FireSpice-v1.0.6.apk
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: FireSpice-v1.0.5-APK
-          path: build-output/FireSpice-v1.0.5.apk
+          name: FireSpice-v1.0.6-APK
+          path: build-output/FireSpice-v1.0.6.apk
           retention-days: 90
 
       - name: Create or Update GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: v1.0.5
-          name: "FIRE SPICE Android App • Release v1.0.5"
+          tag_name: v1.0.6
+          name: "FIRE SPICE Android App • Release v1.0.6"
           prerelease: false
           draft: false
           make_latest: true
           body: |
             ### 🍷 FIRE SPICE • Haute Gastronomie & Golden Lounge
-            **Official Android Application Release (v1.0.5 - Owner Login Notifications)**
+            **Official Android Application Release (v1.0.6 - Full Mobile Interactive Polish)**
 
-            #### 🔔 What's New in v1.0.5:
-            - **Owner Login Notifications**: Restaurant owner receives an email at `lohithvelsakthi@gmail.com` every time a patron signs into the app — including their name, email, login method (Google/Email), device type, and IST timestamp.
-            - **EmailJS Integration**: Client-side email notification system bundled entirely within the APK — works offline-first with zero server dependency.
-            - **Silent Fail-Safe**: Notification errors never interrupt the patron login flow.
+            #### 📱 What's New in v1.0.6:
+            - **Full Touch Interactivity**: All buttons, table nodes, calendar days, time slots, experience cards and filter pills now have satisfying ≥44px tap targets with gold press-feedback animations.
+            - **Zero 300ms Tap Delay**: `touch-action: manipulation` applied globally for instant button response.
+            - **Bottom Sheet Modals**: Sign-in, install and database modals slide up from the bottom edge like native Android sheets with a pull-handle indicator.
+            - **iOS Auto-Zoom Fixed**: Form inputs set to `font-size: 1rem` to prevent browser zoom on focus.
+            - **Momentum Scrolling**: Zone filters, time slots and stepper scrollbars hidden; `-webkit-overflow-scrolling: touch` enabled on all scroll areas.
+            - **Console Nav Buttons**: Back/Next/Confirm stacked full-width with 52-56px height for easy thumb reach.
+            - **Sub-Nav Gold States**: Mobile bottom nav buttons show gold active/pressed state matching desktop.
+            - **390px Extreme Small Phone Support**: Additional compression pass for Galaxy S22/iPhone SE sized devices.
 
             #### 📲 Installation Instructions:
-            1. Download `FireSpice-v1.0.5.apk` below directly onto your Android device.
-            2. Tap the downloaded file in your browser or Downloads folder.
-            3. If prompted, allow *"Install unknown apps"* for your browser.
-            4. Tap **Update** / **Install** and launch **FIRE SPICE**!
-          files: build-output/FireSpice-v1.0.5.apk
+            1. Download `FireSpice-v1.0.6.apk` onto your Android device.
+            2. Tap → Allow unknown apps → Install → Launch FIRE SPICE!
+          files: build-output/FireSpice-v1.0.6.apk
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

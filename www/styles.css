@@ -3239,3 +3239,646 @@ body {
 }
 
 
+
+/* ==========================================================================
+   MOBILE ENHANCEMENT LAYER v1.0.6
+   Full-fidelity Black & Gold interactive experience on smartphones
+   Covers: Touch targets, button feedback, form UX, hover-less tap states,
+   scroll behaviour, modal sizing, visual hierarchy on small viewports
+   ========================================================================== */
+
+/* ------------------------------------------------------------------
+   1. Touch Targets — All interactive elements ≥ 44px for thumb comfort
+   ------------------------------------------------------------------ */
+@media (max-width: 768px) {
+  /* Buttons */
+  .btn-glass,
+  .btn-glass-sm,
+  .btn-glass-gold,
+  .btn-glass-secondary,
+  .btn-glass-pill {
+    min-height: 44px;
+    min-width: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    /* Remove translateY hover on touch — no hover on mobile */
+    transition: background 0.18s ease, box-shadow 0.18s ease, transform 0.1s ease;
+  }
+
+  /* Clear desktop hover lift on touch devices */
+  .btn-glass:hover,
+  .btn-glass-gold:hover,
+  .btn-glass-secondary:hover {
+    transform: none;
+  }
+
+  /* Satisfying tap press feedback */
+  .btn-glass:active,
+  .btn-glass-gold:active,
+  .btn-glass-secondary:active,
+  .btn-glass-pill:active,
+  .btn-glass-sm:active {
+    transform: scale(0.96);
+    opacity: 0.88;
+    transition: transform 0.08s ease, opacity 0.08s ease;
+  }
+
+  /* Icon-only buttons */
+  .btn-glass-icon {
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
+    min-height: 44px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  /* Console nav Next / Back / Confirm — full-width with large tap zone */
+  .console-nav-footer .btn-glass,
+  .console-nav-footer .btn-glass-gold,
+  .console-nav-footer .btn-glass-secondary {
+    width: 100% !important;
+    padding: 16px 20px !important;
+    font-size: 0.95rem !important;
+    letter-spacing: 1px !important;
+    min-height: 52px !important;
+    border-radius: 14px !important;
+    gap: 10px !important;
+  }
+
+  /* Gold confirm button — extra prominence on mobile */
+  .console-nav-footer .btn-glass-gold {
+    font-size: 1rem !important;
+    min-height: 56px !important;
+    box-shadow:
+      0 6px 24px rgba(212, 175, 55, 0.4),
+      0 0 18px rgba(212, 175, 55, 0.3),
+      inset 0 1px 2px rgba(255, 255, 255, 0.4) !important;
+  }
+
+  /* Calendar day buttons — bigger tap target */
+  .cal-day-btn {
+    min-height: 44px;
+    font-size: 0.88rem;
+    border-radius: 10px;
+    padding: 6px 4px;
+  }
+
+  .cal-day-btn:active {
+    transform: scale(0.93);
+    background: var(--glass-bg-gold) !important;
+    border-color: var(--gold-400) !important;
+  }
+
+  /* Time slot buttons */
+  .time-slot-btn {
+    min-height: 44px;
+    padding: 10px 6px;
+    font-size: 0.84rem;
+  }
+
+  .time-slot-btn:active {
+    transform: scale(0.94);
+    background: var(--glass-bg-gold) !important;
+  }
+
+  /* Guest count preset buttons */
+  .btn-guest-choice {
+    min-height: 52px;
+    padding: 10px 2px;
+    flex: 1;
+    border-radius: 12px;
+  }
+
+  .btn-guest-choice:active {
+    transform: scale(0.94);
+    background: var(--glass-bg-gold) !important;
+  }
+
+  /* Table nodes on floor plan — bigger for fingers */
+  .table-node {
+    padding: 12px 8px;
+    min-height: 90px;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    border-radius: 14px;
+  }
+
+  .table-node.available:active {
+    transform: scale(0.95);
+    border-color: var(--gold-400);
+    box-shadow: 0 0 18px var(--gold-glow);
+  }
+
+  /* Zone filter pills */
+  .zone-filters .btn-glass {
+    min-height: 36px;
+    padding: 8px 14px;
+    font-size: 0.78rem;
+    white-space: nowrap;
+  }
+
+  /* Occasion pills */
+  .occasion-pills .btn-glass {
+    min-height: 40px;
+    padding: 9px 16px;
+    font-size: 0.8rem;
+  }
+
+  /* Experience cards — tap-friendly */
+  .experience-card {
+    padding: 16px;
+    border-radius: 16px;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .experience-card:active {
+    transform: scale(0.98);
+    border-color: var(--gold-400);
+    box-shadow: 0 0 16px var(--gold-glow);
+  }
+
+  /* Menu filter bar */
+  .menu-filter-bar .btn-glass {
+    min-height: 40px;
+    padding: 9px 14px;
+    font-size: 0.8rem;
+    white-space: nowrap;
+  }
+}
+
+/* ------------------------------------------------------------------
+   2. Mobile Sub-Nav — full gold styling & clear active state
+   ------------------------------------------------------------------ */
+@media (max-width: 768px) {
+  .mobile-sub-nav {
+    display: flex;
+    padding: 8px 10px;
+    gap: 8px;
+  }
+
+  .mobile-sub-nav-btn {
+    flex: 1;
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    padding: 8px 6px;
+    min-height: 52px;
+    background: var(--glass-bg-secondary);
+    border: 1px solid rgba(212, 175, 55, 0.2);
+    border-radius: 12px;
+    color: var(--text-muted);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 0.65rem;
+    font-weight: 600;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .mobile-sub-nav-btn svg {
+    color: var(--text-muted);
+    transition: color 0.18s ease;
+  }
+
+  .mobile-sub-nav-btn.active,
+  .mobile-sub-nav-btn:active {
+    background: var(--glass-bg-gold);
+    border-color: var(--gold-400);
+    color: #fff9e6;
+    box-shadow: 0 0 14px rgba(212, 175, 55, 0.3), inset 0 1px 2px rgba(255,255,255,0.3);
+  }
+
+  .mobile-sub-nav-btn.active svg,
+  .mobile-sub-nav-btn:active svg {
+    color: var(--gold-300);
+  }
+}
+
+/* ------------------------------------------------------------------
+   3. Form Inputs — large, thumb-friendly, gold-focused on mobile
+   ------------------------------------------------------------------ */
+@media (max-width: 768px) {
+  .form-input,
+  .form-textarea,
+  select.form-input {
+    padding: 14px 16px;
+    font-size: 1rem;         /* Prevents iOS auto-zoom */
+    min-height: 52px;
+    border-radius: 12px;
+    border: 1px solid rgba(212, 175, 55, 0.25);
+    background: rgba(14, 14, 20, 0.85);
+    color: var(--text-main);
+    -webkit-appearance: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .form-input:focus,
+  .form-textarea:focus {
+    border-color: var(--gold-400);
+    box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.18);
+    outline: none;
+  }
+
+  .form-label {
+    font-size: 0.8rem;
+    letter-spacing: 0.8px;
+    margin-bottom: 6px;
+  }
+
+  .form-group {
+    margin-bottom: 16px;
+  }
+}
+
+/* ------------------------------------------------------------------
+   4. Modals — edge-to-edge, scrollable, keyboard-safe on mobile
+   ------------------------------------------------------------------ */
+@media (max-width: 768px) {
+  .modal-overlay {
+    padding: 0;
+    align-items: flex-end;   /* Slide up from bottom like native sheet */
+  }
+
+  .auth-modal-dialog,
+  .install-modal-dialog,
+  .database-modal-dialog,
+  .bookings-modal-dialog {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 22px 16px 32px !important;
+    border-radius: 24px 24px 0 0 !important;
+    max-height: 92vh !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+
+  /* Pull handle indicator */
+  .auth-modal-dialog::before,
+  .install-modal-dialog::before,
+  .database-modal-dialog::before,
+  .bookings-modal-dialog::before {
+    content: '';
+    display: block;
+    width: 40px;
+    height: 4px;
+    background: rgba(212, 175, 55, 0.3);
+    border-radius: 2px;
+    margin: 0 auto 20px;
+  }
+
+  /* Auth tabs — full-width */
+  .auth-tabs {
+    display: flex;
+    width: 100%;
+    gap: 6px;
+    margin-bottom: 20px;
+  }
+
+  .auth-tabs .btn-glass {
+    flex: 1;
+    min-height: 44px;
+    font-size: 0.8rem;
+    text-align: center;
+    justify-content: center;
+  }
+
+  /* Modal action row */
+  .modal-actions {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .modal-actions .btn-glass {
+    width: 100%;
+    min-height: 50px;
+    font-size: 0.95rem;
+  }
+
+  /* Database modal table — horizontal scroll with momentum */
+  .db-table-wrapper {
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x mandatory;
+  }
+}
+
+/* ------------------------------------------------------------------
+   5. Booking Console — step content padding & readability
+   ------------------------------------------------------------------ */
+@media (max-width: 768px) {
+  .booking-console-container {
+    padding: 0 8px;
+    margin-bottom: 80px; /* Clear ambient controller pill */
+  }
+
+  .console-card {
+    border-radius: 20px;
+    overflow: hidden;
+  }
+
+  .step-content-pane {
+    padding: 18px 12px 20px;
+  }
+
+  /* Step header inside pane */
+  .pane-section-title {
+    font-size: 1rem;
+    letter-spacing: 1.5px;
+    margin-bottom: 16px;
+  }
+
+  /* Booking summary receipt */
+  .booking-summary-receipt {
+    padding: 14px 12px;
+    border-radius: 16px;
+  }
+
+  .summary-row {
+    padding: 8px 0;
+    font-size: 0.85rem;
+  }
+
+  /* VIP Confirmation Pass */
+  .vip-pass-card {
+    padding: 20px 14px;
+    border-radius: 20px;
+    overflow: hidden;
+  }
+
+  .pass-code-block {
+    font-size: 1.2rem;
+    letter-spacing: 3px;
+    padding: 12px 16px;
+  }
+
+  .pass-details-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+}
+
+/* ------------------------------------------------------------------
+   6. Tasting Menu — card images & readability on mobile
+   ------------------------------------------------------------------ */
+@media (max-width: 768px) {
+  .menu-section {
+    padding: 0 8px;
+    margin-bottom: 80px;
+  }
+
+  .menu-section-title {
+    font-size: clamp(1.3rem, 5.5vw, 1.9rem);
+    letter-spacing: 2px;
+    text-align: center;
+  }
+
+  .menu-items-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .menu-card {
+    border-radius: 18px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .menu-card-img {
+    height: 200px;
+    object-fit: cover;
+    width: 100%;
+  }
+
+  .menu-card-body {
+    padding: 16px;
+  }
+
+  .menu-item-title {
+    font-size: 1.05rem;
+    line-height: 1.3;
+    margin-bottom: 6px;
+  }
+
+  .menu-item-desc {
+    font-size: 0.84rem;
+    line-height: 1.5;
+  }
+
+  .menu-item-price {
+    font-size: 1.1rem;
+    margin-top: 10px;
+  }
+}
+
+/* ------------------------------------------------------------------
+   7. VIP User Dropdown — usable on mobile, tall enough to scroll
+   ------------------------------------------------------------------ */
+@media (max-width: 768px) {
+  .vip-dropdown-menu {
+    right: 0 !important;
+    left: auto !important;
+    width: min(300px, calc(100vw - 20px)) !important;
+    max-height: 70vh;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .vip-dropdown-actions .btn-glass {
+    min-height: 44px;
+    font-size: 0.85rem;
+    padding: 10px 14px;
+  }
+}
+
+/* ------------------------------------------------------------------
+   8. Hero Section — tighter spacing, full-bleed on mobile
+   ------------------------------------------------------------------ */
+@media (max-width: 768px) {
+  .hero-section {
+    margin: 10px 8px 14px;
+    padding: 20px 14px;
+    border-radius: 20px;
+  }
+
+  .hero-title {
+    font-size: clamp(1.4rem, 7vw, 2rem);
+    line-height: 1.2;
+    margin-bottom: 12px;
+  }
+
+  .hero-description {
+    font-size: 0.95rem;
+    line-height: 1.55;
+    margin-bottom: 18px;
+  }
+
+  .hero-cta-row {
+    flex-direction: column;
+    gap: 10px;
+    align-items: stretch;
+  }
+
+  .hero-cta-row .btn-glass,
+  .hero-cta-row .btn-glass-gold {
+    width: 100%;
+    min-height: 52px;
+    font-size: 0.95rem;
+    justify-content: center;
+  }
+
+  .hero-stats-bar {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px 16px;
+    padding: 10px 14px;
+  }
+
+  .stat-sep {
+    display: none;
+  }
+}
+
+/* ------------------------------------------------------------------
+   9. Scroll areas — momentum scrolling & no rubber-band bleed
+   ------------------------------------------------------------------ */
+@media (max-width: 768px) {
+  .console-stepper {
+    scrollbar-width: none;
+  }
+  .console-stepper::-webkit-scrollbar {
+    display: none;
+  }
+
+  .zone-filters {
+    scrollbar-width: none;
+  }
+  .zone-filters::-webkit-scrollbar {
+    display: none;
+  }
+
+  .menu-filter-bar {
+    scrollbar-width: none;
+  }
+  .menu-filter-bar::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* ------------------------------------------------------------------
+   10. Global tap highlight & selection polish
+   ------------------------------------------------------------------ */
+@media (max-width: 768px) {
+  button,
+  [role="button"],
+  .table-node,
+  .experience-card,
+  .menu-card {
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;  /* Removes 300ms delay */
+  }
+
+  /* Prevent text selection on tappable elements */
+  .btn-glass,
+  .mobile-sub-nav-btn,
+  .table-node,
+  .experience-card,
+  .cal-day-btn,
+  .time-slot-btn,
+  .btn-guest-choice {
+    -webkit-user-select: none;
+    user-select: none;
+  }
+}
+
+/* ------------------------------------------------------------------
+   11. Ambient Controller — compact, non-intrusive on mobile
+   ------------------------------------------------------------------ */
+@media (max-width: 768px) {
+  .ambient-controller-pill {
+    bottom: max(20px, var(--sab, 16px));
+    right: 14px;
+    left: auto;
+    z-index: 44;
+  }
+
+  .ambiance-toggle-btn {
+    min-height: 44px;
+    padding: 10px 16px;
+    border-radius: 999px;
+    font-size: 0.82rem;
+    letter-spacing: 0.5px;
+    gap: 8px;
+  }
+}
+
+/* ------------------------------------------------------------------
+   12. Extra-small phones (≤ 390px) — final compression pass
+   ------------------------------------------------------------------ */
+@media (max-width: 390px) {
+  .luxury-header {
+    padding: 8px 10px 8px 10px;
+  }
+
+  .brand-title {
+    font-size: 0.9rem;
+    letter-spacing: 1.2px;
+  }
+
+  .mobile-sub-nav-btn {
+    font-size: 0.6rem;
+    min-height: 48px;
+    padding: 6px 4px;
+  }
+
+  .console-nav-footer .btn-glass,
+  .console-nav-footer .btn-glass-gold {
+    font-size: 0.88rem !important;
+    min-height: 50px !important;
+  }
+
+  .btn-glass-sm {
+    padding: 7px 12px;
+    font-size: 0.75rem;
+    min-height: 40px;
+  }
+
+  .time-slots-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 5px;
+  }
+
+  .architectural-floor-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+    padding: 8px 4px;
+  }
+
+  .table-node {
+    min-height: 80px;
+    padding: 10px 4px;
+  }
+
+  .experience-grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .menu-items-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .auth-modal-dialog,
+  .install-modal-dialog,
+  .database-modal-dialog,
+  .bookings-modal-dialog {
+    padding: 18px 12px 28px !important;
+  }
+}
