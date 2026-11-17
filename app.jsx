@@ -433,7 +433,7 @@ function RollingBackground({ speed, dim }) {
 /* ==========================================================================
    Component: Header
    ========================================================================== */
-function Header({ onNav, audioEnabled, onToggleAudio, onOpenBookings, currentUser, onOpenAuth, onLogout, onOpenDatabase, onOpenInstall, isStandalone }) {
+function Header({ onNav, audioEnabled, onToggleAudio, onOpenBookings, currentUser, onOpenAuth, onLogout, onOpenDatabase, onOpenInstall, isStandalone, currentStep }) {
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
 
@@ -451,85 +451,86 @@ function Header({ onNav, audioEnabled, onToggleAudio, onOpenBookings, currentUse
   }, [userDropdownOpen]);
 
   return (
-    <header className="luxury-header">
-      <a href="#" className="brand-crest" onClick={(e) => { e.preventDefault(); onNav(1); }}>
-        <div className="crest-logo-icon">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M3 18h18M4 18l2-10 5 4 5-7 4 13" />
-            <circle cx="12" cy="5" r="1.5" fill="currentColor" />
-            <circle cx="6" cy="8" r="1.5" fill="currentColor" />
-            <circle cx="18" cy="8" r="1.5" fill="currentColor" />
-          </svg>
-        </div>
-        <div>
-          <h1 className="brand-title">FIRE SPICE</h1>
-          <p className="brand-subtitle">RESTAURANT & LOUNGE</p>
-        </div>
-      </a>
-
-      <nav className="header-nav">
-        <button
-          className="btn-glass btn-glass-sm active"
-          onClick={() => {
-            if (!currentUser) onOpenAuth();
-            else onNav(1);
-          }}
-        >
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
-          Reserve Table
-        </button>
-        <button
-          className="btn-glass btn-glass-sm btn-glass-secondary"
-          onClick={() => {
-            if (!currentUser) onOpenAuth();
-            else onNav(2);
-          }}
-        >
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 3h18v18H3z"></path><path d="M3 9h18"></path><path d="M9 21V9"></path></svg>
-          Floor Plan
-        </button>
-        <button className="btn-glass btn-glass-sm btn-glass-secondary" onClick={() => {
-          const el = document.getElementById('tastingMenuSection');
-          if (el) el.scrollIntoView({ behavior: 'smooth' });
-        }}>
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 8h1a4 4 0 0 1 0 8h-1"></path><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"></path><line x1="6" y1="1" x2="6" y2="4"></line><line x1="10" y1="1" x2="10" y2="4"></line><line x1="14" y1="1" x2="14" y2="4"></line></svg>
-          Tasting Menu
-        </button>
-      </nav>
-
-      <div className="header-actions">
-        {!isStandalone && (
-          <button
-            className="btn-glass btn-glass-sm btn-install-app"
-            onClick={onOpenInstall}
-            title="Install FIRE SPICE as an App on your device"
-            style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', color: 'var(--gold-300)', borderColor: 'rgba(212, 175, 55, 0.45)', background: 'rgba(212, 175, 55, 0.12)' }}
-          >
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-            <span className="install-btn-text">Install App</span>
-          </button>
-        )}
-
-        {isStandalone && (
-          <div className="standalone-app-badge" title="Running in Standalone Native App Mode">
-            <span>✦ APP MODE</span>
+    <>
+      <header className="luxury-header">
+        <a href="#" className="brand-crest" onClick={(e) => { e.preventDefault(); onNav(1); }}>
+          <div className="crest-logo-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M3 18h18M4 18l2-10 5 4 5-7 4 13" />
+              <circle cx="12" cy="5" r="1.5" fill="currentColor" />
+              <circle cx="6" cy="8" r="1.5" fill="currentColor" />
+              <circle cx="18" cy="8" r="1.5" fill="currentColor" />
+            </svg>
           </div>
-        )}
+          <div>
+            <h1 className="brand-title">FIRE SPICE</h1>
+            <p className="brand-subtitle">RESTAURANT & LOUNGE</p>
+          </div>
+        </a>
 
-        <button
-          className="btn-glass btn-glass-sm btn-glass-secondary"
-          onClick={onOpenDatabase}
-          title="Inspect SQLite Database & Login Audit Trail"
-          style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}
-        >
-          <span style={{ width: '7px', height: '7px', borderRadius: '50%', background: '#4ade80', boxShadow: '0 0 8px #4ade80' }}></span>
-          <span>Database</span>
-        </button>
+        <nav className="header-nav">
+          <button
+            className={`btn-glass btn-glass-sm ${currentStep === 1 ? 'active' : ''}`}
+            onClick={() => {
+              if (!currentUser) onOpenAuth();
+              else onNav(1);
+            }}
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+            Reserve Table
+          </button>
+          <button
+            className={`btn-glass btn-glass-sm ${currentStep === 2 ? 'active' : 'btn-glass-secondary'}`}
+            onClick={() => {
+              if (!currentUser) onOpenAuth();
+              else onNav(2);
+            }}
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 3h18v18H3z"></path><path d="M3 9h18"></path><path d="M9 21V9"></path></svg>
+            Floor Plan
+          </button>
+          <button className="btn-glass btn-glass-sm btn-glass-secondary" onClick={() => {
+            const el = document.getElementById('tastingMenuSection');
+            if (el) el.scrollIntoView({ behavior: 'smooth' });
+          }}>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 8h1a4 4 0 0 1 0 8h-1"></path><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"></path><line x1="6" y1="1" x2="6" y2="4"></line><line x1="10" y1="1" x2="10" y2="4"></line><line x1="14" y1="1" x2="14" y2="4"></line></svg>
+            Tasting Menu
+          </button>
+        </nav>
 
-        <button className="btn-glass btn-glass-sm btn-glass-secondary" onClick={onOpenBookings}>
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-          <span>Find Reservation</span>
-        </button>
+        <div className="header-actions">
+          {!isStandalone && (
+            <button
+              className="btn-glass btn-glass-sm btn-install-app"
+              onClick={onOpenInstall}
+              title="Install FIRE SPICE as an App on your device"
+              style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', color: 'var(--gold-300)', borderColor: 'rgba(212, 175, 55, 0.45)', background: 'rgba(212, 175, 55, 0.12)' }}
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+              <span className="install-btn-text">Install App</span>
+            </button>
+          )}
+
+          {isStandalone && (
+            <div className="standalone-app-badge" title="Running in Standalone Native App Mode">
+              <span>✦ APP</span>
+            </div>
+          )}
+
+          <button
+            className="btn-glass btn-glass-sm btn-glass-secondary"
+            onClick={onOpenDatabase}
+            title="Inspect SQLite Database & Login Audit Trail"
+            style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}
+          >
+            <span style={{ width: '7px', height: '7px', borderRadius: '50%', background: '#4ade80', boxShadow: '0 0 8px #4ade80' }}></span>
+            <span className="nav-btn-text">Database</span>
+          </button>
+
+          <button className="btn-glass btn-glass-sm btn-glass-secondary" onClick={onOpenBookings} title="Find Reservation">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            <span className="nav-btn-text">Find Reservation</span>
+          </button>
 
         {currentUser ? (
           <div className="vip-user-wrapper" ref={dropdownRef}>
@@ -698,6 +699,39 @@ function Header({ onNav, audioEnabled, onToggleAudio, onOpenBookings, currentUse
         </button>
       </div>
     </header>
+    <div className="mobile-sub-nav">
+      <button
+        className={`mobile-sub-nav-btn ${currentStep === 1 ? 'active' : ''}`}
+        onClick={() => {
+          if (!currentUser) onOpenAuth();
+          else onNav(1);
+        }}
+      >
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+        <span>Reserve</span>
+      </button>
+      <button
+        className={`mobile-sub-nav-btn ${currentStep === 2 ? 'active' : ''}`}
+        onClick={() => {
+          if (!currentUser) onOpenAuth();
+          else onNav(2);
+        }}
+      >
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 3h18v18H3z"></path><path d="M3 9h18"></path><path d="M9 21V9"></path></svg>
+        <span>Floor Plan</span>
+      </button>
+      <button
+        className="mobile-sub-nav-btn"
+        onClick={() => {
+          const el = document.getElementById('tastingMenuSection');
+          if (el) el.scrollIntoView({ behavior: 'smooth' });
+        }}
+      >
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 8h1a4 4 0 0 1 0 8h-1"></path><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"></path><line x1="6" y1="1" x2="6" y2="4"></line><line x1="10" y1="1" x2="10" y2="4"></line><line x1="14" y1="1" x2="14" y2="4"></line></svg>
+        <span>Menu</span>
+      </button>
+    </div>
+    </>
   );
 }
 
@@ -1603,22 +1637,33 @@ function MenuShowcase({ onSound }) {
    Component: Ambiance Controller (Protected UX)
    ========================================================================== */
 function AmbianceController({ speed, setSpeed, dim, setDim, onSound }) {
+  const [collapsed, setCollapsed] = useState(true);
+
   return (
-    <aside className="ambient-controller-pill" aria-label="Ambiance Background Controls">
-      <div className="ctrl-label">
+    <aside className={`ambient-controller-pill ${collapsed ? 'collapsed' : ''}`} aria-label="Ambiance Background Controls">
+      <button
+        className="btn-glass btn-glass-sm btn-glass-pill ambiance-toggle-btn"
+        onClick={() => { setCollapsed(!collapsed); onSound('click'); }}
+        title="Toggle Background Atmosphere Settings"
+      >
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"></circle><polygon points="10 8 16 12 10 16 10 8"></polygon></svg>
-        <span>Ambiance:</span>
+        <span>{collapsed ? 'Ambiance' : '✕ Close'}</span>
+      </button>
+
+      <div className="ambiance-controls-drawer">
+        <div className="ctrl-label">
+          <span>Speed:</span>
+        </div>
+        <button className={`btn-glass btn-glass-sm btn-glass-pill ${speed === 'slow' ? 'active' : ''}`} onClick={() => { setSpeed('slow'); onSound('click'); }}>Gentle</button>
+        <button className={`btn-glass btn-glass-sm btn-glass-pill ${speed === 'normal' ? 'active' : ''}`} onClick={() => { setSpeed('normal'); onSound('click'); }}>Majestic</button>
+        <button className={`btn-glass btn-glass-sm btn-glass-pill ${speed === 'paused' ? 'active' : ''}`} onClick={() => { setSpeed('paused'); onSound('click'); }}>⏸ Pause</button>
+
+        <span className="ctrl-sep" style={{ color: 'rgba(212, 175, 55, 0.3)' }}>|</span>
+
+        <button className={`btn-glass btn-glass-sm btn-glass-pill ${dim === 'rich' ? 'active' : ''}`} onClick={() => { setDim('rich'); onSound('click'); }}>Rich</button>
+        <button className={`btn-glass btn-glass-sm btn-glass-pill ${dim === 'comfort' ? 'active' : ''}`} onClick={() => { setDim('comfort'); onSound('click'); }}>Comfort</button>
+        <button className={`btn-glass btn-glass-sm btn-glass-pill ${dim === 'deep' ? 'active' : ''}`} onClick={() => { setDim('deep'); onSound('click'); }}>Deep</button>
       </div>
-
-      <button className={`btn-glass btn-glass-sm btn-glass-pill ${speed === 'slow' ? 'active' : ''}`} onClick={() => { setSpeed('slow'); onSound('click'); }}>Gentle</button>
-      <button className={`btn-glass btn-glass-sm btn-glass-pill ${speed === 'normal' ? 'active' : ''}`} onClick={() => { setSpeed('normal'); onSound('click'); }}>Majestic</button>
-      <button className={`btn-glass btn-glass-sm btn-glass-pill ${speed === 'paused' ? 'active' : ''}`} onClick={() => { setSpeed('paused'); onSound('click'); }}>⏸ Pause</button>
-
-      <span style={{ color: 'rgba(212, 175, 55, 0.3)' }}>|</span>
-
-      <button className={`btn-glass btn-glass-sm btn-glass-pill ${dim === 'rich' ? 'active' : ''}`} onClick={() => { setDim('rich'); onSound('click'); }}>Rich</button>
-      <button className={`btn-glass btn-glass-sm btn-glass-pill ${dim === 'comfort' ? 'active' : ''}`} onClick={() => { setDim('comfort'); onSound('click'); }}>Comfort</button>
-      <button className={`btn-glass btn-glass-sm btn-glass-pill ${dim === 'deep' ? 'active' : ''}`} onClick={() => { setDim('deep'); onSound('click'); }}>Deep Noir</button>
     </aside>
   );
 }
@@ -2818,6 +2863,7 @@ function App() {
         onOpenDatabase={() => { setDatabaseModalOpen(true); onSound('click'); }}
         onOpenInstall={() => { setInstallModalOpen(true); onSound('click'); }}
         isStandalone={isStandalone}
+        currentStep={step}
       />
 
       <HeroSection />

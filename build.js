@@ -32,7 +32,9 @@ try {
   // Sync to www for Capacitor Android if directory exists
   if (fs.existsSync('www')) {
     fs.writeFileSync('www/bundle.js', result.code, 'utf8');
-    console.log('Synced bundle.js -> www/bundle.js');
+    if (fs.existsSync('index.html')) fs.copyFileSync('index.html', 'www/index.html');
+    if (fs.existsSync('styles.css')) fs.copyFileSync('styles.css', 'www/styles.css');
+    console.log('Synced bundle.js, index.html, styles.css -> www/');
   }
 } catch (err) {
   console.error('SYNTAX/TRANSPILE ERROR:');

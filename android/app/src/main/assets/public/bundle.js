@@ -431,7 +431,8 @@ function Header({
   onLogout,
   onOpenDatabase,
   onOpenInstall,
-  isStandalone
+  isStandalone,
+  currentStep
 }) {
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
@@ -448,7 +449,7 @@ function Header({
     }
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [userDropdownOpen]);
-  return /*#__PURE__*/React.createElement("header", {
+  return /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("header", {
     className: "luxury-header"
   }, /*#__PURE__*/React.createElement("a", {
     href: "#",
@@ -460,8 +461,8 @@ function Header({
   }, /*#__PURE__*/React.createElement("div", {
     className: "crest-logo-icon"
   }, /*#__PURE__*/React.createElement("svg", {
-    width: "24",
-    height: "24",
+    width: "22",
+    height: "22",
     viewBox: "0 0 24 24",
     fill: "none",
     stroke: "currentColor",
@@ -492,7 +493,7 @@ function Header({
   }, "RESTAURANT & LOUNGE"))), /*#__PURE__*/React.createElement("nav", {
     className: "header-nav"
   }, /*#__PURE__*/React.createElement("button", {
-    className: "btn-glass btn-glass-sm active",
+    className: `btn-glass btn-glass-sm ${currentStep === 1 ? 'active' : ''}`,
     onClick: () => {
       if (!currentUser) onOpenAuth();else onNav(1);
     }
@@ -526,7 +527,7 @@ function Header({
     x2: "21",
     y2: "10"
   })), "Reserve Table"), /*#__PURE__*/React.createElement("button", {
-    className: "btn-glass btn-glass-sm btn-glass-secondary",
+    className: `btn-glass btn-glass-sm ${currentStep === 2 ? 'active' : 'btn-glass-secondary'}`,
     onClick: () => {
       if (!currentUser) onOpenAuth();else onNav(2);
     }
@@ -612,7 +613,7 @@ function Header({
   }, "Install App")), isStandalone && /*#__PURE__*/React.createElement("div", {
     className: "standalone-app-badge",
     title: "Running in Standalone Native App Mode"
-  }, /*#__PURE__*/React.createElement("span", null, "✦ APP MODE")), /*#__PURE__*/React.createElement("button", {
+  }, /*#__PURE__*/React.createElement("span", null, "✦ APP")), /*#__PURE__*/React.createElement("button", {
     className: "btn-glass btn-glass-sm btn-glass-secondary",
     onClick: onOpenDatabase,
     title: "Inspect SQLite Database & Login Audit Trail",
@@ -629,9 +630,12 @@ function Header({
       background: '#4ade80',
       boxShadow: '0 0 8px #4ade80'
     }
-  }), /*#__PURE__*/React.createElement("span", null, "Database")), /*#__PURE__*/React.createElement("button", {
+  }), /*#__PURE__*/React.createElement("span", {
+    className: "nav-btn-text"
+  }, "Database")), /*#__PURE__*/React.createElement("button", {
     className: "btn-glass btn-glass-sm btn-glass-secondary",
-    onClick: onOpenBookings
+    onClick: onOpenBookings,
+    title: "Find Reservation"
   }, /*#__PURE__*/React.createElement("svg", {
     width: "14",
     height: "14",
@@ -648,7 +652,9 @@ function Header({
     y1: "21",
     x2: "16.65",
     y2: "16.65"
-  })), /*#__PURE__*/React.createElement("span", null, "Find Reservation")), currentUser ? /*#__PURE__*/React.createElement("div", {
+  })), /*#__PURE__*/React.createElement("span", {
+    className: "nav-btn-text"
+  }, "Find Reservation")), currentUser ? /*#__PURE__*/React.createElement("div", {
     className: "vip-user-wrapper",
     ref: dropdownRef
   }, /*#__PURE__*/React.createElement("button", {
@@ -972,7 +978,95 @@ function Header({
     y1: "9",
     x2: "23",
     y2: "15"
-  })))));
+  }))))), /*#__PURE__*/React.createElement("div", {
+    className: "mobile-sub-nav"
+  }, /*#__PURE__*/React.createElement("button", {
+    className: `mobile-sub-nav-btn ${currentStep === 1 ? 'active' : ''}`,
+    onClick: () => {
+      if (!currentUser) onOpenAuth();else onNav(1);
+    }
+  }, /*#__PURE__*/React.createElement("svg", {
+    width: "14",
+    height: "14",
+    viewBox: "0 0 24 24",
+    fill: "none",
+    stroke: "currentColor",
+    strokeWidth: "2"
+  }, /*#__PURE__*/React.createElement("rect", {
+    x: "3",
+    y: "4",
+    width: "18",
+    height: "18",
+    rx: "2",
+    ry: "2"
+  }), /*#__PURE__*/React.createElement("line", {
+    x1: "16",
+    y1: "2",
+    x2: "16",
+    y2: "6"
+  }), /*#__PURE__*/React.createElement("line", {
+    x1: "8",
+    y1: "2",
+    x2: "8",
+    y2: "6"
+  }), /*#__PURE__*/React.createElement("line", {
+    x1: "3",
+    y1: "10",
+    x2: "21",
+    y2: "10"
+  })), /*#__PURE__*/React.createElement("span", null, "Reserve")), /*#__PURE__*/React.createElement("button", {
+    className: `mobile-sub-nav-btn ${currentStep === 2 ? 'active' : ''}`,
+    onClick: () => {
+      if (!currentUser) onOpenAuth();else onNav(2);
+    }
+  }, /*#__PURE__*/React.createElement("svg", {
+    width: "14",
+    height: "14",
+    viewBox: "0 0 24 24",
+    fill: "none",
+    stroke: "currentColor",
+    strokeWidth: "2"
+  }, /*#__PURE__*/React.createElement("path", {
+    d: "M3 3h18v18H3z"
+  }), /*#__PURE__*/React.createElement("path", {
+    d: "M3 9h18"
+  }), /*#__PURE__*/React.createElement("path", {
+    d: "M9 21V9"
+  })), /*#__PURE__*/React.createElement("span", null, "Floor Plan")), /*#__PURE__*/React.createElement("button", {
+    className: "mobile-sub-nav-btn",
+    onClick: () => {
+      const el = document.getElementById('tastingMenuSection');
+      if (el) el.scrollIntoView({
+        behavior: 'smooth'
+      });
+    }
+  }, /*#__PURE__*/React.createElement("svg", {
+    width: "14",
+    height: "14",
+    viewBox: "0 0 24 24",
+    fill: "none",
+    stroke: "currentColor",
+    strokeWidth: "2"
+  }, /*#__PURE__*/React.createElement("path", {
+    d: "M18 8h1a4 4 0 0 1 0 8h-1"
+  }), /*#__PURE__*/React.createElement("path", {
+    d: "M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"
+  }), /*#__PURE__*/React.createElement("line", {
+    x1: "6",
+    y1: "1",
+    x2: "6",
+    y2: "4"
+  }), /*#__PURE__*/React.createElement("line", {
+    x1: "10",
+    y1: "1",
+    x2: "10",
+    y2: "4"
+  }), /*#__PURE__*/React.createElement("line", {
+    x1: "14",
+    y1: "1",
+    x2: "14",
+    y2: "4"
+  })), /*#__PURE__*/React.createElement("span", null, "Menu"))));
 }
 
 /* ==========================================================================
@@ -2327,11 +2421,17 @@ function AmbianceController({
   setDim,
   onSound
 }) {
+  const [collapsed, setCollapsed] = useState(true);
   return /*#__PURE__*/React.createElement("aside", {
-    className: "ambient-controller-pill",
+    className: `ambient-controller-pill ${collapsed ? 'collapsed' : ''}`,
     "aria-label": "Ambiance Background Controls"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "ctrl-label"
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "btn-glass btn-glass-sm btn-glass-pill ambiance-toggle-btn",
+    onClick: () => {
+      setCollapsed(!collapsed);
+      onSound('click');
+    },
+    title: "Toggle Background Atmosphere Settings"
   }, /*#__PURE__*/React.createElement("svg", {
     width: "14",
     height: "14",
@@ -2345,7 +2445,11 @@ function AmbianceController({
     r: "10"
   }), /*#__PURE__*/React.createElement("polygon", {
     points: "10 8 16 12 10 16 10 8"
-  })), /*#__PURE__*/React.createElement("span", null, "Ambiance:")), /*#__PURE__*/React.createElement("button", {
+  })), /*#__PURE__*/React.createElement("span", null, collapsed ? 'Ambiance' : '✕ Close')), /*#__PURE__*/React.createElement("div", {
+    className: "ambiance-controls-drawer"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "ctrl-label"
+  }, /*#__PURE__*/React.createElement("span", null, "Speed:")), /*#__PURE__*/React.createElement("button", {
     className: `btn-glass btn-glass-sm btn-glass-pill ${speed === 'slow' ? 'active' : ''}`,
     onClick: () => {
       setSpeed('slow');
@@ -2364,6 +2468,7 @@ function AmbianceController({
       onSound('click');
     }
   }, "⏸ Pause"), /*#__PURE__*/React.createElement("span", {
+    className: "ctrl-sep",
     style: {
       color: 'rgba(212, 175, 55, 0.3)'
     }
@@ -2385,7 +2490,7 @@ function AmbianceController({
       setDim('deep');
       onSound('click');
     }
-  }, "Deep Noir"));
+  }, "Deep")));
 }
 
 /* ==========================================================================
@@ -3953,7 +4058,8 @@ function App() {
       setInstallModalOpen(true);
       onSound('click');
     },
-    isStandalone: isStandalone
+    isStandalone: isStandalone,
+    currentStep: step
   }), /*#__PURE__*/React.createElement(HeroSection, null), /*#__PURE__*/React.createElement("main", {
     className: "booking-console-container",
     id: "bookingConsole"
