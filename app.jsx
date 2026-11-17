@@ -12,9 +12,9 @@ const { useState, useEffect, useRef, useMemo, useCallback } = React;
    Setup: Replace EMAILJS_PUBLIC_KEY, EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID
           with your actual values from https://dashboard.emailjs.com
    ========================================================================== */
-const EMAILJS_PUBLIC_KEY   = 'YOUR_PUBLIC_KEY';    // From EmailJS → Account → Public Key
-const EMAILJS_SERVICE_ID   = 'YOUR_SERVICE_ID';    // From EmailJS → Email Services (connect Gmail)
-const EMAILJS_TEMPLATE_ID  = 'YOUR_TEMPLATE_ID';  // From EmailJS → Email Templates
+const EMAILJS_PUBLIC_KEY   = '0BmVBOCZwe3Ine3da'; // EmailJS Account Public Key
+const EMAILJS_SERVICE_ID   = 'service_cvkn78a';    // EmailJS Gmail Service
+const EMAILJS_TEMPLATE_ID  = 'template_j1vh2wd';  // EmailJS Email Template
 const OWNER_EMAIL          = 'lohithvelsakthi@gmail.com';
 
 let _emailjsInitialized = false;
