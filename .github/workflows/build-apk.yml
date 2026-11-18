@@ -59,18 +59,18 @@ jobs:
           APK_FILE=$(find android -name "*.apk" | head -n 1)
           if [ -n "$APK_FILE" ]; then
             echo "Found APK at: $APK_FILE"
-            cp "$APK_FILE" build-output/FireSpice-v1.0.7.apk
+            cp "$APK_FILE" build-output/FireSpice-v1.0.8.apk
           else
             echo "ERROR: No APK found!"
             exit 1
           fi
-          ls -lh build-output/FireSpice-v1.0.7.apk
+          ls -lh build-output/FireSpice-v1.0.8.apk
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: FireSpice-v1.0.7-APK
-          path: build-output/FireSpice-v1.0.7.apk
+          name: FireSpice-v1.0.8-APK
+          path: build-output/FireSpice-v1.0.8.apk
           retention-days: 90
 
       - name: Create or Update GitHub Release
@@ -92,8 +92,8 @@ jobs:
             - **Silent Fail-Safe**: Email errors never block or interrupt the reservation confirmation flow.
 
             #### 📲 Installation Instructions:
-            1. Download `FireSpice-v1.0.7.apk` onto your Android device.
+            1. Download `FireSpice-v1.0.8.apk` onto your Android device.
             2. Tap → Allow unknown apps → Update / Install → Launch FIRE SPICE!
-          files: build-output/FireSpice-v1.0.7.apk
+          files: build-output/FireSpice-v1.0.8.apk
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

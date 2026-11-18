@@ -86,10 +86,7 @@ async function sendBookingConfirmation(reservation) {
     ensureEmailJSInit();
     if (typeof emailjs === 'undefined') return;
     if (EMAILJS_PUBLIC_KEY === 'YOUR_PUBLIC_KEY') return;
-    if (EMAILJS_BOOKING_TEMPLATE_ID === 'YOUR_BOOKING_TEMPLATE_ID') {
-      console.info('[FIRE SPICE] Booking template not configured yet — skipping customer confirmation.');
-      return;
-    }
+    if (EMAILJS_BOOKING_TEMPLATE_ID === 'YOUR_BOOKING_TEMPLATE_ID') return;
     if (!reservation.email || !reservation.email.includes('@')) {
       console.warn('[FIRE SPICE] No valid customer email — skipping booking confirmation.');
       return;
@@ -115,7 +112,7 @@ async function sendBookingConfirmation(reservation) {
     await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_BOOKING_TEMPLATE_ID, templateParams);
     console.info('[FIRE SPICE] ✅ Booking confirmation sent to', reservation.email, '— Pass Code:', reservation.code);
   } catch (err) {
-    console.warn('[FIRE SPICE] Booking confirmation failed (non-critical):', err);
+    console.warn('[FIRE SPICE] Booking confirmation failed:', err.status, err.text || err.message);
   }
 }
 
