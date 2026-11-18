@@ -387,36 +387,6 @@ const DEFAULT_VIP_MEMBERS = [
     notes: 'Google Verified dining patron.',
     memberSince: '2026',
     perks: ['Google Verified Priority Allocation', 'Dedicated Sommelier Care', 'Arrival Dom Pérignon Flute', '1-Click Fast Table Booking']
-  },
-  {
-    id: 'G-4022',
-    name: 'Elena Vance',
-    firstName: 'Elena',
-    lastName: 'Vance',
-    email: 'elena.vance@gmail.com',
-    phone: '+1 (555) 234-5678',
-    provider: 'google',
-    tier: 'Google Verified Patron',
-    tierBadge: 'Google Verified',
-    dietary: 'Gluten-sensitive, Pescatarian',
-    notes: 'Anniversary celebration tasting.',
-    memberSince: '2025',
-    perks: ['Priority Booking Access', 'Personalized Dietary Menu', 'Complimentary Truffle Course']
-  },
-  {
-    id: 'VIP-7001',
-    name: 'Lord Sterling',
-    firstName: 'Sterling',
-    lastName: 'de Montmirail',
-    email: 'sterling@imperial.com',
-    phone: '+1 (555) 777-8899',
-    provider: 'email',
-    tier: 'Imperial Gold Member',
-    tierBadge: 'Imperial Gold',
-    dietary: 'Prefers Rare Vintages & Miyazaki Wagyu',
-    notes: 'Requires quiet corner alcove with dedicated sommelier.',
-    memberSince: '2023',
-    perks: ['Priority Sanctuary Table Allocation', 'Dedicated Sommelier Care', 'Arrival Dom Pérignon Flute', 'Zero-Penalty Cancellation']
   }
 ];
 
@@ -2246,46 +2216,9 @@ function AuthModal({ isOpen, onClose, onLogin, onSound }) {
               <span className="google-fast-badge">Recommended</span>
             </div>
 
-            {/* Quick 1-Click Google Account Chooser */}
+            {/* Google Email input */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-              <button
-                type="button"
-                className="google-account-btn"
-                onClick={() => handleSelectGoogleProfile(DEFAULT_VIP_MEMBERS[0])}
-              >
-                <div className="google-avatar-circle">L</div>
-                <div style={{ textAlign: 'left', flex: 1, minWidth: 0 }}>
-                  <div style={{ color: '#fff', fontWeight: 600, fontSize: '0.9rem' }}>Lohith Vel</div>
-                  <div style={{ color: 'var(--text-muted)', fontSize: '0.74rem' }}>lohithvelsakthi@gmail.com</div>
-                </div>
-                <span className="google-click-hint">1-Click Sign In →</span>
-              </button>
-
-              <button
-                type="button"
-                className="google-account-btn"
-                onClick={() => handleSelectGoogleProfile(DEFAULT_VIP_MEMBERS[1])}
-              >
-                <div className="google-avatar-circle" style={{ background: '#7c3aed' }}>E</div>
-                <div style={{ textAlign: 'left', flex: 1, minWidth: 0 }}>
-                  <div style={{ color: '#fff', fontWeight: 600, fontSize: '0.9rem' }}>Elena Vance</div>
-                  <div style={{ color: 'var(--text-muted)', fontSize: '0.74rem' }}>elena.vance@gmail.com</div>
-                </div>
-                <span className="google-click-hint">1-Click Sign In →</span>
-              </button>
-            </div>
-
-            {/* Custom Google Email input toggle */}
-            {!showCustomGoogle ? (
-              <button
-                type="button"
-                className="google-alt-btn"
-                onClick={() => setShowCustomGoogle(true)}
-              >
-                + Sign in with another Google Account / Gmail
-              </button>
-            ) : (
-              <form onSubmit={handleCustomGoogleSubmit} style={{ marginTop: '12px', borderTop: '1px dashed rgba(212, 175, 55, 0.25)', paddingTop: '12px' }}>
+              <form onSubmit={handleCustomGoogleSubmit} style={{ marginTop: '4px' }}>
                 <label className="form-label" style={{ fontSize: '0.75rem' }}>Enter Your Google / Gmail Address</label>
                 <div style={{ display: 'flex', gap: '8px' }}>
                   <input
@@ -2302,7 +2235,7 @@ function AuthModal({ isOpen, onClose, onLogin, onSound }) {
                   </button>
                 </div>
               </form>
-            )}
+            </div>
           </div>
         </div>
 
@@ -2856,8 +2789,8 @@ function App() {
     }
   };
 
-  const [speed, setSpeed] = useState('normal'); // 'slow', 'normal', 'paused'
-  const [dim, setDim] = useState('comfort');    // 'rich', 'comfort', 'deep'
+  const [speed, setSpeed] = useState('normal'); // Majestic (default)
+  const [dim, setDim] = useState('rich');       // Rich (default)
 
   const [booking, setBooking] = useState({
     guests: 2,
@@ -3056,13 +2989,6 @@ function App() {
 
       <MenuShowcase onSound={onSound} />
 
-      <AmbianceController
-        speed={speed}
-        setSpeed={setSpeed}
-        dim={dim}
-        setDim={setDim}
-        onSound={onSound}
-      />
 
       <BookingsModal
         isOpen={modalOpen}

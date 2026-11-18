@@ -365,34 +365,6 @@ const DEFAULT_VIP_MEMBERS = [{
   notes: 'Google Verified dining patron.',
   memberSince: '2026',
   perks: ['Google Verified Priority Allocation', 'Dedicated Sommelier Care', 'Arrival Dom Pérignon Flute', '1-Click Fast Table Booking']
-}, {
-  id: 'G-4022',
-  name: 'Elena Vance',
-  firstName: 'Elena',
-  lastName: 'Vance',
-  email: 'elena.vance@gmail.com',
-  phone: '+1 (555) 234-5678',
-  provider: 'google',
-  tier: 'Google Verified Patron',
-  tierBadge: 'Google Verified',
-  dietary: 'Gluten-sensitive, Pescatarian',
-  notes: 'Anniversary celebration tasting.',
-  memberSince: '2025',
-  perks: ['Priority Booking Access', 'Personalized Dietary Menu', 'Complimentary Truffle Course']
-}, {
-  id: 'VIP-7001',
-  name: 'Lord Sterling',
-  firstName: 'Sterling',
-  lastName: 'de Montmirail',
-  email: 'sterling@imperial.com',
-  phone: '+1 (555) 777-8899',
-  provider: 'email',
-  tier: 'Imperial Gold Member',
-  tierBadge: 'Imperial Gold',
-  dietary: 'Prefers Rare Vintages & Miyazaki Wagyu',
-  notes: 'Requires quiet corner alcove with dedicated sommelier.',
-  memberSince: '2023',
-  perks: ['Priority Sanctuary Table Allocation', 'Dedicated Sommelier Care', 'Arrival Dom Pérignon Flute', 'Zero-Penalty Cancellation']
 }];
 
 /* ==========================================================================
@@ -3275,69 +3247,10 @@ function AuthModal({
       flexDirection: 'column',
       gap: '10px'
     }
-  }, /*#__PURE__*/React.createElement("button", {
-    type: "button",
-    className: "google-account-btn",
-    onClick: () => handleSelectGoogleProfile(DEFAULT_VIP_MEMBERS[0])
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "google-avatar-circle"
-  }, "L"), /*#__PURE__*/React.createElement("div", {
-    style: {
-      textAlign: 'left',
-      flex: 1,
-      minWidth: 0
-    }
-  }, /*#__PURE__*/React.createElement("div", {
-    style: {
-      color: '#fff',
-      fontWeight: 600,
-      fontSize: '0.9rem'
-    }
-  }, "Lohith Vel"), /*#__PURE__*/React.createElement("div", {
-    style: {
-      color: 'var(--text-muted)',
-      fontSize: '0.74rem'
-    }
-  }, "lohithvelsakthi@gmail.com")), /*#__PURE__*/React.createElement("span", {
-    className: "google-click-hint"
-  }, "1-Click Sign In →")), /*#__PURE__*/React.createElement("button", {
-    type: "button",
-    className: "google-account-btn",
-    onClick: () => handleSelectGoogleProfile(DEFAULT_VIP_MEMBERS[1])
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "google-avatar-circle",
-    style: {
-      background: '#7c3aed'
-    }
-  }, "E"), /*#__PURE__*/React.createElement("div", {
-    style: {
-      textAlign: 'left',
-      flex: 1,
-      minWidth: 0
-    }
-  }, /*#__PURE__*/React.createElement("div", {
-    style: {
-      color: '#fff',
-      fontWeight: 600,
-      fontSize: '0.9rem'
-    }
-  }, "Elena Vance"), /*#__PURE__*/React.createElement("div", {
-    style: {
-      color: 'var(--text-muted)',
-      fontSize: '0.74rem'
-    }
-  }, "elena.vance@gmail.com")), /*#__PURE__*/React.createElement("span", {
-    className: "google-click-hint"
-  }, "1-Click Sign In →"))), !showCustomGoogle ? /*#__PURE__*/React.createElement("button", {
-    type: "button",
-    className: "google-alt-btn",
-    onClick: () => setShowCustomGoogle(true)
-  }, "+ Sign in with another Google Account / Gmail") : /*#__PURE__*/React.createElement("form", {
+  }, /*#__PURE__*/React.createElement("form", {
     onSubmit: handleCustomGoogleSubmit,
     style: {
-      marginTop: '12px',
-      borderTop: '1px dashed rgba(212, 175, 55, 0.25)',
-      paddingTop: '12px'
+      marginTop: '4px'
     }
   }, /*#__PURE__*/React.createElement("label", {
     className: "form-label",
@@ -3363,7 +3276,7 @@ function AuthModal({
     style: {
       flexShrink: 0
     }
-  }, "Sign In"))))), /*#__PURE__*/React.createElement("div", {
+  }, "Sign In")))))), /*#__PURE__*/React.createElement("div", {
     className: "auth-divider"
   }, /*#__PURE__*/React.createElement("span", null, "OR CONTINUE WITH EMAIL ID")), /*#__PURE__*/React.createElement("div", {
     className: "auth-tabs"
@@ -4033,8 +3946,8 @@ function App() {
       setInstallModalOpen(true);
     }
   };
-  const [speed, setSpeed] = useState('normal'); // 'slow', 'normal', 'paused'
-  const [dim, setDim] = useState('comfort'); // 'rich', 'comfort', 'deep'
+  const [speed, setSpeed] = useState('normal'); // Majestic (default)
+  const [dim, setDim] = useState('rich'); // Rich (default)
 
   const [booking, setBooking] = useState({
     guests: 2,
@@ -4257,12 +4170,6 @@ function App() {
       width: '120px'
     }
   })))), /*#__PURE__*/React.createElement(MenuShowcase, {
-    onSound: onSound
-  }), /*#__PURE__*/React.createElement(AmbianceController, {
-    speed: speed,
-    setSpeed: setSpeed,
-    dim: dim,
-    setDim: setDim,
     onSound: onSound
   }), /*#__PURE__*/React.createElement(BookingsModal, {
     isOpen: modalOpen,
