@@ -3039,13 +3039,6 @@ function App() {
                 📲 Install FIRE SPICE App
               </button>
             )}
-            <button
-              className="btn-glass btn-glass-sm"
-              onClick={() => { setDatabaseModalOpen(true); onSound('click'); }}
-              style={{ color: 'var(--gold-300)', borderColor: 'rgba(212, 175, 55, 0.4)' }}
-            >
-              🗄️ Inspect SQLite Database & Logins
-            </button>
             <button className="btn-glass btn-glass-sm btn-glass-secondary" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
               ↑ Back to Top
             </button>

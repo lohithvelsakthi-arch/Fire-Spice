@@ -4231,16 +4231,6 @@ function App() {
       borderColor: 'rgba(212, 175, 55, 0.45)'
     }
   }, "📲 Install FIRE SPICE App"), /*#__PURE__*/React.createElement("button", {
-    className: "btn-glass btn-glass-sm",
-    onClick: () => {
-      setDatabaseModalOpen(true);
-      onSound('click');
-    },
-    style: {
-      color: 'var(--gold-300)',
-      borderColor: 'rgba(212, 175, 55, 0.4)'
-    }
-  }, "🗄️ Inspect SQLite Database & Logins"), /*#__PURE__*/React.createElement("button", {
     className: "btn-glass btn-glass-sm btn-glass-secondary",
     onClick: () => window.scrollTo({
       top: 0,
