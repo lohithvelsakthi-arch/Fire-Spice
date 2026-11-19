@@ -2752,6 +2752,33 @@ function InstallModal({ isOpen, onClose, onInstall, isIos, onSound }) {
 /* ==========================================================================
    Component: Cinematic Page Transition Overlay (In-Page Simulation)
    ========================================================================== */
+const STEP_PAGE_META = {
+  1: {
+    tag: 'PAGE 1 OF 4 • DATE & SERVICE',
+    title: 'DATE, SERVICE & PARTY SIZE',
+    transitionTitle: 'PAGE 1: DATE & SERVICE',
+    transitionSubtitle: '✦ Loading Dining Calendar & Party Allocation...'
+  },
+  2: {
+    tag: 'PAGE 2 OF 4 • FLOOR PLAN & SEATING',
+    title: 'ARCHITECTURAL FLOOR PLAN & ZONES',
+    transitionTitle: 'PAGE 2: TABLE & ZONE',
+    transitionSubtitle: '✦ Loading 3D Table Layout & Architectural Seating...'
+  },
+  3: {
+    tag: 'PAGE 3 OF 4 • GASTRONOMIC ENHANCEMENTS',
+    title: 'OCCASION, SOMMELIER & VINTAGES',
+    transitionTitle: 'PAGE 3: ENHANCEMENTS',
+    transitionSubtitle: '✦ Loading Vintage Wine Pairings, Caviar & Occasions...'
+  },
+  4: {
+    tag: 'PAGE 4 OF 4 • GUEST DETAILS & RECEIPT',
+    title: 'GUEST CONTACT & RESERVATION GUARANTEE',
+    transitionTitle: 'PAGE 4: GUEST DETAILS',
+    transitionSubtitle: '✦ Preparing VIP Profile & Table Guarantee...'
+  }
+};
+
 function PageTransitionOverlay({ transition }) {
   if (!transition || !transition.active) return null;
 
@@ -3048,19 +3075,35 @@ function App() {
     });
   };
 
+  const [slideDir, setSlideDir] = useState('forward');
+
+  const goToStep = (targetStep) => {
+    if (targetStep === step) return;
+    const dir = targetStep > step ? 'forward' : 'backward';
+    setSlideDir(dir);
+
+    const meta = STEP_PAGE_META[targetStep] || {
+      transitionTitle: `STEP ${targetStep}`,
+      transitionSubtitle: 'Loading next step...'
+    };
+
+    navigateToPage('reserve', {
+      step: targetStep,
+      title: meta.transitionTitle,
+      subtitle: meta.transitionSubtitle,
+      duration: 380
+    });
+  };
+
   const nextStep = () => {
     if (step < 4) {
-      setStep(s => s + 1);
-      onSound('click');
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      goToStep(step + 1);
     }
   };
 
   const prevStep = () => {
     if (step > 1) {
-      setStep(s => s - 1);
-      onSound('click');
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      goToStep(step - 1);
     }
   };
 
@@ -3150,25 +3193,36 @@ function App() {
               />
             ) : (
               <div className="console-card">
+                <div className="sim-step-page-banner">
+                  <div className="sim-step-badge">
+                    <span className="gold-diamond"></span>
+                    <span>{STEP_PAGE_META[step]?.tag || `PAGE ${step} OF 4`}</span>
+                    <span className="gold-diamond"></span>
+                  </div>
+                  <div className="sim-step-heading">{STEP_PAGE_META[step]?.title || ''}</div>
+                </div>
+
                 <Stepper
                   currentStep={step}
-                  onStepClick={(s) => { setStep(s); onSound('click'); }}
+                  onStepClick={(s) => goToStep(s)}
                   booking={booking}
                 />
 
-                {step === 1 && <StepDateTime booking={booking} setBooking={setBooking} onSound={onSound} />}
-                {step === 2 && <StepFloorPlan booking={booking} setBooking={setBooking} onSound={onSound} onProceed={() => { setStep(3); onSound('select'); }} />}
-                {step === 3 && <StepEnhancements booking={booking} setBooking={setBooking} onSound={onSound} />}
-                {step === 4 && (
-                  <StepGuestDetails
-                    booking={booking}
-                    setBooking={setBooking}
-                    onConfirm={handleConfirmReservation}
-                    onSound={onSound}
-                    currentUser={currentUser}
-                    onOpenAuth={() => { setAuthModalOpen(true); onSound('click'); }}
-                  />
-                )}
+                <div key={step} className={`console-step-viewport slide-${slideDir}`}>
+                  {step === 1 && <StepDateTime booking={booking} setBooking={setBooking} onSound={onSound} />}
+                  {step === 2 && <StepFloorPlan booking={booking} setBooking={setBooking} onSound={onSound} onProceed={() => goToStep(3)} />}
+                  {step === 3 && <StepEnhancements booking={booking} setBooking={setBooking} onSound={onSound} />}
+                  {step === 4 && (
+                    <StepGuestDetails
+                      booking={booking}
+                      setBooking={setBooking}
+                      onConfirm={handleConfirmReservation}
+                      onSound={onSound}
+                      currentUser={currentUser}
+                      onOpenAuth={() => { setAuthModalOpen(true); onSound('click'); }}
+                    />
+                  )}
+                </div>
 
                 <div className="console-nav-footer">
                   <button
