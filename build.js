@@ -43,7 +43,16 @@ try {
       fs.copyFileSync(emailjsSrc, emailjsDst);
     }
 
-    console.log('Synced bundle.js, index.html, styles.css, vendor/emailjs.min.js -> www/');
+    // Sync logo and icons
+    if (fs.existsSync('logo.png')) fs.copyFileSync('logo.png', 'www/logo.png');
+    if (fs.existsSync('icons')) {
+      if (!fs.existsSync('www/icons')) fs.mkdirSync('www/icons', { recursive: true });
+      fs.readdirSync('icons').forEach(file => {
+        fs.copyFileSync(`icons/${file}`, `www/icons/${file}`);
+      });
+    }
+
+    console.log('Synced bundle.js, index.html, styles.css, vendor/emailjs.min.js, logo.png, icons/ -> www/');
   }
 } catch (err) {
   console.error('SYNTAX/TRANSPILE ERROR:');

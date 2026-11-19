@@ -536,12 +536,7 @@ function Header({ onNav, audioEnabled, onToggleAudio, onOpenBookings, currentUse
       <header className="luxury-header">
         <a href="#" className="brand-crest" onClick={(e) => { e.preventDefault(); if (onSwitchView) onSwitchView('home'); else onNav(1); }}>
           <div className="crest-logo-icon">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M3 18h18M4 18l2-10 5 4 5-7 4 13" />
-              <circle cx="12" cy="5" r="1.5" fill="currentColor" />
-              <circle cx="6" cy="8" r="1.5" fill="currentColor" />
-              <circle cx="18" cy="8" r="1.5" fill="currentColor" />
-            </svg>
+            <img src="icons/icon-192.png" alt="FIRE SPICE Logo" className="brand-logo-img" />
           </div>
           <div>
             <h1 className="brand-title">FIRE SPICE</h1>
@@ -822,6 +817,10 @@ function Header({ onNav, audioEnabled, onToggleAudio, onOpenBookings, currentUse
 function HeroSection({ onStartReserve, onExploreMenu }) {
   return (
     <section className="hero-section">
+      <div className="hero-emblem-wrap" style={{ display: 'flex', justifyContent: 'center', marginBottom: '16px' }}>
+        <img src="icons/icon-192.png" alt="FIRE SPICE Emblem" style={{ width: '84px', height: '84px', objectFit: 'contain', borderRadius: '18px', border: '1px solid rgba(212, 175, 55, 0.4)', background: 'rgba(6, 6, 8, 0.7)', padding: '6px', boxShadow: '0 0 28px rgba(212, 175, 55, 0.35)' }} />
+      </div>
+
       <div className="hero-badge">
         <span className="gold-diamond"></span>
         <span>Michelin Two-Star Distinction • Private Dining Sanctuary</span>
@@ -1452,6 +1451,7 @@ function StepGuestDetails({ booking, setBooking, onConfirm, onSound, currentUser
         {/* Live Summary Receipt */}
         <div className="booking-summary-receipt">
           <div className="summary-crest-header">
+            <img src="icons/icon-192.png" alt="FIRE SPICE" style={{ width: '42px', height: '42px', objectFit: 'contain', margin: '0 auto 6px', display: 'block', borderRadius: '8px' }} />
             <div className="summary-brand">FIRE SPICE</div>
             <div style={{ fontSize: '0.72rem', letterSpacing: '2px', color: 'var(--gold-400)', textTransform: 'uppercase' }}>
               Reservation Guarantee
@@ -1616,9 +1616,12 @@ function StepConfirmedPass({ reservation, onReset, onReturnHome, onSound, curren
 
         <div className="vip-pass-card">
           <div className="pass-header">
-            <div>
-              <h4 className="pass-brand-title">FIRE SPICE</h4>
-              <div style={{ fontSize: '0.72rem', letterSpacing: '2px', color: 'var(--gold-400)', textTransform: 'uppercase' }}>Haute Dining Pass</div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+              <img src="icons/icon-192.png" alt="FIRE SPICE" style={{ width: '48px', height: '48px', objectFit: 'contain', borderRadius: '10px', border: '1px solid rgba(212, 175, 55, 0.45)', background: '#060608', padding: '2px' }} />
+              <div>
+                <h4 className="pass-brand-title">FIRE SPICE</h4>
+                <div style={{ fontSize: '0.72rem', letterSpacing: '2px', color: 'var(--gold-400)', textTransform: 'uppercase' }}>Haute Dining Pass</div>
+              </div>
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '4px' }}>
               <div className="pass-code-badge">{reservation.code}</div>
@@ -1881,13 +1884,9 @@ function BookingsModal({ isOpen, onClose, onViewPass, onSound }) {
 function LockedConsoleGate({ onOpenGoogleAuth, onOpenEmailAuth }) {
   return (
     <div className="console-card booking-gate-locked">
-      <div className="gate-lock-icon-wrap">
+      <div className="gate-lock-icon-wrap" style={{ width: '80px', height: '80px', borderRadius: '20px', overflow: 'hidden', padding: '6px' }}>
         <div className="gate-lock-glow"></div>
-        <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="gate-lock-svg">
-          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-          <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-          <circle cx="12" cy="16" r="1.5" fill="currentColor"></circle>
-        </svg>
+        <img src="icons/icon-192.png" alt="FIRE SPICE" style={{ width: '100%', height: '100%', objectFit: 'contain', position: 'relative', zIndex: 2 }} />
       </div>
 
       <div className="hero-badge" style={{ marginBottom: '14px' }}>
@@ -2205,13 +2204,8 @@ function AuthModal({ isOpen, onClose, onLogin, onSound }) {
         <button className="btn-glass btn-glass-icon btn-glass-sm modal-close-btn" onClick={onClose} title="Dismiss (Reservations remain locked)">✕</button>
 
         <div className="auth-crest-header">
-          <div className="crest-logo-icon" style={{ margin: '0 auto 12px' }}>
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M3 18h18M4 18l2-10 5 4 5-7 4 13" />
-              <circle cx="12" cy="5" r="1.5" fill="currentColor" />
-              <circle cx="6" cy="8" r="1.5" fill="currentColor" />
-              <circle cx="18" cy="8" r="1.5" fill="currentColor" />
-            </svg>
+          <div className="crest-logo-icon" style={{ margin: '0 auto 12px', width: '56px', height: '56px', borderRadius: '16px' }}>
+            <img src="icons/icon-192.png" alt="FIRE SPICE" className="brand-logo-img" />
           </div>
           <div className="hero-badge" style={{ marginBottom: '8px' }}>
             <span className="gold-diamond"></span>
@@ -2642,7 +2636,7 @@ function InstallModal({ isOpen, onClose, onInstall, isIos, onSound }) {
         <button className="btn-glass btn-glass-icon btn-glass-sm modal-close-btn" onClick={onClose}>✕</button>
 
         <div className="install-crest-badge">
-          <span>FS</span>
+          <img src="icons/icon-192.png" alt="FIRE SPICE" className="install-logo-img" />
         </div>
 
         <div className="hero-badge" style={{ marginBottom: '8px' }}>
@@ -2796,12 +2790,7 @@ function PageTransitionOverlay({ transition }) {
     <div className="page-transition-overlay" role="dialog" aria-live="polite">
       <div className="transition-modal-box">
         <div className="transition-crest">
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <path d="M3 18h18M4 18l2-10 5 4 5-7 4 13" />
-            <circle cx="12" cy="5" r="1.5" fill="currentColor" />
-            <circle cx="6" cy="8" r="1.5" fill="currentColor" />
-            <circle cx="18" cy="8" r="1.5" fill="currentColor" />
-          </svg>
+          <img src="icons/icon-192.png" alt="FIRE SPICE" className="transition-logo-img" />
         </div>
 
         <div className="transition-title">{transition.title || 'FIRE SPICE'}</div>
@@ -3345,6 +3334,7 @@ function App() {
 
       <footer className="luxury-footer">
         <div className="footer-content">
+          <img src="icons/icon-192.png" alt="FIRE SPICE" style={{ width: '60px', height: '60px', objectFit: 'contain', margin: '0 auto 14px', display: 'block', borderRadius: '12px', filter: 'drop-shadow(0 0 16px rgba(212, 175, 55, 0.4))' }} />
           <h3 className="font-serif" style={{ fontSize: '1.3rem', letterSpacing: '4px', color: 'var(--gold-300)', marginBottom: '8px' }}>
             FIRE SPICE ATELIER CULINAIRE
           </h3>

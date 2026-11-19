@@ -546,33 +546,11 @@ function Header({
     }
   }, /*#__PURE__*/React.createElement("div", {
     className: "crest-logo-icon"
-  }, /*#__PURE__*/React.createElement("svg", {
-    width: "22",
-    height: "22",
-    viewBox: "0 0 24 24",
-    fill: "none",
-    stroke: "currentColor",
-    strokeWidth: "1.8",
-    strokeLinecap: "round",
-    strokeLinejoin: "round"
-  }, /*#__PURE__*/React.createElement("path", {
-    d: "M3 18h18M4 18l2-10 5 4 5-7 4 13"
-  }), /*#__PURE__*/React.createElement("circle", {
-    cx: "12",
-    cy: "5",
-    r: "1.5",
-    fill: "currentColor"
-  }), /*#__PURE__*/React.createElement("circle", {
-    cx: "6",
-    cy: "8",
-    r: "1.5",
-    fill: "currentColor"
-  }), /*#__PURE__*/React.createElement("circle", {
-    cx: "18",
-    cy: "8",
-    r: "1.5",
-    fill: "currentColor"
-  }))), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("h1", {
+  }, /*#__PURE__*/React.createElement("img", {
+    src: "icons/icon-192.png",
+    alt: "FIRE SPICE Logo",
+    className: "brand-logo-img"
+  })), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("h1", {
     className: "brand-title"
   }, "FIRE SPICE"), /*#__PURE__*/React.createElement("p", {
     className: "brand-subtitle"
@@ -1152,6 +1130,26 @@ function HeroSection({
   return /*#__PURE__*/React.createElement("section", {
     className: "hero-section"
   }, /*#__PURE__*/React.createElement("div", {
+    className: "hero-emblem-wrap",
+    style: {
+      display: 'flex',
+      justifyContent: 'center',
+      marginBottom: '16px'
+    }
+  }, /*#__PURE__*/React.createElement("img", {
+    src: "icons/icon-192.png",
+    alt: "FIRE SPICE Emblem",
+    style: {
+      width: '84px',
+      height: '84px',
+      objectFit: 'contain',
+      borderRadius: '18px',
+      border: '1px solid rgba(212, 175, 55, 0.4)',
+      background: 'rgba(6, 6, 8, 0.7)',
+      padding: '6px',
+      boxShadow: '0 0 28px rgba(212, 175, 55, 0.35)'
+    }
+  })), /*#__PURE__*/React.createElement("div", {
     className: "hero-badge"
   }, /*#__PURE__*/React.createElement("span", {
     className: "gold-diamond"
@@ -2060,7 +2058,18 @@ function StepGuestDetails({
     className: "booking-summary-receipt"
   }, /*#__PURE__*/React.createElement("div", {
     className: "summary-crest-header"
-  }, /*#__PURE__*/React.createElement("div", {
+  }, /*#__PURE__*/React.createElement("img", {
+    src: "icons/icon-192.png",
+    alt: "FIRE SPICE",
+    style: {
+      width: '42px',
+      height: '42px',
+      objectFit: 'contain',
+      margin: '0 auto 6px',
+      display: 'block',
+      borderRadius: '8px'
+    }
+  }), /*#__PURE__*/React.createElement("div", {
     className: "summary-brand"
   }, "FIRE SPICE"), /*#__PURE__*/React.createElement("div", {
     style: {
@@ -2284,7 +2293,25 @@ function StepConfirmedPass({
     className: "vip-pass-card"
   }, /*#__PURE__*/React.createElement("div", {
     className: "pass-header"
-  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("h4", {
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: 'flex',
+      alignItems: 'center',
+      gap: '14px'
+    }
+  }, /*#__PURE__*/React.createElement("img", {
+    src: "icons/icon-192.png",
+    alt: "FIRE SPICE",
+    style: {
+      width: '48px',
+      height: '48px',
+      objectFit: 'contain',
+      borderRadius: '10px',
+      border: '1px solid rgba(212, 175, 55, 0.45)',
+      background: '#060608',
+      padding: '2px'
+    }
+  }), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("h4", {
     className: "pass-brand-title"
   }, "FIRE SPICE"), /*#__PURE__*/React.createElement("div", {
     style: {
@@ -2293,7 +2320,7 @@ function StepConfirmedPass({
       color: 'var(--gold-400)',
       textTransform: 'uppercase'
     }
-  }, "Haute Dining Pass")), /*#__PURE__*/React.createElement("div", {
+  }, "Haute Dining Pass"))), /*#__PURE__*/React.createElement("div", {
     style: {
       display: 'flex',
       flexDirection: 'column',
@@ -2780,34 +2807,27 @@ function LockedConsoleGate({
   return /*#__PURE__*/React.createElement("div", {
     className: "console-card booking-gate-locked"
   }, /*#__PURE__*/React.createElement("div", {
-    className: "gate-lock-icon-wrap"
+    className: "gate-lock-icon-wrap",
+    style: {
+      width: '80px',
+      height: '80px',
+      borderRadius: '20px',
+      overflow: 'hidden',
+      padding: '6px'
+    }
   }, /*#__PURE__*/React.createElement("div", {
     className: "gate-lock-glow"
-  }), /*#__PURE__*/React.createElement("svg", {
-    width: "44",
-    height: "44",
-    viewBox: "0 0 24 24",
-    fill: "none",
-    stroke: "currentColor",
-    strokeWidth: "1.8",
-    strokeLinecap: "round",
-    strokeLinejoin: "round",
-    className: "gate-lock-svg"
-  }, /*#__PURE__*/React.createElement("rect", {
-    x: "3",
-    y: "11",
-    width: "18",
-    height: "11",
-    rx: "2",
-    ry: "2"
-  }), /*#__PURE__*/React.createElement("path", {
-    d: "M7 11V7a5 5 0 0 1 10 0v4"
-  }), /*#__PURE__*/React.createElement("circle", {
-    cx: "12",
-    cy: "16",
-    r: "1.5",
-    fill: "currentColor"
-  }))), /*#__PURE__*/React.createElement("div", {
+  }), /*#__PURE__*/React.createElement("img", {
+    src: "icons/icon-192.png",
+    alt: "FIRE SPICE",
+    style: {
+      width: '100%',
+      height: '100%',
+      objectFit: 'contain',
+      position: 'relative',
+      zIndex: 2
+    }
+  })), /*#__PURE__*/React.createElement("div", {
     className: "hero-badge",
     style: {
       marginBottom: '14px'
@@ -3174,35 +3194,16 @@ function AuthModal({
   }, /*#__PURE__*/React.createElement("div", {
     className: "crest-logo-icon",
     style: {
-      margin: '0 auto 12px'
+      margin: '0 auto 12px',
+      width: '56px',
+      height: '56px',
+      borderRadius: '16px'
     }
-  }, /*#__PURE__*/React.createElement("svg", {
-    width: "24",
-    height: "24",
-    viewBox: "0 0 24 24",
-    fill: "none",
-    stroke: "currentColor",
-    strokeWidth: "1.8",
-    strokeLinecap: "round",
-    strokeLinejoin: "round"
-  }, /*#__PURE__*/React.createElement("path", {
-    d: "M3 18h18M4 18l2-10 5 4 5-7 4 13"
-  }), /*#__PURE__*/React.createElement("circle", {
-    cx: "12",
-    cy: "5",
-    r: "1.5",
-    fill: "currentColor"
-  }), /*#__PURE__*/React.createElement("circle", {
-    cx: "6",
-    cy: "8",
-    r: "1.5",
-    fill: "currentColor"
-  }), /*#__PURE__*/React.createElement("circle", {
-    cx: "18",
-    cy: "8",
-    r: "1.5",
-    fill: "currentColor"
-  }))), /*#__PURE__*/React.createElement("div", {
+  }, /*#__PURE__*/React.createElement("img", {
+    src: "icons/icon-192.png",
+    alt: "FIRE SPICE",
+    className: "brand-logo-img"
+  })), /*#__PURE__*/React.createElement("div", {
     className: "hero-badge",
     style: {
       marginBottom: '8px'
@@ -3743,7 +3744,11 @@ function InstallModal({
     onClick: onClose
   }, "✕"), /*#__PURE__*/React.createElement("div", {
     className: "install-crest-badge"
-  }, /*#__PURE__*/React.createElement("span", null, "FS")), /*#__PURE__*/React.createElement("div", {
+  }, /*#__PURE__*/React.createElement("img", {
+    src: "icons/icon-192.png",
+    alt: "FIRE SPICE",
+    className: "install-logo-img"
+  })), /*#__PURE__*/React.createElement("div", {
     className: "hero-badge",
     style: {
       marginBottom: '8px'
@@ -3947,31 +3952,11 @@ function PageTransitionOverlay({
     className: "transition-modal-box"
   }, /*#__PURE__*/React.createElement("div", {
     className: "transition-crest"
-  }, /*#__PURE__*/React.createElement("svg", {
-    width: "28",
-    height: "28",
-    viewBox: "0 0 24 24",
-    fill: "none",
-    stroke: "currentColor",
-    strokeWidth: "2"
-  }, /*#__PURE__*/React.createElement("path", {
-    d: "M3 18h18M4 18l2-10 5 4 5-7 4 13"
-  }), /*#__PURE__*/React.createElement("circle", {
-    cx: "12",
-    cy: "5",
-    r: "1.5",
-    fill: "currentColor"
-  }), /*#__PURE__*/React.createElement("circle", {
-    cx: "6",
-    cy: "8",
-    r: "1.5",
-    fill: "currentColor"
-  }), /*#__PURE__*/React.createElement("circle", {
-    cx: "18",
-    cy: "8",
-    r: "1.5",
-    fill: "currentColor"
-  }))), /*#__PURE__*/React.createElement("div", {
+  }, /*#__PURE__*/React.createElement("img", {
+    src: "icons/icon-192.png",
+    alt: "FIRE SPICE",
+    className: "transition-logo-img"
+  })), /*#__PURE__*/React.createElement("div", {
     className: "transition-title"
   }, transition.title || 'FIRE SPICE'), /*#__PURE__*/React.createElement("div", {
     className: "transition-subtitle"
@@ -4542,7 +4527,19 @@ function App() {
     className: "luxury-footer"
   }, /*#__PURE__*/React.createElement("div", {
     className: "footer-content"
-  }, /*#__PURE__*/React.createElement("h3", {
+  }, /*#__PURE__*/React.createElement("img", {
+    src: "icons/icon-192.png",
+    alt: "FIRE SPICE",
+    style: {
+      width: '60px',
+      height: '60px',
+      objectFit: 'contain',
+      margin: '0 auto 14px',
+      display: 'block',
+      borderRadius: '12px',
+      filter: 'drop-shadow(0 0 16px rgba(212, 175, 55, 0.4))'
+    }
+  }), /*#__PURE__*/React.createElement("h3", {
     className: "font-serif",
     style: {
       fontSize: '1.3rem',
