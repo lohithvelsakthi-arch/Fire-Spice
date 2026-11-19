@@ -704,25 +704,6 @@ function Header({
     title: "Running in Standalone Native App Mode"
   }, /*#__PURE__*/React.createElement("span", null, "✦ APP")), /*#__PURE__*/React.createElement("button", {
     className: "btn-glass btn-glass-sm btn-glass-secondary",
-    onClick: onOpenDatabase,
-    title: "Inspect SQLite Database & Login Audit Trail",
-    style: {
-      display: 'inline-flex',
-      alignItems: 'center',
-      gap: '6px'
-    }
-  }, /*#__PURE__*/React.createElement("span", {
-    style: {
-      width: '7px',
-      height: '7px',
-      borderRadius: '50%',
-      background: '#4ade80',
-      boxShadow: '0 0 8px #4ade80'
-    }
-  }), /*#__PURE__*/React.createElement("span", {
-    className: "nav-btn-text"
-  }, "Database")), /*#__PURE__*/React.createElement("button", {
-    className: "btn-glass btn-glass-sm btn-glass-secondary",
     onClick: onOpenBookings,
     title: "Find Reservation"
   }, /*#__PURE__*/React.createElement("svg", {

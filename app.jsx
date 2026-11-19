@@ -603,16 +603,6 @@ function Header({ onNav, audioEnabled, onToggleAudio, onOpenBookings, currentUse
             </div>
           )}
 
-          <button
-            className="btn-glass btn-glass-sm btn-glass-secondary"
-            onClick={onOpenDatabase}
-            title="Inspect SQLite Database & Login Audit Trail"
-            style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}
-          >
-            <span style={{ width: '7px', height: '7px', borderRadius: '50%', background: '#4ade80', boxShadow: '0 0 8px #4ade80' }}></span>
-            <span className="nav-btn-text">Database</span>
-          </button>
-
           <button className="btn-glass btn-glass-sm btn-glass-secondary" onClick={onOpenBookings} title="Find Reservation">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
             <span className="nav-btn-text">Find Reservation</span>
