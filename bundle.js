@@ -516,7 +516,9 @@ function Header({
   onOpenDatabase,
   onOpenInstall,
   isStandalone,
-  currentStep
+  currentStep,
+  activeView,
+  onSwitchView
 }) {
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
@@ -540,7 +542,7 @@ function Header({
     className: "brand-crest",
     onClick: e => {
       e.preventDefault();
-      onNav(1);
+      if (onSwitchView) onSwitchView('home');else onNav(1);
     }
   }, /*#__PURE__*/React.createElement("div", {
     className: "crest-logo-icon"
@@ -577,9 +579,9 @@ function Header({
   }, "RESTAURANT & LOUNGE"))), /*#__PURE__*/React.createElement("nav", {
     className: "header-nav"
   }, /*#__PURE__*/React.createElement("button", {
-    className: `btn-glass btn-glass-sm ${currentStep === 1 ? 'active' : ''}`,
+    className: `btn-glass btn-glass-sm ${activeView === 'reserve' && currentStep === 1 ? 'active' : ''}`,
     onClick: () => {
-      if (!currentUser) onOpenAuth();else onNav(1);
+      if (!currentUser) onOpenAuth();else if (onSwitchView) onSwitchView('reserve', 1);else onNav(1);
     }
   }, /*#__PURE__*/React.createElement("svg", {
     width: "14",
@@ -611,9 +613,9 @@ function Header({
     x2: "21",
     y2: "10"
   })), "Reserve Table"), /*#__PURE__*/React.createElement("button", {
-    className: `btn-glass btn-glass-sm ${currentStep === 2 ? 'active' : 'btn-glass-secondary'}`,
+    className: `btn-glass btn-glass-sm ${activeView === 'reserve' && currentStep === 2 ? 'active' : 'btn-glass-secondary'}`,
     onClick: () => {
-      if (!currentUser) onOpenAuth();else onNav(2);
+      if (!currentUser) onOpenAuth();else if (onSwitchView) onSwitchView('reserve', 2);else onNav(2);
     }
   }, /*#__PURE__*/React.createElement("svg", {
     width: "14",
@@ -629,12 +631,15 @@ function Header({
   }), /*#__PURE__*/React.createElement("path", {
     d: "M9 21V9"
   })), "Floor Plan"), /*#__PURE__*/React.createElement("button", {
-    className: "btn-glass btn-glass-sm btn-glass-secondary",
+    className: `btn-glass btn-glass-sm ${activeView === 'home' ? 'btn-glass-secondary' : 'btn-glass-secondary'}`,
     onClick: () => {
-      const el = document.getElementById('tastingMenuSection');
-      if (el) el.scrollIntoView({
-        behavior: 'smooth'
-      });
+      if (onSwitchView) onSwitchView('home');
+      setTimeout(() => {
+        const el = document.getElementById('tastingMenuSection');
+        if (el) el.scrollIntoView({
+          behavior: 'smooth'
+        });
+      }, 200);
     }
   }, /*#__PURE__*/React.createElement("svg", {
     width: "14",
@@ -1065,9 +1070,9 @@ function Header({
   }))))), /*#__PURE__*/React.createElement("div", {
     className: "mobile-sub-nav"
   }, /*#__PURE__*/React.createElement("button", {
-    className: `mobile-sub-nav-btn ${currentStep === 1 ? 'active' : ''}`,
+    className: `mobile-sub-nav-btn ${activeView === 'reserve' && currentStep === 1 ? 'active' : ''}`,
     onClick: () => {
-      if (!currentUser) onOpenAuth();else onNav(1);
+      if (!currentUser) onOpenAuth();else if (onSwitchView) onSwitchView('reserve', 1);else onNav(1);
     }
   }, /*#__PURE__*/React.createElement("svg", {
     width: "14",
@@ -1099,9 +1104,9 @@ function Header({
     x2: "21",
     y2: "10"
   })), /*#__PURE__*/React.createElement("span", null, "Reserve")), /*#__PURE__*/React.createElement("button", {
-    className: `mobile-sub-nav-btn ${currentStep === 2 ? 'active' : ''}`,
+    className: `mobile-sub-nav-btn ${activeView === 'reserve' && currentStep === 2 ? 'active' : ''}`,
     onClick: () => {
-      if (!currentUser) onOpenAuth();else onNav(2);
+      if (!currentUser) onOpenAuth();else if (onSwitchView) onSwitchView('reserve', 2);else onNav(2);
     }
   }, /*#__PURE__*/React.createElement("svg", {
     width: "14",
@@ -1117,12 +1122,15 @@ function Header({
   }), /*#__PURE__*/React.createElement("path", {
     d: "M9 21V9"
   })), /*#__PURE__*/React.createElement("span", null, "Floor Plan")), /*#__PURE__*/React.createElement("button", {
-    className: "mobile-sub-nav-btn",
+    className: `mobile-sub-nav-btn ${activeView === 'home' ? 'active' : ''}`,
     onClick: () => {
-      const el = document.getElementById('tastingMenuSection');
-      if (el) el.scrollIntoView({
-        behavior: 'smooth'
-      });
+      if (onSwitchView) onSwitchView('home');
+      setTimeout(() => {
+        const el = document.getElementById('tastingMenuSection');
+        if (el) el.scrollIntoView({
+          behavior: 'smooth'
+        });
+      }, 200);
     }
   }, /*#__PURE__*/React.createElement("svg", {
     width: "14",
@@ -1156,7 +1164,10 @@ function Header({
 /* ==========================================================================
    Component: Hero (Serene, Refined, High-Legibility Ambiance)
    ========================================================================== */
-function HeroSection() {
+function HeroSection({
+  onStartReserve,
+  onExploreMenu
+}) {
   return /*#__PURE__*/React.createElement("section", {
     className: "hero-section"
   }, /*#__PURE__*/React.createElement("div", {
@@ -1172,6 +1183,30 @@ function HeroSection() {
   }, "CULINARY ODYSSEY")), /*#__PURE__*/React.createElement("p", {
     className: "hero-description"
   }, "An evening of gilded serenity, rare vintage pairings, and bespoke private tables."), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: 'flex',
+      justifyContent: 'center',
+      gap: '14px',
+      margin: '22px 0 28px',
+      flexWrap: 'wrap'
+    }
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "btn-glass btn-glass-gold",
+    style: {
+      padding: '12px 28px',
+      fontSize: '0.94rem',
+      letterSpacing: '1px',
+      fontWeight: 700
+    },
+    onClick: onStartReserve
+  }, "✦ Reserve Your Sanctuary Table (Step 1) →"), /*#__PURE__*/React.createElement("button", {
+    className: "btn-glass btn-glass-secondary",
+    style: {
+      padding: '12px 24px',
+      fontSize: '0.94rem'
+    },
+    onClick: onExploreMenu
+  }, "View Tasting Menu")), /*#__PURE__*/React.createElement("div", {
     className: "hero-stats-bar"
   }, /*#__PURE__*/React.createElement("div", {
     className: "hero-stat-pill"
@@ -2155,6 +2190,7 @@ function StepGuestDetails({
 function StepConfirmedPass({
   reservation,
   onReset,
+  onReturnHome,
   onSound,
   currentUser
 }) {
@@ -2229,32 +2265,27 @@ function StepConfirmedPass({
   }, /*#__PURE__*/React.createElement("div", {
     className: "confirmation-view"
   }, /*#__PURE__*/React.createElement("div", {
-    style: {
-      marginBottom: '24px'
-    }
+    className: "pass-page-celebration"
   }, /*#__PURE__*/React.createElement("div", {
-    style: {
-      width: '60px',
-      height: '60px',
-      borderRadius: '50%',
-      background: 'rgba(212, 175, 55, 0.2)',
-      border: '2px solid var(--gold-400)',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      margin: '0 auto 16px',
-      color: 'var(--gold-300)'
-    }
+    className: "pass-success-shield"
   }, /*#__PURE__*/React.createElement("svg", {
-    width: "32",
-    height: "32",
+    width: "36",
+    height: "36",
     viewBox: "0 0 24 24",
     fill: "none",
     stroke: "currentColor",
     strokeWidth: "2.5"
   }, /*#__PURE__*/React.createElement("polyline", {
     points: "20 6 9 17 4 12"
-  }))), /*#__PURE__*/React.createElement("h3", {
+  }))), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: '0.72rem',
+      letterSpacing: '3px',
+      color: 'var(--gold-400)',
+      textTransform: 'uppercase',
+      marginBottom: '6px'
+    }
+  }, "Official Dining Sanctuary Pass"), /*#__PURE__*/React.createElement("h3", {
     className: "font-serif",
     style: {
       fontSize: '2rem',
@@ -2263,10 +2294,12 @@ function StepConfirmedPass({
     }
   }, "RESERVATION CONFIRMED"), /*#__PURE__*/React.createElement("p", {
     style: {
-      fontSize: '0.95rem',
-      color: 'var(--gold-300)'
+      fontSize: '0.92rem',
+      color: 'var(--gold-300)',
+      maxWidth: '520px',
+      margin: '0 auto'
     }
-  }, "We have prepared your gilded sanctuary at FIRE SPICE.")), /*#__PURE__*/React.createElement("div", {
+  }, "We have prepared your gilded sanctuary at FIRE SPICE. A receipt and pass code have been dispatched to your email.")), /*#__PURE__*/React.createElement("div", {
     className: "vip-pass-card"
   }, /*#__PURE__*/React.createElement("div", {
     className: "pass-header"
@@ -2416,7 +2449,21 @@ function StepConfirmedPass({
     y1: "12",
     x2: "19",
     y2: "12"
-  })), "Book Another Table"))));
+  })), "Book Another Table"), onReturnHome && /*#__PURE__*/React.createElement("button", {
+    className: "btn-glass btn-glass-secondary",
+    onClick: onReturnHome
+  }, /*#__PURE__*/React.createElement("svg", {
+    width: "16",
+    height: "16",
+    viewBox: "0 0 24 24",
+    fill: "none",
+    stroke: "currentColor",
+    strokeWidth: "2"
+  }, /*#__PURE__*/React.createElement("path", {
+    d: "M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"
+  }), /*#__PURE__*/React.createElement("polyline", {
+    points: "9 22 9 12 15 12 15 22"
+  })), "Return to Grand Lounge"))));
 }
 
 /* ==========================================================================
@@ -3875,10 +3922,81 @@ function InstallModal({
 }
 
 /* ==========================================================================
+   Component: Cinematic Page Transition Overlay (In-Page Simulation)
+   ========================================================================== */
+function PageTransitionOverlay({
+  transition
+}) {
+  if (!transition || !transition.active) return null;
+  return /*#__PURE__*/React.createElement("div", {
+    className: "page-transition-overlay",
+    role: "dialog",
+    "aria-live": "polite"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "transition-modal-box"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "transition-crest"
+  }, /*#__PURE__*/React.createElement("svg", {
+    width: "28",
+    height: "28",
+    viewBox: "0 0 24 24",
+    fill: "none",
+    stroke: "currentColor",
+    strokeWidth: "2"
+  }, /*#__PURE__*/React.createElement("path", {
+    d: "M3 18h18M4 18l2-10 5 4 5-7 4 13"
+  }), /*#__PURE__*/React.createElement("circle", {
+    cx: "12",
+    cy: "5",
+    r: "1.5",
+    fill: "currentColor"
+  }), /*#__PURE__*/React.createElement("circle", {
+    cx: "6",
+    cy: "8",
+    r: "1.5",
+    fill: "currentColor"
+  }), /*#__PURE__*/React.createElement("circle", {
+    cx: "18",
+    cy: "8",
+    r: "1.5",
+    fill: "currentColor"
+  }))), /*#__PURE__*/React.createElement("div", {
+    className: "transition-title"
+  }, transition.title || 'FIRE SPICE'), /*#__PURE__*/React.createElement("div", {
+    className: "transition-subtitle"
+  }, transition.subtitle), /*#__PURE__*/React.createElement("div", {
+    className: "transition-progress-container"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "transition-progress-bar",
+    style: {
+      width: `${Math.min(100, Math.max(10, transition.progress || 35))}%`
+    }
+  })), /*#__PURE__*/React.createElement("div", {
+    className: "transition-badge"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "transition-dot"
+  }), /*#__PURE__*/React.createElement("span", null, "In-Page Simulation"))));
+}
+
+/* ==========================================================================
    Main Application Root Component
    ========================================================================== */
 function App() {
   const [step, setStep] = useState(1);
+  const [activeView, setActiveView] = useState(() => {
+    try {
+      const stored = localStorage.getItem('firespice_user');
+      return stored ? 'reserve' : 'home';
+    } catch (e) {
+      return 'home';
+    }
+  });
+  const [pageTransition, setPageTransition] = useState({
+    active: false,
+    title: '',
+    subtitle: '',
+    progress: 0
+  });
   const [audioEnabled, setAudioEnabled] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
   const [currentUser, setCurrentUser] = useState(() => {
@@ -3971,6 +4089,80 @@ function App() {
   const onSound = useCallback(type => {
     playChime(audioEnabled, type);
   }, [audioEnabled]);
+
+  // Unified Interactive Page Simulation Transition Router
+  const navigateToPage = useCallback((targetView, options = {}) => {
+    const {
+      title = 'TRANSITIONING SANCTUARY',
+      subtitle = 'Entering requested section...',
+      step = 1,
+      duration = 850,
+      stepsSequence = null
+    } = options;
+    if (stepsSequence && stepsSequence.length) {
+      // Multi-phase celebratory transition for table reservation
+      setPageTransition({
+        active: true,
+        title,
+        subtitle: stepsSequence[0],
+        progress: 30
+      });
+      onSound('confirm');
+      setTimeout(() => {
+        setPageTransition(prev => ({
+          ...prev,
+          subtitle: stepsSequence[1],
+          progress: 65
+        }));
+        onSound('select');
+      }, 600);
+      setTimeout(() => {
+        setPageTransition(prev => ({
+          ...prev,
+          subtitle: stepsSequence[2],
+          progress: 95
+        }));
+        onSound('confirm');
+      }, 1200);
+      setTimeout(() => {
+        setPageTransition({
+          active: false,
+          title: '',
+          subtitle: '',
+          progress: 0
+        });
+        setActiveView(targetView);
+        if (step) setStep(step);
+        window.scrollTo({
+          top: 0,
+          behavior: 'instant'
+        });
+      }, 1800);
+    } else {
+      // Single-phase smooth page transition
+      setPageTransition({
+        active: true,
+        title,
+        subtitle,
+        progress: 80
+      });
+      onSound('select');
+      setTimeout(() => {
+        setPageTransition({
+          active: false,
+          title: '',
+          subtitle: '',
+          progress: 0
+        });
+        setActiveView(targetView);
+        if (step) setStep(step);
+        window.scrollTo({
+          top: 0,
+          behavior: 'instant'
+        });
+      }, duration);
+    }
+  }, [onSound]);
   const handleLogin = user => {
     setCurrentUser(user);
     try {
@@ -3991,6 +4183,15 @@ function App() {
         notes: user.notes || prev.guestInfo.notes
       }
     }));
+    setAuthModalOpen(false);
+
+    // ✦ Interactive In-Page Simulation: Load Table Reservation Page!
+    navigateToPage('reserve', {
+      title: 'PATRON AUTHENTICATED',
+      subtitle: `Welcome, ${user.firstName || user.name || 'Patron'} • Loading Table Reservation Page (Step 1)...`,
+      step: 1,
+      duration: 950
+    });
   };
   const handleLogout = () => {
     setCurrentUser(null);
@@ -3998,6 +4199,7 @@ function App() {
       localStorage.removeItem('firespice_user');
     } catch (e) {}
     onSound('click');
+    setActiveView('home');
     setAuthModalOpen(true);
   };
   const handleConfirmReservation = (guestInfo, total) => {
@@ -4030,15 +4232,20 @@ function App() {
     // Send branded booking confirmation email to customer (non-blocking)
     sendBookingConfirmation(res);
     setConfirmedReservation(res);
-    setStep(5);
-    onSound('confirm');
+
+    // ✦ Interactive Transition: Moving to Another Page Simulation & Showing Pass!
+    navigateToPage('pass', {
+      title: 'TABLE SANCTUARY SECURED',
+      stepsSequence: ['✦ Allocating Table & Assigning Dedicated Sommelier...', '✦ Generating Cryptographic VIP Pass & Maître d\' Seal...', '✦ Confirmation Email Dispatched • Moving to Official Pass Page...'],
+      step: 5
+    });
   };
   const nextStep = () => {
     if (step < 4) {
       setStep(s => s + 1);
       onSound('click');
-      const el = document.getElementById('bookingConsole');
-      if (el) el.scrollIntoView({
+      window.scrollTo({
+        top: 0,
         behavior: 'smooth'
       });
     }
@@ -4047,8 +4254,8 @@ function App() {
     if (step > 1) {
       setStep(s => s - 1);
       onSound('click');
-      const el = document.getElementById('bookingConsole');
-      if (el) el.scrollIntoView({
+      window.scrollTo({
+        top: 0,
         behavior: 'smooth'
       });
     }
@@ -4058,13 +4265,12 @@ function App() {
   }, /*#__PURE__*/React.createElement(RollingBackground, {
     speed: speed,
     dim: dim
+  }), /*#__PURE__*/React.createElement(PageTransitionOverlay, {
+    transition: pageTransition
   }), /*#__PURE__*/React.createElement(Header, {
-    onNav: s => {
-      if (!currentUser) setAuthModalOpen(true);else {
-        setStep(s);
-        onSound('click');
-      }
-    },
+    onNav: s => navigateToPage('reserve', {
+      step: s
+    }),
     audioEnabled: audioEnabled,
     onToggleAudio: () => {
       setAudioEnabled(a => !a);
@@ -4089,10 +4295,77 @@ function App() {
       onSound('click');
     },
     isStandalone: isStandalone,
-    currentStep: step
-  }), /*#__PURE__*/React.createElement(HeroSection, null), /*#__PURE__*/React.createElement("main", {
+    currentStep: step,
+    activeView: activeView,
+    onSwitchView: (view, targetStep = 1) => navigateToPage(view, {
+      step: targetStep
+    })
+  }), activeView === 'home' && /*#__PURE__*/React.createElement("div", {
+    className: "page-view-wrapper"
+  }, /*#__PURE__*/React.createElement(HeroSection, {
+    onStartReserve: () => {
+      if (!currentUser) setAuthModalOpen(true);else navigateToPage('reserve', {
+        step: 1,
+        title: 'ENTERING SANCTUARY',
+        subtitle: 'Loading Table Selection Console (Step 1)...'
+      });
+    },
+    onExploreMenu: () => {
+      const el = document.getElementById('tastingMenuSection');
+      if (el) el.scrollIntoView({
+        behavior: 'smooth'
+      });
+    }
+  }), /*#__PURE__*/React.createElement("div", {
+    className: "home-reserve-callout"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "home-callout-text"
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: '0.72rem',
+      color: 'var(--gold-400)',
+      letterSpacing: '2px',
+      textTransform: 'uppercase',
+      marginBottom: '6px'
+    }
+  }, "✦ Guaranteed Seating & Sommelier Pairings"), /*#__PURE__*/React.createElement("h3", null, "READY FOR HAUTE GASTRONOMIE?"), /*#__PURE__*/React.createElement("p", null, "Experience The Golden Atrium, Velvet Sommelier Booths, or the Skyline Royal Terrace.")), /*#__PURE__*/React.createElement("button", {
+    className: "btn-glass btn-glass-gold",
+    onClick: () => {
+      if (!currentUser) setAuthModalOpen(true);else navigateToPage('reserve', {
+        step: 1,
+        title: 'ENTERING SANCTUARY',
+        subtitle: 'Loading Table Selection Console (Step 1)...'
+      });
+    },
+    style: {
+      whiteSpace: 'nowrap',
+      padding: '14px 28px',
+      fontWeight: 700
+    }
+  }, "Reserve a Table Sanctuary →")), /*#__PURE__*/React.createElement(MenuShowcase, {
+    onSound: onSound
+  })), activeView === 'reserve' && /*#__PURE__*/React.createElement("div", {
+    className: "page-view-wrapper"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "sim-page-header"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "sim-page-info"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "sim-page-tag"
+  }, /*#__PURE__*/React.createElement("span", null, "✦"), " PAGE 1 OF 2 • RESERVATION CONSOLE"), /*#__PURE__*/React.createElement("h2", {
+    className: "sim-page-title"
+  }, "TABLE RESERVATION SANCTUARY")), /*#__PURE__*/React.createElement("button", {
+    className: "sim-back-btn",
+    onClick: () => navigateToPage('home', {
+      title: 'RETURNING',
+      subtitle: 'Returning to Grand Lounge & Menu...'
+    })
+  }, "← Return to Grand Lounge")), /*#__PURE__*/React.createElement("main", {
     className: "booking-console-container",
-    id: "bookingConsole"
+    id: "bookingConsole",
+    style: {
+      marginTop: 0
+    }
   }, !currentUser ? /*#__PURE__*/React.createElement(LockedConsoleGate, {
     onOpenGoogleAuth: () => {
       setAuthModalOpen(true);
@@ -4137,19 +4410,7 @@ function App() {
       setAuthModalOpen(true);
       onSound('click');
     }
-  }), step === 5 && /*#__PURE__*/React.createElement(StepConfirmedPass, {
-    reservation: confirmedReservation,
-    onReset: () => {
-      setBooking(prev => ({
-        ...prev,
-        addons: []
-      }));
-      setStep(1);
-      onSound('click');
-    },
-    onSound: onSound,
-    currentUser: currentUser
-  }), step < 5 && /*#__PURE__*/React.createElement("div", {
+  }), /*#__PURE__*/React.createElement("div", {
     className: "console-nav-footer"
   }, /*#__PURE__*/React.createElement("button", {
     className: "btn-glass btn-glass-secondary",
@@ -4169,14 +4430,71 @@ function App() {
     style: {
       width: '120px'
     }
-  })))), /*#__PURE__*/React.createElement(MenuShowcase, {
-    onSound: onSound
-  }), /*#__PURE__*/React.createElement(BookingsModal, {
+  }))))), activeView === 'pass' && /*#__PURE__*/React.createElement("div", {
+    className: "page-view-wrapper"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "sim-page-header"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "sim-page-info"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "sim-page-tag",
+    style: {
+      color: '#4ade80'
+    }
+  }, /*#__PURE__*/React.createElement("span", {
+    style: {
+      width: '6px',
+      height: '6px',
+      borderRadius: '50%',
+      background: '#4ade80',
+      display: 'inline-block'
+    }
+  }), "PAGE 2 OF 2 • OFFICIAL CONFIRMATION PASS"), /*#__PURE__*/React.createElement("h2", {
+    className: "sim-page-title"
+  }, "VIP GUEST SANCTUARY PASS")), /*#__PURE__*/React.createElement("button", {
+    className: "sim-back-btn",
+    onClick: () => navigateToPage('home', {
+      title: 'RETURNING',
+      subtitle: 'Returning to Grand Lounge...'
+    })
+  }, "← Return to Grand Lounge")), /*#__PURE__*/React.createElement("main", {
+    className: "booking-console-container",
+    style: {
+      marginTop: 0
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "console-card"
+  }, /*#__PURE__*/React.createElement(StepConfirmedPass, {
+    reservation: confirmedReservation,
+    onReset: () => {
+      setBooking(prev => ({
+        ...prev,
+        addons: []
+      }));
+      navigateToPage('reserve', {
+        step: 1,
+        title: 'NEW RESERVATION',
+        subtitle: 'Preparing New Table Reservation (Step 1)...'
+      });
+    },
+    onReturnHome: () => navigateToPage('home', {
+      title: 'RETURNING',
+      subtitle: 'Returning to Grand Lounge...'
+    }),
+    onSound: onSound,
+    currentUser: currentUser
+  })))), /*#__PURE__*/React.createElement(BookingsModal, {
     isOpen: modalOpen,
     onClose: () => setModalOpen(false),
     onViewPass: res => {
       setConfirmedReservation(res);
-      setStep(5);
+      setModalOpen(false);
+      navigateToPage('pass', {
+        title: 'RETRIEVING DINING PASS',
+        subtitle: `Opening Pass for ${res.tableName} (${res.code})...`,
+        step: 5,
+        duration: 750
+      });
     },
     onSound: onSound
   }), /*#__PURE__*/React.createElement(AuthModal, {

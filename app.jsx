@@ -514,7 +514,7 @@ function RollingBackground({ speed, dim }) {
 /* ==========================================================================
    Component: Header
    ========================================================================== */
-function Header({ onNav, audioEnabled, onToggleAudio, onOpenBookings, currentUser, onOpenAuth, onLogout, onOpenDatabase, onOpenInstall, isStandalone, currentStep }) {
+function Header({ onNav, audioEnabled, onToggleAudio, onOpenBookings, currentUser, onOpenAuth, onLogout, onOpenDatabase, onOpenInstall, isStandalone, currentStep, activeView, onSwitchView }) {
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
 
@@ -534,7 +534,7 @@ function Header({ onNav, audioEnabled, onToggleAudio, onOpenBookings, currentUse
   return (
     <>
       <header className="luxury-header">
-        <a href="#" className="brand-crest" onClick={(e) => { e.preventDefault(); onNav(1); }}>
+        <a href="#" className="brand-crest" onClick={(e) => { e.preventDefault(); if (onSwitchView) onSwitchView('home'); else onNav(1); }}>
           <div className="crest-logo-icon">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
               <path d="M3 18h18M4 18l2-10 5 4 5-7 4 13" />
@@ -551,9 +551,10 @@ function Header({ onNav, audioEnabled, onToggleAudio, onOpenBookings, currentUse
 
         <nav className="header-nav">
           <button
-            className={`btn-glass btn-glass-sm ${currentStep === 1 ? 'active' : ''}`}
+            className={`btn-glass btn-glass-sm ${activeView === 'reserve' && currentStep === 1 ? 'active' : ''}`}
             onClick={() => {
               if (!currentUser) onOpenAuth();
+              else if (onSwitchView) onSwitchView('reserve', 1);
               else onNav(1);
             }}
           >
@@ -561,18 +562,22 @@ function Header({ onNav, audioEnabled, onToggleAudio, onOpenBookings, currentUse
             Reserve Table
           </button>
           <button
-            className={`btn-glass btn-glass-sm ${currentStep === 2 ? 'active' : 'btn-glass-secondary'}`}
+            className={`btn-glass btn-glass-sm ${activeView === 'reserve' && currentStep === 2 ? 'active' : 'btn-glass-secondary'}`}
             onClick={() => {
               if (!currentUser) onOpenAuth();
+              else if (onSwitchView) onSwitchView('reserve', 2);
               else onNav(2);
             }}
           >
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 3h18v18H3z"></path><path d="M3 9h18"></path><path d="M9 21V9"></path></svg>
             Floor Plan
           </button>
-          <button className="btn-glass btn-glass-sm btn-glass-secondary" onClick={() => {
-            const el = document.getElementById('tastingMenuSection');
-            if (el) el.scrollIntoView({ behavior: 'smooth' });
+          <button className={`btn-glass btn-glass-sm ${activeView === 'home' ? 'btn-glass-secondary' : 'btn-glass-secondary'}`} onClick={() => {
+            if (onSwitchView) onSwitchView('home');
+            setTimeout(() => {
+              const el = document.getElementById('tastingMenuSection');
+              if (el) el.scrollIntoView({ behavior: 'smooth' });
+            }, 200);
           }}>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 8h1a4 4 0 0 1 0 8h-1"></path><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"></path><line x1="6" y1="1" x2="6" y2="4"></line><line x1="10" y1="1" x2="10" y2="4"></line><line x1="14" y1="1" x2="14" y2="4"></line></svg>
             Tasting Menu
@@ -782,9 +787,10 @@ function Header({ onNav, audioEnabled, onToggleAudio, onOpenBookings, currentUse
     </header>
     <div className="mobile-sub-nav">
       <button
-        className={`mobile-sub-nav-btn ${currentStep === 1 ? 'active' : ''}`}
+        className={`mobile-sub-nav-btn ${activeView === 'reserve' && currentStep === 1 ? 'active' : ''}`}
         onClick={() => {
           if (!currentUser) onOpenAuth();
+          else if (onSwitchView) onSwitchView('reserve', 1);
           else onNav(1);
         }}
       >
@@ -792,9 +798,10 @@ function Header({ onNav, audioEnabled, onToggleAudio, onOpenBookings, currentUse
         <span>Reserve</span>
       </button>
       <button
-        className={`mobile-sub-nav-btn ${currentStep === 2 ? 'active' : ''}`}
+        className={`mobile-sub-nav-btn ${activeView === 'reserve' && currentStep === 2 ? 'active' : ''}`}
         onClick={() => {
           if (!currentUser) onOpenAuth();
+          else if (onSwitchView) onSwitchView('reserve', 2);
           else onNav(2);
         }}
       >
@@ -802,10 +809,13 @@ function Header({ onNav, audioEnabled, onToggleAudio, onOpenBookings, currentUse
         <span>Floor Plan</span>
       </button>
       <button
-        className="mobile-sub-nav-btn"
+        className={`mobile-sub-nav-btn ${activeView === 'home' ? 'active' : ''}`}
         onClick={() => {
-          const el = document.getElementById('tastingMenuSection');
-          if (el) el.scrollIntoView({ behavior: 'smooth' });
+          if (onSwitchView) onSwitchView('home');
+          setTimeout(() => {
+            const el = document.getElementById('tastingMenuSection');
+            if (el) el.scrollIntoView({ behavior: 'smooth' });
+          }, 200);
         }}
       >
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 8h1a4 4 0 0 1 0 8h-1"></path><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"></path><line x1="6" y1="1" x2="6" y2="4"></line><line x1="10" y1="1" x2="10" y2="4"></line><line x1="14" y1="1" x2="14" y2="4"></line></svg>
@@ -819,7 +829,7 @@ function Header({ onNav, audioEnabled, onToggleAudio, onOpenBookings, currentUse
 /* ==========================================================================
    Component: Hero (Serene, Refined, High-Legibility Ambiance)
    ========================================================================== */
-function HeroSection() {
+function HeroSection({ onStartReserve, onExploreMenu }) {
   return (
     <section className="hero-section">
       <div className="hero-badge">
@@ -835,6 +845,23 @@ function HeroSection() {
       <p className="hero-description">
         An evening of gilded serenity, rare vintage pairings, and bespoke private tables.
       </p>
+
+      <div style={{ display: 'flex', justifyContent: 'center', gap: '14px', margin: '22px 0 28px', flexWrap: 'wrap' }}>
+        <button
+          className="btn-glass btn-glass-gold"
+          style={{ padding: '12px 28px', fontSize: '0.94rem', letterSpacing: '1px', fontWeight: 700 }}
+          onClick={onStartReserve}
+        >
+          ✦ Reserve Your Sanctuary Table (Step 1) →
+        </button>
+        <button
+          className="btn-glass btn-glass-secondary"
+          style={{ padding: '12px 24px', fontSize: '0.94rem' }}
+          onClick={onExploreMenu}
+        >
+          View Tasting Menu
+        </button>
+      </div>
 
       <div className="hero-stats-bar">
         <div className="hero-stat-pill">
@@ -1494,7 +1521,7 @@ function StepGuestDetails({ booking, setBooking, onConfirm, onSound, currentUser
 /* ==========================================================================
    Component: Step 5 - Confirmed VIP Pass
    ========================================================================== */
-function StepConfirmedPass({ reservation, onReset, onSound, currentUser }) {
+function StepConfirmedPass({ reservation, onReset, onReturnHome, onSound, currentUser }) {
   const canvasRef = useRef(null);
 
   useEffect(() => {
@@ -1582,15 +1609,18 @@ function StepConfirmedPass({ reservation, onReset, onSound, currentUser }) {
   return (
     <div className="step-content-pane active">
       <div className="confirmation-view">
-        <div style={{ marginBottom: '24px' }}>
-          <div style={{ width: '60px', height: '60px', borderRadius: '50%', background: 'rgba(212, 175, 55, 0.2)', border: '2px solid var(--gold-400)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px', color: 'var(--gold-300)' }}>
-            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+        <div className="pass-page-celebration">
+          <div className="pass-success-shield">
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+          </div>
+          <div style={{ fontSize: '0.72rem', letterSpacing: '3px', color: 'var(--gold-400)', textTransform: 'uppercase', marginBottom: '6px' }}>
+            Official Dining Sanctuary Pass
           </div>
           <h3 className="font-serif" style={{ fontSize: '2rem', color: '#fff', marginBottom: '6px' }}>
             RESERVATION CONFIRMED
           </h3>
-          <p style={{ fontSize: '0.95rem', color: 'var(--gold-300)' }}>
-            We have prepared your gilded sanctuary at FIRE SPICE.
+          <p style={{ fontSize: '0.92rem', color: 'var(--gold-300)', maxWidth: '520px', margin: '0 auto' }}>
+            We have prepared your gilded sanctuary at FIRE SPICE. A receipt and pass code have been dispatched to your email.
           </p>
         </div>
 
@@ -1651,6 +1681,12 @@ function StepConfirmedPass({ reservation, onReset, onSound, currentUser }) {
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
             Book Another Table
           </button>
+          {onReturnHome && (
+            <button className="btn-glass btn-glass-secondary" onClick={onReturnHome}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+              Return to Grand Lounge
+            </button>
+          )}
         </div>
       </div>
     </div>
@@ -2714,10 +2750,63 @@ function InstallModal({ isOpen, onClose, onInstall, isIos, onSound }) {
 }
 
 /* ==========================================================================
+   Component: Cinematic Page Transition Overlay (In-Page Simulation)
+   ========================================================================== */
+function PageTransitionOverlay({ transition }) {
+  if (!transition || !transition.active) return null;
+
+  return (
+    <div className="page-transition-overlay" role="dialog" aria-live="polite">
+      <div className="transition-modal-box">
+        <div className="transition-crest">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <path d="M3 18h18M4 18l2-10 5 4 5-7 4 13" />
+            <circle cx="12" cy="5" r="1.5" fill="currentColor" />
+            <circle cx="6" cy="8" r="1.5" fill="currentColor" />
+            <circle cx="18" cy="8" r="1.5" fill="currentColor" />
+          </svg>
+        </div>
+
+        <div className="transition-title">{transition.title || 'FIRE SPICE'}</div>
+        <div className="transition-subtitle">{transition.subtitle}</div>
+
+        <div className="transition-progress-container">
+          <div
+            className="transition-progress-bar"
+            style={{ width: `${Math.min(100, Math.max(10, transition.progress || 35))}%` }}
+          />
+        </div>
+
+        <div className="transition-badge">
+          <span className="transition-dot"></span>
+          <span>In-Page Simulation</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ==========================================================================
    Main Application Root Component
    ========================================================================== */
 function App() {
   const [step, setStep] = useState(1);
+  const [activeView, setActiveView] = useState(() => {
+    try {
+      const stored = localStorage.getItem('firespice_user');
+      return stored ? 'reserve' : 'home';
+    } catch (e) {
+      return 'home';
+    }
+  });
+
+  const [pageTransition, setPageTransition] = useState({
+    active: false,
+    title: '',
+    subtitle: '',
+    progress: 0
+  });
+
   const [audioEnabled, setAudioEnabled] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
   const [currentUser, setCurrentUser] = useState(() => {
@@ -2809,6 +2898,69 @@ function App() {
     playChime(audioEnabled, type);
   }, [audioEnabled]);
 
+  // Unified Interactive Page Simulation Transition Router
+  const navigateToPage = useCallback((targetView, options = {}) => {
+    const {
+      title = 'TRANSITIONING SANCTUARY',
+      subtitle = 'Entering requested section...',
+      step = 1,
+      duration = 850,
+      stepsSequence = null
+    } = options;
+
+    if (stepsSequence && stepsSequence.length) {
+      // Multi-phase celebratory transition for table reservation
+      setPageTransition({
+        active: true,
+        title,
+        subtitle: stepsSequence[0],
+        progress: 30
+      });
+      onSound('confirm');
+
+      setTimeout(() => {
+        setPageTransition(prev => ({
+          ...prev,
+          subtitle: stepsSequence[1],
+          progress: 65
+        }));
+        onSound('select');
+      }, 600);
+
+      setTimeout(() => {
+        setPageTransition(prev => ({
+          ...prev,
+          subtitle: stepsSequence[2],
+          progress: 95
+        }));
+        onSound('confirm');
+      }, 1200);
+
+      setTimeout(() => {
+        setPageTransition({ active: false, title: '', subtitle: '', progress: 0 });
+        setActiveView(targetView);
+        if (step) setStep(step);
+        window.scrollTo({ top: 0, behavior: 'instant' });
+      }, 1800);
+    } else {
+      // Single-phase smooth page transition
+      setPageTransition({
+        active: true,
+        title,
+        subtitle,
+        progress: 80
+      });
+      onSound('select');
+
+      setTimeout(() => {
+        setPageTransition({ active: false, title: '', subtitle: '', progress: 0 });
+        setActiveView(targetView);
+        if (step) setStep(step);
+        window.scrollTo({ top: 0, behavior: 'instant' });
+      }, duration);
+    }
+  }, [onSound]);
+
   const handleLogin = (user) => {
     setCurrentUser(user);
     try {
@@ -2829,6 +2981,16 @@ function App() {
         notes: user.notes || prev.guestInfo.notes
       }
     }));
+
+    setAuthModalOpen(false);
+
+    // ✦ Interactive In-Page Simulation: Load Table Reservation Page!
+    navigateToPage('reserve', {
+      title: 'PATRON AUTHENTICATED',
+      subtitle: `Welcome, ${user.firstName || user.name || 'Patron'} • Loading Table Reservation Page (Step 1)...`,
+      step: 1,
+      duration: 950
+    });
   };
 
   const handleLogout = () => {
@@ -2837,6 +2999,7 @@ function App() {
       localStorage.removeItem('firespice_user');
     } catch (e) {}
     onSound('click');
+    setActiveView('home');
     setAuthModalOpen(true);
   };
 
@@ -2872,16 +3035,24 @@ function App() {
     sendBookingConfirmation(res);
 
     setConfirmedReservation(res);
-    setStep(5);
-    onSound('confirm');
+
+    // ✦ Interactive Transition: Moving to Another Page Simulation & Showing Pass!
+    navigateToPage('pass', {
+      title: 'TABLE SANCTUARY SECURED',
+      stepsSequence: [
+        '✦ Allocating Table & Assigning Dedicated Sommelier...',
+        '✦ Generating Cryptographic VIP Pass & Maître d\' Seal...',
+        '✦ Confirmation Email Dispatched • Moving to Official Pass Page...'
+      ],
+      step: 5
+    });
   };
 
   const nextStep = () => {
     if (step < 4) {
       setStep(s => s + 1);
       onSound('click');
-      const el = document.getElementById('bookingConsole');
-      if (el) el.scrollIntoView({ behavior: 'smooth' });
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
 
@@ -2889,8 +3060,7 @@ function App() {
     if (step > 1) {
       setStep(s => s - 1);
       onSound('click');
-      const el = document.getElementById('bookingConsole');
-      if (el) el.scrollIntoView({ behavior: 'smooth' });
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
 
@@ -2898,11 +3068,10 @@ function App() {
     <div className="app-wrapper">
       <RollingBackground speed={speed} dim={dim} />
 
+      <PageTransitionOverlay transition={pageTransition} />
+
       <Header
-        onNav={(s) => {
-          if (!currentUser) setAuthModalOpen(true);
-          else { setStep(s); onSound('click'); }
-        }}
+        onNav={(s) => navigateToPage('reserve', { step: s })}
         audioEnabled={audioEnabled}
         onToggleAudio={() => { setAudioEnabled(a => !a); onSound('click'); }}
         onOpenBookings={() => { setModalOpen(true); onSound('click'); }}
@@ -2913,89 +3082,172 @@ function App() {
         onOpenInstall={() => { setInstallModalOpen(true); onSound('click'); }}
         isStandalone={isStandalone}
         currentStep={step}
+        activeView={activeView}
+        onSwitchView={(view, targetStep = 1) => navigateToPage(view, { step: targetStep })}
       />
 
-      <HeroSection />
-
-      <main className="booking-console-container" id="bookingConsole">
-        {!currentUser ? (
-          <LockedConsoleGate
-            onOpenGoogleAuth={() => { setAuthModalOpen(true); onSound('click'); }}
-            onOpenEmailAuth={() => { setAuthModalOpen(true); onSound('click'); }}
+      {/* ── PAGE VIEW 1: GRAND LOUNGE & TASTING MENU (HOME) ── */}
+      {activeView === 'home' && (
+        <div className="page-view-wrapper">
+          <HeroSection
+            onStartReserve={() => {
+              if (!currentUser) setAuthModalOpen(true);
+              else navigateToPage('reserve', { step: 1, title: 'ENTERING SANCTUARY', subtitle: 'Loading Table Selection Console (Step 1)...' });
+            }}
+            onExploreMenu={() => {
+              const el = document.getElementById('tastingMenuSection');
+              if (el) el.scrollIntoView({ behavior: 'smooth' });
+            }}
           />
-        ) : (
-          <div className="console-card">
-            <Stepper
-              currentStep={step}
-              onStepClick={(s) => { setStep(s); onSound('click'); }}
-              booking={booking}
-            />
 
-            {step === 1 && <StepDateTime booking={booking} setBooking={setBooking} onSound={onSound} />}
-            {step === 2 && <StepFloorPlan booking={booking} setBooking={setBooking} onSound={onSound} onProceed={() => { setStep(3); onSound('select'); }} />}
-            {step === 3 && <StepEnhancements booking={booking} setBooking={setBooking} onSound={onSound} />}
-            {step === 4 && (
-              <StepGuestDetails
-                booking={booking}
-                setBooking={setBooking}
-                onConfirm={handleConfirmReservation}
-                onSound={onSound}
-                currentUser={currentUser}
-                onOpenAuth={() => { setAuthModalOpen(true); onSound('click'); }}
+          <div className="home-reserve-callout">
+            <div className="home-callout-text">
+              <div style={{ fontSize: '0.72rem', color: 'var(--gold-400)', letterSpacing: '2px', textTransform: 'uppercase', marginBottom: '6px' }}>
+                ✦ Guaranteed Seating & Sommelier Pairings
+              </div>
+              <h3>READY FOR HAUTE GASTRONOMIE?</h3>
+              <p>Experience The Golden Atrium, Velvet Sommelier Booths, or the Skyline Royal Terrace.</p>
+            </div>
+            <button
+              className="btn-glass btn-glass-gold"
+              onClick={() => {
+                if (!currentUser) setAuthModalOpen(true);
+                else navigateToPage('reserve', { step: 1, title: 'ENTERING SANCTUARY', subtitle: 'Loading Table Selection Console (Step 1)...' });
+              }}
+              style={{ whiteSpace: 'nowrap', padding: '14px 28px', fontWeight: 700 }}
+            >
+              Reserve a Table Sanctuary →
+            </button>
+          </div>
+
+          <MenuShowcase onSound={onSound} />
+        </div>
+      )}
+
+      {/* ── PAGE VIEW 2: TABLE RESERVATION CONSOLE (PAGE 1 OF 2) ── */}
+      {activeView === 'reserve' && (
+        <div className="page-view-wrapper">
+          <div className="sim-page-header">
+            <div className="sim-page-info">
+              <span className="sim-page-tag">
+                <span>✦</span> PAGE 1 OF 2 • RESERVATION CONSOLE
+              </span>
+              <h2 className="sim-page-title">TABLE RESERVATION SANCTUARY</h2>
+            </div>
+            <button
+              className="sim-back-btn"
+              onClick={() => navigateToPage('home', { title: 'RETURNING', subtitle: 'Returning to Grand Lounge & Menu...' })}
+            >
+              ← Return to Grand Lounge
+            </button>
+          </div>
+
+          <main className="booking-console-container" id="bookingConsole" style={{ marginTop: 0 }}>
+            {!currentUser ? (
+              <LockedConsoleGate
+                onOpenGoogleAuth={() => { setAuthModalOpen(true); onSound('click'); }}
+                onOpenEmailAuth={() => { setAuthModalOpen(true); onSound('click'); }}
               />
+            ) : (
+              <div className="console-card">
+                <Stepper
+                  currentStep={step}
+                  onStepClick={(s) => { setStep(s); onSound('click'); }}
+                  booking={booking}
+                />
+
+                {step === 1 && <StepDateTime booking={booking} setBooking={setBooking} onSound={onSound} />}
+                {step === 2 && <StepFloorPlan booking={booking} setBooking={setBooking} onSound={onSound} onProceed={() => { setStep(3); onSound('select'); }} />}
+                {step === 3 && <StepEnhancements booking={booking} setBooking={setBooking} onSound={onSound} />}
+                {step === 4 && (
+                  <StepGuestDetails
+                    booking={booking}
+                    setBooking={setBooking}
+                    onConfirm={handleConfirmReservation}
+                    onSound={onSound}
+                    currentUser={currentUser}
+                    onOpenAuth={() => { setAuthModalOpen(true); onSound('click'); }}
+                  />
+                )}
+
+                <div className="console-nav-footer">
+                  <button
+                    className="btn-glass btn-glass-secondary"
+                    style={{ visibility: step === 1 ? 'hidden' : 'visible' }}
+                    onClick={prevStep}
+                  >
+                    ← Back
+                  </button>
+
+                  <div style={{ fontSize: '0.82rem', color: 'var(--text-dim)' }}>
+                    {step === 1 && 'Complimentary cancellation up to 24 hours prior to service.'}
+                    {step === 2 && 'All tables guaranteed for 2.5 hours of unhurried dining.'}
+                    {step === 3 && 'Sommelier pairings are curated to your course selection.'}
+                    {step === 4 && '✦ Verified Google/Email table reservation guarantee applied.'}
+                  </div>
+
+                  {step < 4 ? (
+                    <button className="btn-glass btn-glass-gold" onClick={nextStep}>
+                      {step === 1 ? 'Continue to Table Selection →' : step === 2 ? 'Continue to Enhancements →' : 'Proceed to Guest Details →'}
+                    </button>
+                  ) : (
+                    <div style={{ width: '120px' }} />
+                  )}
+                </div>
+              </div>
             )}
-            {step === 5 && (
+          </main>
+        </div>
+      )}
+
+      {/* ── PAGE VIEW 3: OFFICIAL VIP CONFIRMATION PASS (PAGE 2 OF 2) ── */}
+      {activeView === 'pass' && (
+        <div className="page-view-wrapper">
+          <div className="sim-page-header">
+            <div className="sim-page-info">
+              <span className="sim-page-tag" style={{ color: '#4ade80' }}>
+                <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#4ade80', display: 'inline-block' }}></span>
+                PAGE 2 OF 2 • OFFICIAL CONFIRMATION PASS
+              </span>
+              <h2 className="sim-page-title">VIP GUEST SANCTUARY PASS</h2>
+            </div>
+            <button
+              className="sim-back-btn"
+              onClick={() => navigateToPage('home', { title: 'RETURNING', subtitle: 'Returning to Grand Lounge...' })}
+            >
+              ← Return to Grand Lounge
+            </button>
+          </div>
+
+          <main className="booking-console-container" style={{ marginTop: 0 }}>
+            <div className="console-card">
               <StepConfirmedPass
                 reservation={confirmedReservation}
                 onReset={() => {
                   setBooking(prev => ({ ...prev, addons: [] }));
-                  setStep(1);
-                  onSound('click');
+                  navigateToPage('reserve', { step: 1, title: 'NEW RESERVATION', subtitle: 'Preparing New Table Reservation (Step 1)...' });
                 }}
+                onReturnHome={() => navigateToPage('home', { title: 'RETURNING', subtitle: 'Returning to Grand Lounge...' })}
                 onSound={onSound}
                 currentUser={currentUser}
               />
-            )}
-
-            {step < 5 && (
-              <div className="console-nav-footer">
-                <button
-                  className="btn-glass btn-glass-secondary"
-                  style={{ visibility: step === 1 ? 'hidden' : 'visible' }}
-                  onClick={prevStep}
-                >
-                  ← Back
-                </button>
-
-                <div style={{ fontSize: '0.82rem', color: 'var(--text-dim)' }}>
-                  {step === 1 && 'Complimentary cancellation up to 24 hours prior to service.'}
-                  {step === 2 && 'All tables guaranteed for 2.5 hours of unhurried dining.'}
-                  {step === 3 && 'Sommelier pairings are curated to your course selection.'}
-                  {step === 4 && '✦ Verified Google/Email table reservation guarantee applied.'}
-                </div>
-
-                {step < 4 ? (
-                  <button className="btn-glass btn-glass-gold" onClick={nextStep}>
-                    {step === 1 ? 'Continue to Table Selection →' : step === 2 ? 'Continue to Enhancements →' : 'Proceed to Guest Details →'}
-                  </button>
-                ) : (
-                  <div style={{ width: '120px' }} />
-                )}
-              </div>
-            )}
-          </div>
-        )}
-      </main>
-
-      <MenuShowcase onSound={onSound} />
-
+            </div>
+          </main>
+        </div>
+      )}
 
       <BookingsModal
         isOpen={modalOpen}
         onClose={() => setModalOpen(false)}
         onViewPass={(res) => {
           setConfirmedReservation(res);
-          setStep(5);
+          setModalOpen(false);
+          navigateToPage('pass', {
+            title: 'RETRIEVING DINING PASS',
+            subtitle: `Opening Pass for ${res.tableName} (${res.code})...`,
+            step: 5,
+            duration: 750
+          });
         }}
         onSound={onSound}
       />
