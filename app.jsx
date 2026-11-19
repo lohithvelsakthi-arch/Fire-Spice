@@ -2757,25 +2757,45 @@ const STEP_PAGE_META = {
     tag: 'PAGE 1 OF 4 • DATE & SERVICE',
     title: 'DATE, SERVICE & PARTY SIZE',
     transitionTitle: 'PAGE 1: DATE & SERVICE',
-    transitionSubtitle: '✦ Loading Dining Calendar & Party Allocation...'
+    transitionSubtitle: '✦ Loading Dining Calendar & Party Allocation...',
+    loadingSequence: [
+      '✦ Preparing Dining Calendar & Available Time Slots...',
+      '✦ Loading Party Size & Service Configuration...',
+      '✦ Date & Service Console Ready'
+    ]
   },
   2: {
     tag: 'PAGE 2 OF 4 • FLOOR PLAN & SEATING',
     title: 'ARCHITECTURAL FLOOR PLAN & ZONES',
     transitionTitle: 'PAGE 2: TABLE & ZONE',
-    transitionSubtitle: '✦ Loading 3D Table Layout & Architectural Seating...'
+    transitionSubtitle: '✦ Loading 3D Table Layout & Architectural Seating...',
+    loadingSequence: [
+      '✦ Rendering Architectural Floor Plan & Zone Layout...',
+      '✦ Scanning Real-Time Table Availability...',
+      '✦ 3D Seating Console Ready'
+    ]
   },
   3: {
     tag: 'PAGE 3 OF 4 • GASTRONOMIC ENHANCEMENTS',
     title: 'OCCASION, SOMMELIER & VINTAGES',
     transitionTitle: 'PAGE 3: ENHANCEMENTS',
-    transitionSubtitle: '✦ Loading Vintage Wine Pairings, Caviar & Occasions...'
+    transitionSubtitle: '✦ Loading Vintage Wine Pairings, Caviar & Occasions...',
+    loadingSequence: [
+      '✦ Curating Occasion & Celebration Options...',
+      '✦ Loading Sommelier Wine Pairings & Vintage Cellar...',
+      '✦ Enhancement Selection Console Ready'
+    ]
   },
   4: {
     tag: 'PAGE 4 OF 4 • GUEST DETAILS & RECEIPT',
     title: 'GUEST CONTACT & RESERVATION GUARANTEE',
     transitionTitle: 'PAGE 4: GUEST DETAILS',
-    transitionSubtitle: '✦ Preparing VIP Profile & Table Guarantee...'
+    transitionSubtitle: '✦ Preparing VIP Profile & Table Guarantee...',
+    loadingSequence: [
+      '✦ Preparing VIP Guest Profile & Contact Form...',
+      '✦ Loading Reservation Guarantee & Payment Summary...',
+      '✦ Guest Details Console Ready'
+    ]
   }
 };
 
@@ -2932,16 +2952,17 @@ function App() {
       subtitle = 'Entering requested section...',
       step = 1,
       duration = 850,
-      stepsSequence = null
+      stepsSequence = null,
+      phaseDuration = 600
     } = options;
 
     if (stepsSequence && stepsSequence.length) {
-      // Multi-phase celebratory transition for table reservation
+      // Multi-phase cinematic transition with loading sequence
       setPageTransition({
         active: true,
         title,
         subtitle: stepsSequence[0],
-        progress: 30
+        progress: 25
       });
       onSound('confirm');
 
@@ -2949,10 +2970,10 @@ function App() {
         setPageTransition(prev => ({
           ...prev,
           subtitle: stepsSequence[1],
-          progress: 65
+          progress: 60
         }));
         onSound('select');
-      }, 600);
+      }, phaseDuration);
 
       setTimeout(() => {
         setPageTransition(prev => ({
@@ -2961,14 +2982,14 @@ function App() {
           progress: 95
         }));
         onSound('confirm');
-      }, 1200);
+      }, phaseDuration * 2);
 
       setTimeout(() => {
         setPageTransition({ active: false, title: '', subtitle: '', progress: 0 });
         setActiveView(targetView);
         if (step) setStep(step);
         window.scrollTo({ top: 0, behavior: 'instant' });
-      }, 1800);
+      }, phaseDuration * 2 + Math.round(phaseDuration * 0.65));
     } else {
       // Single-phase smooth page transition
       setPageTransition({
@@ -3014,9 +3035,13 @@ function App() {
     // ✦ Interactive In-Page Simulation: Load Table Reservation Page!
     navigateToPage('reserve', {
       title: 'PATRON AUTHENTICATED',
-      subtitle: `Welcome, ${user.firstName || user.name || 'Patron'} • Loading Table Reservation Page (Step 1)...`,
+      stepsSequence: [
+        `✦ Welcome, ${user.firstName || user.name || 'Patron'} • Verifying VIP Credentials...`,
+        '✦ Loading Table Reservation Sanctuary (Page 1)...',
+        '✦ Dining Calendar & Party Console Ready'
+      ],
       step: 1,
-      duration: 950
+      phaseDuration: 450
     });
   };
 
@@ -3084,14 +3109,15 @@ function App() {
 
     const meta = STEP_PAGE_META[targetStep] || {
       transitionTitle: `STEP ${targetStep}`,
-      transitionSubtitle: 'Loading next step...'
+      transitionSubtitle: 'Loading next step...',
+      loadingSequence: ['✦ Preparing next section...', '✦ Loading content...', '✦ Ready']
     };
 
     navigateToPage('reserve', {
       step: targetStep,
       title: meta.transitionTitle,
-      subtitle: meta.transitionSubtitle,
-      duration: 380
+      stepsSequence: meta.loadingSequence,
+      phaseDuration: 380
     });
   };
 
