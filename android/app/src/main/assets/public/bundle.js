@@ -470,8 +470,8 @@ function RollingBackground({
     style: {
       animationDuration: speedValue !== 'paused' ? speedValue : '65s',
       animationPlayState: speed === 'paused' ? 'paused' : 'running',
-      opacity: opacityValue,
-      filter: `blur(${blurValue}) brightness(0.92) contrast(1.12) saturate(1.08)`
+      '--ambient-opacity': opacityValue,
+      '--ambient-blur': blurValue
     }
   }, /*#__PURE__*/React.createElement("div", {
     className: "ribbon-track"
@@ -481,7 +481,9 @@ function RollingBackground({
   }, /*#__PURE__*/React.createElement("img", {
     src: img.url,
     alt: img.title,
-    loading: "eager"
+    loading: "eager",
+    decoding: "async",
+    draggable: "false"
   }), /*#__PURE__*/React.createElement("div", {
     className: "card-caption"
   }, img.title)))), /*#__PURE__*/React.createElement("div", {
@@ -492,7 +494,9 @@ function RollingBackground({
   }, /*#__PURE__*/React.createElement("img", {
     src: img.url,
     alt: img.title,
-    loading: "lazy"
+    loading: "eager",
+    decoding: "async",
+    draggable: "false"
   }), /*#__PURE__*/React.createElement("div", {
     className: "card-caption"
   }, img.title))))), /*#__PURE__*/React.createElement("div", {
@@ -1164,28 +1168,12 @@ function HeroSection({
   }, "CULINARY ODYSSEY")), /*#__PURE__*/React.createElement("p", {
     className: "hero-description"
   }, "An evening of gilded serenity, rare vintage pairings, and bespoke private tables."), /*#__PURE__*/React.createElement("div", {
-    style: {
-      display: 'flex',
-      justifyContent: 'center',
-      gap: '14px',
-      margin: '22px 0 28px',
-      flexWrap: 'wrap'
-    }
+    className: "hero-cta-row"
   }, /*#__PURE__*/React.createElement("button", {
-    className: "btn-glass btn-glass-gold",
-    style: {
-      padding: '12px 28px',
-      fontSize: '0.94rem',
-      letterSpacing: '1px',
-      fontWeight: 700
-    },
+    className: "btn-glass btn-glass-gold hero-cta-btn",
     onClick: onStartReserve
   }, "✦ Reserve Your Sanctuary Table (Step 1) →"), /*#__PURE__*/React.createElement("button", {
-    className: "btn-glass btn-glass-secondary",
-    style: {
-      padding: '12px 24px',
-      fontSize: '0.94rem'
-    },
+    className: "btn-glass btn-glass-secondary hero-cta-btn",
     onClick: onExploreMenu
   }, "View Tasting Menu")), /*#__PURE__*/React.createElement("div", {
     className: "hero-stats-bar"
@@ -2427,24 +2415,17 @@ function StepGuestDetails({
       letterSpacing: '1px'
     }
   }), /*#__PURE__*/React.createElement("div", {
+    className: "modal-actions",
     style: {
-      display: 'flex',
-      gap: '10px',
       marginTop: '16px'
     }
   }, /*#__PURE__*/React.createElement("button", {
     type: "button",
     className: "btn-glass btn-glass-secondary",
-    style: {
-      flex: 1
-    },
     onClick: () => setGpayModalOpen(false)
   }, "Cancel"), /*#__PURE__*/React.createElement("button", {
     type: "button",
     className: "btn-glass btn-glass-gold",
-    style: {
-      flex: 2
-    },
     onClick: handleFinalGPayConfirm,
     disabled: isConfirming
   }, isConfirming ? 'Verifying...' : '✓ I Have Paid on GPay — Confirm'))))), customUpiModalOpen && /*#__PURE__*/React.createElement("div", {

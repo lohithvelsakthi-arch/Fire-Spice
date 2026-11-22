@@ -481,15 +481,15 @@ function RollingBackground({ speed, dim }) {
         style={{
           animationDuration: speedValue !== 'paused' ? speedValue : '65s',
           animationPlayState: speed === 'paused' ? 'paused' : 'running',
-          opacity: opacityValue,
-          filter: `blur(${blurValue}) brightness(0.92) contrast(1.12) saturate(1.08)`
+          '--ambient-opacity': opacityValue,
+          '--ambient-blur': blurValue
         }}
       >
         {/* Track 1 */}
         <div className="ribbon-track">
           {images.map((img, i) => (
             <div key={`track1-${i}`} className="ribbon-card">
-              <img src={img.url} alt={img.title} loading="eager" />
+              <img src={img.url} alt={img.title} loading="eager" decoding="async" draggable="false" />
               <div className="card-caption">{img.title}</div>
             </div>
           ))}
@@ -498,7 +498,7 @@ function RollingBackground({ speed, dim }) {
         <div className="ribbon-track">
           {images.map((img, i) => (
             <div key={`track2-${i}`} className="ribbon-card">
-              <img src={img.url} alt={img.title} loading="lazy" />
+              <img src={img.url} alt={img.title} loading="eager" decoding="async" draggable="false" />
               <div className="card-caption">{img.title}</div>
             </div>
           ))}
@@ -837,17 +837,15 @@ function HeroSection({ onStartReserve, onExploreMenu }) {
         An evening of gilded serenity, rare vintage pairings, and bespoke private tables.
       </p>
 
-      <div style={{ display: 'flex', justifyContent: 'center', gap: '14px', margin: '22px 0 28px', flexWrap: 'wrap' }}>
+      <div className="hero-cta-row">
         <button
-          className="btn-glass btn-glass-gold"
-          style={{ padding: '12px 28px', fontSize: '0.94rem', letterSpacing: '1px', fontWeight: 700 }}
+          className="btn-glass btn-glass-gold hero-cta-btn"
           onClick={onStartReserve}
         >
           ✦ Reserve Your Sanctuary Table (Step 1) →
         </button>
         <button
-          className="btn-glass btn-glass-secondary"
-          style={{ padding: '12px 24px', fontSize: '0.94rem' }}
+          className="btn-glass btn-glass-secondary hero-cta-btn"
           onClick={onExploreMenu}
         >
           View Tasting Menu
@@ -1693,11 +1691,10 @@ function StepGuestDetails({ booking, setBooking, onConfirm, onSound, currentUser
                 style={{ fontFamily: 'monospace', letterSpacing: '1px' }}
               />
 
-              <div style={{ display: 'flex', gap: '10px', marginTop: '16px' }}>
+              <div className="modal-actions" style={{ marginTop: '16px' }}>
                 <button
                   type="button"
                   className="btn-glass btn-glass-secondary"
-                  style={{ flex: 1 }}
                   onClick={() => setGpayModalOpen(false)}
                 >
                   Cancel
@@ -1705,7 +1702,6 @@ function StepGuestDetails({ booking, setBooking, onConfirm, onSound, currentUser
                 <button
                   type="button"
                   className="btn-glass btn-glass-gold"
-                  style={{ flex: 2 }}
                   onClick={handleFinalGPayConfirm}
                   disabled={isConfirming}
                 >

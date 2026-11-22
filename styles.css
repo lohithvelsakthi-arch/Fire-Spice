@@ -4,6 +4,12 @@
    ========================================================================== */
 
 :root {
+  /* Safe Area Insets for Mobile App Notches & Gestures */
+  --sat: env(safe-area-inset-top, 0px);
+  --sab: env(safe-area-inset-bottom, 0px);
+  --sal: env(safe-area-inset-left, 0px);
+  --sar: env(safe-area-inset-right, 0px);
+
   /* Palette: Obsidian Noir & Metallic Golds */
   --bg-deep: #060608;
   --bg-surface: #40404f;
@@ -122,9 +128,13 @@ body {
   width: max-content;
   will-change: transform;
   animation: rollHorizontal var(--roll-speed, 65s) linear infinite;
-  opacity: var(--gallery-opacity, 0.78);
-  filter: blur(var(--gallery-blur, 0.5px)) brightness(0.96) contrast(1.12) saturate(1.1);
+  opacity: var(--ambient-opacity, var(--gallery-opacity, 0.78));
+  filter: blur(var(--ambient-blur, var(--gallery-blur, 0.5px))) brightness(0.96) contrast(1.12) saturate(1.1);
   transition: opacity 0.5s ease, filter 0.5s ease;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  -webkit-transform-style: preserve-3d;
+  transform-style: preserve-3d;
 }
 
 .rolling-ribbon:hover {
@@ -136,6 +146,8 @@ body {
   display: flex;
   gap: 32px;
   padding: 0 16px;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
 }
 
 .ribbon-card {
@@ -147,6 +159,8 @@ body {
   flex-shrink: 0;
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.85), 0 0 0 1px rgba(212, 175, 55, 0.28);
   background: #111116;
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
 }
 
 .ribbon-card img {
@@ -154,6 +168,8 @@ body {
   height: 100%;
   object-fit: cover;
   display: block;
+  -webkit-user-drag: none;
+  user-select: none;
 }
 
 .ribbon-card .card-caption {
@@ -2367,11 +2383,13 @@ body {
 
   .mobile-sub-nav .btn-glass {
     flex: 1;
-    padding: 8px 6px;
-    font-size: 0.74rem;
+    min-height: 48px;
+    padding: 10px 8px;
+    font-size: 0.82rem;
+    font-weight: 600;
     gap: 6px;
     white-space: nowrap;
-    border-radius: 9px;
+    border-radius: 12px;
   }
 
   .brand-crest {
@@ -2404,8 +2422,11 @@ body {
   }
 
   .header-actions .btn-glass {
-    padding: 8px 10px;
-    font-size: 0.78rem;
+    min-height: 44px;
+    min-width: 44px;
+    padding: 10px 12px;
+    font-size: 0.84rem;
+    border-radius: 12px;
   }
 
   .standalone-app-badge {
@@ -2431,9 +2452,30 @@ body {
 
   /* Hero Section */
   .hero-section {
-    padding: 22px 14px;
+    padding: 24px 16px;
     margin: 12px 10px 16px;
-    border-radius: 18px;
+    border-radius: 20px;
+  }
+
+  .hero-cta-row {
+    display: flex;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    width: 100% !important;
+    gap: 12px !important;
+    margin: 18px 0 22px !important;
+  }
+
+  .hero-cta-btn {
+    width: 100% !important;
+    min-height: 52px !important;
+    font-size: 0.94rem !important;
+    font-weight: 700 !important;
+    padding: 14px 18px !important;
+    justify-content: center !important;
+    text-align: center !important;
+    letter-spacing: 0.8px !important;
+    border-radius: 14px !important;
   }
 
   .hero-badge {
@@ -2538,7 +2580,9 @@ body {
   }
 
   .btn-guest-choice {
-    padding: 10px 4px;
+    min-height: 54px;
+    padding: 10px 6px;
+    border-radius: 12px;
   }
 
   .guest-count-num {
@@ -2554,19 +2598,23 @@ body {
   }
 
   .cal-day-btn {
-    min-height: 38px;
-    font-size: 0.8rem;
-    border-radius: 8px;
+    min-height: 44px;
+    font-size: 0.88rem;
+    font-weight: 600;
+    border-radius: 10px;
   }
 
   .time-slots-grid {
-    grid-template-columns: repeat(auto-fill, minmax(78px, 1fr));
-    gap: 6px;
+    grid-template-columns: repeat(auto-fill, minmax(88px, 1fr));
+    gap: 8px;
   }
 
   .time-slot-btn {
-    padding: 8px 4px;
-    font-size: 0.82rem;
+    min-height: 46px;
+    padding: 10px 6px;
+    font-size: 0.88rem;
+    font-weight: 600;
+    border-radius: 10px;
   }
 
   /* Step 2: Seating & Floor Plan */
@@ -2596,8 +2644,11 @@ body {
 
   .zone-filters .btn-glass {
     flex-shrink: 0;
-    padding: 6px 12px;
-    font-size: 0.75rem;
+    min-height: 42px;
+    padding: 8px 18px;
+    font-size: 0.84rem;
+    font-weight: 600;
+    border-radius: 9999px;
   }
 
   .floor-legend {
@@ -2622,8 +2673,9 @@ body {
   }
 
   .table-node {
-    padding: 10px 6px;
-    border-radius: 12px;
+    min-height: 96px;
+    padding: 12px 8px;
+    border-radius: 14px;
   }
 
   .table-plate-icon {
@@ -2632,7 +2684,8 @@ body {
   }
 
   .table-node-name {
-    font-size: 0.78rem;
+    font-size: 0.84rem;
+    font-weight: 700;
     text-align: center;
   }
 
@@ -2666,8 +2719,11 @@ body {
   }
 
   .occasion-pills .btn-glass {
-    padding: 7px 12px;
-    font-size: 0.75rem;
+    min-height: 44px;
+    padding: 10px 18px;
+    font-size: 0.84rem;
+    font-weight: 600;
+    border-radius: 9999px;
   }
 
   /* Step 4: Form & Receipt */
@@ -2750,8 +2806,11 @@ body {
 
   .menu-filter-bar .btn-glass {
     flex-shrink: 0;
-    padding: 7px 12px;
-    font-size: 0.78rem;
+    min-height: 42px;
+    padding: 8px 18px;
+    font-size: 0.84rem;
+    font-weight: 600;
+    border-radius: 9999px;
   }
 
   .menu-items-grid {
@@ -2772,10 +2831,28 @@ body {
     font-size: 1.05rem;
   }
 
-  /* Ambient Gallery & Controller */
+  /* Ambient Rolling Ribbon for Mobile APK */
+  .rolling-ribbon {
+    top: 24% !important;
+    filter: brightness(0.95) contrast(1.1) !important;
+  }
+
+  .ribbon-track {
+    gap: 18px !important;
+    padding: 0 10px !important;
+  }
+
   .ribbon-card {
-    width: 260px;
-    height: 180px;
+    width: 280px !important;
+    height: 195px !important;
+    border-radius: 16px !important;
+    box-shadow: 0 14px 40px rgba(0, 0, 0, 0.9), 0 0 0 1px rgba(212, 175, 55, 0.35) !important;
+  }
+
+  .ribbon-card .card-caption {
+    padding: 10px 14px !important;
+    font-size: 0.74rem !important;
+    letter-spacing: 1.5px !important;
   }
 
   .ambient-controller-pill {
@@ -2880,9 +2957,17 @@ body {
     width: 100%;
   }
 
+  .ribbon-card {
+    width: 245px !important;
+    height: 170px !important;
+    border-radius: 14px !important;
+  }
+
   .btn-glass-lg {
-    padding: 12px 18px;
-    font-size: 0.92rem;
+    min-height: 52px;
+    padding: 14px 20px;
+    font-size: 0.96rem;
+    font-weight: 700;
     letter-spacing: 1px;
   }
 }
@@ -3828,6 +3913,18 @@ body {
     -webkit-user-select: none;
     user-select: none;
   }
+
+  /* Tactile native mobile touch feedback */
+  .btn-glass:active,
+  .btn-guest-choice:active,
+  .cal-day-btn:active,
+  .time-slot-btn:active,
+  .table-node:active,
+  .btn-gpay-app-open:active {
+    transform: scale(0.97) !important;
+    filter: brightness(1.15);
+    transition: transform 0.08s ease, filter 0.08s ease;
+  }
 }
 
 /* ------------------------------------------------------------------
@@ -3864,16 +3961,17 @@ body {
     letter-spacing: 1.2px;
   }
 
-  .mobile-sub-nav-btn {
-    font-size: 0.6rem;
-    min-height: 48px;
-    padding: 6px 4px;
+  .mobile-sub-nav-btn,
+  .mobile-sub-nav .btn-glass {
+    font-size: 0.76rem !important;
+    min-height: 46px !important;
+    padding: 8px 6px !important;
   }
 
   .console-nav-footer .btn-glass,
   .console-nav-footer .btn-glass-gold {
-    font-size: 0.88rem !important;
-    min-height: 50px !important;
+    font-size: 0.92rem !important;
+    min-height: 52px !important;
   }
 
   .btn-glass-sm {

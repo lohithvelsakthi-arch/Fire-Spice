@@ -59,44 +59,44 @@ jobs:
           APK_FILE=$(find android -name "*.apk" | head -n 1)
           if [ -n "$APK_FILE" ]; then
             echo "Found APK at: $APK_FILE"
-            cp "$APK_FILE" build-output/FireSpice-v1.0.16.apk
+            cp "$APK_FILE" build-output/FireSpice-v1.0.17.apk
           else
             echo "ERROR: No APK found!"
             exit 1
           fi
-          ls -lh build-output/FireSpice-v1.0.16.apk
+          ls -lh build-output/FireSpice-v1.0.17.apk
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: FireSpice-v1.0.16-APK
-          path: build-output/FireSpice-v1.0.16.apk
+          name: FireSpice-v1.0.17-APK
+          path: build-output/FireSpice-v1.0.17.apk
           retention-days: 90
 
       - name: Create or Update GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: v1.0.16
-          name: "FIRE SPICE Android App • Release v1.0.16"
+          tag_name: v1.0.17
+          name: "FIRE SPICE Android App • Release v1.0.17"
           prerelease: false
           draft: false
           make_latest: true
           body: |
             ### 🍷 FIRE SPICE • Haute Gastronomie & Golden Lounge
-            **Official Android Application Release (v1.0.16 — Google Pay & UPI Live Payments & Under ₹5 Pricing)**
+            **Official Android Application Release (v1.0.17 — Mobile UX Polish, Optimized Rolling Ribbon & Luxury Button Sizing)**
 
-            #### 🛠️ What's New in v1.0.16:
-            - **Google Pay (GPay) & Direct UPI Payments**:
-              - Direct payment settlement to owner's SBI Google Pay account (`lohithvelsakthi-1@oksbi`).
-              - One-tap Google Pay app launcher on Android (`upi://pay`).
-              - Dynamic real-time UPI QR code generation for instant scanning.
-              - Instant cryptographic verification and SQLite transaction logging.
-            - **All Meal & Table Costs Under ₹5**:
-              - All table minimum spend guarantees, tasting menus, and culinary add-ons adjusted strictly within ₹1 to ₹5.
-            - **Verified VIP Dining Pass**:
-              - Displays official "✓ GUARANTEE DEPOSIT PAID VIA GOOGLE PAY" badge with UPI transaction reference.
-            - **Android Home Screen Icon**:
-              - Full 24K gold FIRE SPICE cloche logo on obsidian noir (`#060608`).
+            #### 🛠️ What's New in v1.0.17:
+            - **Cinematic Rolling Ribbon Optimized for Mobile**:
+              - Perfectly positioned at the upper crown of mobile screens (`top: 24%`), gracefully framing the emblem without obscuring the hero title or booking buttons.
+              - 60fps GPU hardware acceleration with pre-decoded imagery (`loading="eager"` and `decoding="async"`), eliminating blank grey cards and micro-stutters in Android WebView.
+              - Sized proportionally (`280px x 195px` on phones, `245px x 170px` on compact screens) with 24K gold border glow and deep velvet shadows.
+            - **Luxury Button Sizing & Mobile Touch Architecture**:
+              - Generous, ergonomic touch targets (minimum 44px - 54px height) across all mobile buttons: Hero CTA buttons, Header actions, Mobile Sub-Nav pills, Calendar day buttons, Time slots, Zone filters, Table nodes, and Console footer buttons.
+              - Native tactile tap feedback (`active: scale(0.97)` with instant haptic visual brightness).
+              - Eliminated 300ms mobile tap delay (`touch-action: manipulation`) and removed web tap grey highlights (`-webkit-tap-highlight-color: transparent`).
+            - **Google Pay & Under ₹5 Pricing Maintained**:
+              - Direct UPI transfers to `lohithvelsakthi-1@oksbi` (Payee: FIRE SPICE - Lohith Vel).
+              - All tasting menus, table guarantees, and add-ons strictly within ₹1 to ₹5.
 
             #### 📲 Installation Instructions:
             1. Download `FireSpice-v1.0.16.apk` onto your Android device.
