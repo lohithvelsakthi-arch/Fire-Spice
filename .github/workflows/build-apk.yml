@@ -78,7 +78,6 @@ jobs:
         with:
           tag_name: v1.0.17
           name: "FIRE SPICE Android App • Release v1.0.17"
-          files: build-output/FireSpice-v1.0.17.apk
           prerelease: false
           draft: false
           make_latest: true
@@ -100,8 +99,8 @@ jobs:
               - All tasting menus, table guarantees, and add-ons strictly within ₹1 to ₹5.
 
             #### 📲 Installation Instructions:
-            1. Download `FireSpice-v1.0.16.apk` onto your Android device.
+            1. Download `FireSpice-v1.0.17.apk` onto your Android device.
             2. Tap → Allow unknown apps → Update / Install → Launch FIRE SPICE!
-          files: build-output/FireSpice-v1.0.16.apk
+          files: build-output/FireSpice-v1.0.17.apk
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
