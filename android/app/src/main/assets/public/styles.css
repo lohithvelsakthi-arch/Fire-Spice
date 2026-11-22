@@ -4247,4 +4247,167 @@ body {
   color: #ffffff;
 }
 
+/* ==========================================================================
+   Razorpay Payment Gateway & Live Verification Styles
+   ========================================================================== */
+.rzp-security-pill {
+  margin-top: 14px;
+  padding: 10px 14px;
+  background: rgba(212, 175, 55, 0.05);
+  border: 1px solid rgba(212, 175, 55, 0.22);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.spinner-inline {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(212, 175, 55, 0.3);
+  border-top-color: var(--gold-400);
+  border-radius: 50%;
+  animation: rzpSpin 0.75s linear infinite;
+  vertical-align: middle;
+  margin-right: 8px;
+}
+
+@keyframes rzpSpin {
+  to { transform: rotate(360deg); }
+}
+
+.pass-payment-verification-badge {
+  margin-top: 14px;
+  padding: 12px 16px;
+  background: linear-gradient(135deg, rgba(74, 222, 128, 0.08) 0%, rgba(212, 175, 55, 0.08) 100%);
+  border: 1px solid rgba(74, 222, 128, 0.35);
+  border-radius: 10px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+}
+
+.badge-currency {
+  font-family: 'Cinzel', serif;
+  font-size: 0.95rem;
+  color: var(--gold-300);
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.rzp-setup-modal-dialog {
+  max-width: 520px;
+  width: 90%;
+  background: rgba(14, 14, 18, 0.96);
+  border: 1px solid rgba(212, 175, 55, 0.35);
+  border-radius: 18px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8), 0 0 30px rgba(212, 175, 55, 0.15);
+  padding: 28px;
+  position: relative;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+/* ==========================================================================
+   Google Pay (GPay) & Direct UPI Payment Styles
+   ========================================================================== */
+.gpay-security-pill {
+  margin-top: 14px;
+  padding: 10px 14px;
+  background: rgba(66, 133, 244, 0.06);
+  border: 1px solid rgba(66, 133, 244, 0.3);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.gpay-logo-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 700;
+  font-size: 0.76rem;
+  letter-spacing: 0.5px;
+  background: linear-gradient(135deg, #4285F4 0%, #34A853 100%);
+  color: #ffffff;
+  padding: 2px 8px;
+  border-radius: 6px;
+  box-shadow: 0 2px 6px rgba(66, 133, 244, 0.3);
+}
+
+.btn-gpay-primary {
+  background: linear-gradient(135deg, rgba(66, 133, 244, 0.2) 0%, rgba(52, 168, 83, 0.2) 100%);
+  border: 1px solid rgba(66, 133, 244, 0.6);
+  color: #ffffff;
+  font-weight: 600;
+  transition: all 0.25s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.btn-gpay-primary:hover {
+  background: linear-gradient(135deg, rgba(66, 133, 244, 0.35) 0%, rgba(52, 168, 83, 0.35) 100%);
+  border-color: #4285F4;
+  box-shadow: 0 4px 20px rgba(66, 133, 244, 0.35);
+  transform: translateY(-1px);
+}
+
+.btn-gpay-app-open {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  padding: 14px 20px;
+  background: linear-gradient(135deg, #1a73e8 0%, #188038 100%);
+  color: #ffffff;
+  text-decoration: none;
+  border-radius: 12px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  box-shadow: 0 4px 16px rgba(26, 115, 232, 0.4);
+  transition: all 0.25s ease;
+  margin-top: 14px;
+}
+
+.btn-gpay-app-open:hover {
+  filter: brightness(1.1);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 22px rgba(26, 115, 232, 0.5);
+}
+
+.gpay-qr-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  background: #ffffff;
+  border-radius: 16px;
+  border: 2px solid var(--gold-400);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  max-width: 250px;
+  margin: 0 auto;
+}
+
+.gpay-modal-dialog {
+  max-width: 500px;
+  width: 92%;
+  background: rgba(14, 14, 18, 0.97);
+  border: 1px solid rgba(212, 175, 55, 0.4);
+  border-radius: 20px;
+  box-shadow: 0 25px 70px rgba(0, 0, 0, 0.9), 0 0 40px rgba(66, 133, 244, 0.15);
+  padding: 28px;
+  position: relative;
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+}
+
+
 

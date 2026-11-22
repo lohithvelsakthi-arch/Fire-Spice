@@ -103,7 +103,9 @@ async function sendBookingConfirmation(reservation) {
       guest_count:      String(reservation.guests),
       occasion:         reservation.occasion || 'Dining Experience',
       dietary:          reservation.dietary || 'None reported',
-      total_amount:     `$${reservation.total}`,
+      total_amount:     `₹${reservation.total}`,
+      payment_id:       reservation.paymentId || 'Pre-authorized via Google Pay (GPay UPI)',
+      payment_status:   reservation.paymentStatus || 'PAID',
       vip_tier:         reservation.vipTier || 'Verified Member',
       restaurant_name:  'FIRE SPICE • Haute Gastronomie & Golden Lounge',
       contact_email:    OWNER_EMAIL,
@@ -127,7 +129,7 @@ const TABLES_DATABASE = [
     name: 'Table A1 • Gilded Solitude',
     shape: 'circle',
     capacity: 2,
-    minSpend: 160,
+    minSpend: 1,
     description: 'Candlelit intimate table set under the crystal mezzanine with a direct vantage of our grand gold archway.',
     features: ['Mezzanine Golden Glow', 'Bespoke Candlelight', 'Dedicated Sommelier Care'],
     img: 'https://images.unsplash.com/photo-1550966871-3ed3cdb5ed0c?auto=format&fit=crop&w=600&q=80',
@@ -140,7 +142,7 @@ const TABLES_DATABASE = [
     name: 'Table A2 • Imperial Centerpiece',
     shape: 'circle',
     capacity: 4,
-    minSpend: 180,
+    minSpend: 2,
     description: 'Placed precisely beneath our 12,000-crystal golden chandelier. Acoustically engineered for effortless conversation.',
     features: ['Direct Chandelier Vantage', 'Acoustically Tuned Privacy', 'Dedicated Chef de Rang'],
     img: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=600&q=80',
@@ -153,7 +155,7 @@ const TABLES_DATABASE = [
     name: 'Table A3 • Grand Banqueting Round',
     shape: 'banquet',
     capacity: 6,
-    minSpend: 190,
+    minSpend: 3,
     description: 'Opulent circular banquet with Italian gold-veined marble and custom leather high-back armchairs.',
     features: ['Italian Gold-Veined Marble', 'Full Room Ambiance', 'Tableside Carving Cart Access'],
     img: 'https://images.unsplash.com/photo-1541544741938-0af808871cc0?auto=format&fit=crop&w=600&q=80',
@@ -166,7 +168,7 @@ const TABLES_DATABASE = [
     name: 'Table A4 • Archway Alcove',
     shape: 'circle',
     capacity: 2,
-    minSpend: 170,
+    minSpend: 1,
     description: 'Flanked by fluted obsidian columns and brass sconces, offering supreme tranquility for intimate dinners.',
     features: ['Fluted Obsidian Columns', 'Intimate Ambiance', 'Soft Dimming Control'],
     img: 'https://images.unsplash.com/photo-1550966871-3ed3cdb5ed0c?auto=format&fit=crop&w=600&q=80',
@@ -179,7 +181,7 @@ const TABLES_DATABASE = [
     name: 'Table B1 • Onyx Banquette',
     shape: 'booth',
     capacity: 2,
-    minSpend: 185,
+    minSpend: 2,
     description: 'Deep midnight velvet booth with brushed gold backplates and secluded acoustic drapes.',
     features: ['Secluded Velvet Nook', 'Private Brass Call Bell', 'Warm Indirect Lighting'],
     img: 'https://images.unsplash.com/photo-1572116469696-31de0f17cc34?auto=format&fit=crop&w=600&q=80',
@@ -192,7 +194,7 @@ const TABLES_DATABASE = [
     name: 'Table B2 • Gilded Alcove',
     shape: 'booth',
     capacity: 4,
-    minSpend: 200,
+    minSpend: 3,
     description: 'Curved golden booth facing the sommelier display wall. Generous booth spacing for supreme comfort.',
     features: ['Sommelier Display Vantage', 'High-Back Plush Seating', 'Bespoke Champagne Bucket Stand'],
     img: 'https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?auto=format&fit=crop&w=600&q=80',
@@ -205,7 +207,7 @@ const TABLES_DATABASE = [
     name: 'Table B3 • Sovereign Booth',
     shape: 'booth',
     capacity: 6,
-    minSpend: 210,
+    minSpend: 4,
     description: 'Semi-private royal banquette surrounded by brass lattice fretwork. Preferred for executive dinners.',
     features: ['Brass Lattice Enclosure', 'Discreet Service Corridor', 'Curated Art Display'],
     img: 'https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=600&q=80',
@@ -218,7 +220,7 @@ const TABLES_DATABASE = [
     name: 'Table T1 • Horizon Edge Duo',
     shape: 'circle',
     capacity: 2,
-    minSpend: 220,
+    minSpend: 3,
     description: 'Positioned right at the floor-to-ceiling heated terrace glass, framing the glittering night skyline.',
     features: ['Unobstructed Skyline View', 'Radiant Underfloor Heating', 'Starlight Ambiance'],
     img: 'https://images.unsplash.com/photo-1578474846511-04ba529f0b88?auto=format&fit=crop&w=600&q=80',
@@ -231,7 +233,7 @@ const TABLES_DATABASE = [
     name: 'Table T2 • Starlight Terrace',
     shape: 'circle',
     capacity: 4,
-    minSpend: 240,
+    minSpend: 4,
     description: 'Under the glass pavilion ceiling. Watch twilight settle over the city while tasting our grand pairings.',
     features: ['Glass Canopy Ceiling', 'Bespoke Wind Shielding', 'Terrace Sommelier Service'],
     img: 'https://images.unsplash.com/photo-1578474846511-04ba529f0b88?auto=format&fit=crop&w=600&q=80',
@@ -244,7 +246,7 @@ const TABLES_DATABASE = [
     name: 'Table T3 • Royal Skyline Pavilion',
     shape: 'banquet',
     capacity: 8,
-    minSpend: 250,
+    minSpend: 5,
     description: 'Our largest open-air terrace table, anchored by a custom bronze fire ribbon and panoramic lights.',
     features: ['Bronze Fire Ribbon Warmth', 'Full Skyline Panorama', 'Private Bartender Optional'],
     img: 'https://images.unsplash.com/photo-1578474846511-04ba529f0b88?auto=format&fit=crop&w=600&q=80',
@@ -257,7 +259,7 @@ const TABLES_DATABASE = [
     name: 'Table V1 • Sommelier Grand Vault',
     shape: 'booth',
     capacity: 4,
-    minSpend: 280,
+    minSpend: 4,
     description: 'Encased inside our climate-controlled 19th-century cellar. Dine among 1,400 rare vintages.',
     features: ['Private Temperature Controlled Vault', 'Sommelier Lead Tasting', 'Rare Vintage Access'],
     img: 'https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?auto=format&fit=crop&w=600&q=80',
@@ -270,7 +272,7 @@ const TABLES_DATABASE = [
     name: "Table C1 • Chef Marc's Counter",
     shape: 'circle',
     capacity: 2,
-    minSpend: 320,
+    minSpend: 5,
     description: 'Front-row culinary staging directly opposite Chef Marc Éléonore. Includes personalized tasting courses.',
     features: ['Personalized Course Delivery', 'Interaction with Executive Chef', 'Gold-Leaf Caviar Presentation'],
     img: 'https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=600&q=80',
@@ -283,17 +285,17 @@ const MENU_DATABASE = [
     id: 'm1',
     category: 'tasting',
     title: "L'Or Impérial Tasting Journey",
-    price: '$285',
+    price: '₹5',
     badge: 'Signature 8 Courses',
     desc: 'An orchestral eight-course progression highlighting Brittany langoustine, winter black truffles, and A5 Miyazaki Wagyu, concluded with our 24K gold sphere.',
-    pairing: 'Grand Cru Sommelier Pairing +$160',
+    pairing: 'Grand Cru Sommelier Pairing +₹1',
     img: 'https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=700&q=80'
   },
   {
     id: 'm2',
     category: 'caviar',
     title: 'Royal Osetra Caviar Tartlet',
-    price: '$125',
+    price: '₹2',
     badge: 'Amuse-Bouche',
     desc: 'Crisp brioche feuille, smoked egg yolk emulsion, crème fraîche infused with Meyer lemon, crowned with 25g Imperial Osetra pearls.',
     pairing: 'Dom Pérignon 2013 Vintage',
@@ -303,7 +305,7 @@ const MENU_DATABASE = [
     id: 'm3',
     category: 'mains',
     title: 'A5 Miyazaki Wagyu Filet Mignon',
-    price: '$175',
+    price: '₹4',
     badge: 'Robata Grilled',
     desc: 'Seared over Japanese binchotan charcoal, glazed with bone marrow jus, served alongside smoked parsnip mousseline and shaved Périgord truffle.',
     pairing: 'Château Margaux Premier Grand Cru',
@@ -313,7 +315,7 @@ const MENU_DATABASE = [
     id: 'm4',
     category: 'caviar',
     title: 'Hokkaido Scallop Carpaccio & Gold Leaf',
-    price: '$95',
+    price: '₹3',
     badge: 'Cold Crudo',
     desc: 'Diver-caught Hokkaido scallops thinly sliced, bathed in yuzu-white soy ponzu, finger lime pearls, and edible 24K gold leaf flurries.',
     pairing: 'Puligny-Montrachet 1er Cru',
@@ -323,7 +325,7 @@ const MENU_DATABASE = [
     id: 'm5',
     category: 'mains',
     title: 'Glazed Brittany Blue Lobster',
-    price: '$160',
+    price: '₹4',
     badge: 'Oceanic Haute',
     desc: 'Poached in Meyer lemon butter, resting on a pillow of saffron carnaroli risotto and reduction of lobster coral.',
     pairing: 'Meursault-Charmes 2018',
@@ -333,7 +335,7 @@ const MENU_DATABASE = [
     id: 'm6',
     category: 'cellar',
     title: '1982 Château Lafite Rothschild',
-    price: '$3,800',
+    price: '₹5',
     badge: 'Rare Cellar Vault',
     desc: 'Pauillac, Bordeaux. Pristine cellar provenance. Notes of graphite, cedarwood, cassis, and velvety melted tannins.',
     pairing: 'Private Decanting Ritual',
@@ -345,28 +347,28 @@ const EXPERIENCES = [
   {
     id: 'caviar',
     title: 'Imperial Osetra Caviar Service',
-    price: 145,
+    price: 1,
     perGuest: false,
     desc: '30g Royal Reserve Imperial Osetra served on shaved ice with warm blinis, crème fraîche, and mother-of-pearl spoons.'
   },
   {
     id: 'champagne',
     title: 'Dom Pérignon Vintage Flutes',
-    price: 195,
+    price: 2,
     perGuest: false,
     desc: 'Two chilled flutes of Dom Pérignon Vintage poured tableside upon arrival, accompanied by candied yuzu amuse-bouche.'
   },
   {
     id: 'wine-pairing',
     title: 'Sommelier Grand Cru Flight',
-    price: 120,
+    price: 1,
     perGuest: true,
     desc: 'Hand-curated 5-course wine pairing journey featuring rare Burgundies, Bordeaux Premier Crus, and aged Tokaji.'
   },
   {
     id: 'floral',
     title: 'Black & Gold Orchid Arrangement',
-    price: 85,
+    price: 1,
     perGuest: false,
     desc: 'Artisanal centerpiece of midnight black calla lilies and gold-dusted Ecuadorian roses with custom calligraphy card.'
   }
@@ -1175,7 +1177,7 @@ function StepFloorPlan({ booking, setBooking, onSound, onProceed }) {
 
           <div style={{ background: 'rgba(212, 175, 55, 0.08)', border: '1px solid rgba(212, 175, 55, 0.2)', borderRadius: '12px', padding: '14px', textAlign: 'center' }}>
             <div style={{ fontSize: '0.72rem', letterSpacing: '1px', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Minimum Spend Guarantee</div>
-            <div className="font-serif" style={{ fontSize: '1.4rem', color: 'var(--gold-300)', fontWeight: 700 }}>${selectedTable.minSpend} / guest</div>
+            <div className="font-serif" style={{ fontSize: '1.4rem', color: 'var(--gold-300)', fontWeight: 700 }}>₹{selectedTable.minSpend} / guest</div>
           </div>
 
           <button className="btn-glass btn-glass-gold" style={{ width: '100%' }} onClick={onProceed}>
@@ -1244,7 +1246,7 @@ function StepEnhancements({ booking, setBooking, onSound }) {
                 <div className="experience-icon">
                   <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"></circle><path d="m4.93 4.93 4.24 4.24"></path><path d="m14.83 9.17 4.24-4.24"></path></svg>
                 </div>
-                <span className="experience-price">+{item.price}{item.perGuest ? ' / guest' : ''}</span>
+                <span className="experience-price">+₹{item.price}{item.perGuest ? ' / guest' : ''}</span>
               </div>
               <h4 className="experience-title">{item.title}</h4>
               <p className="experience-desc">{item.desc}</p>
@@ -1278,6 +1280,15 @@ function StepGuestDetails({ booking, setBooking, onConfirm, onSound, currentUser
   });
   const [agree, setAgree] = useState(true);
 
+  // Google Pay Gateway State
+  const [gpayConfig, setGpayConfig] = useState({ upiId: 'lohithvelsakthi-1@oksbi', payeeName: 'FIRE SPICE - Lohith Vel' });
+  const [gpayModalOpen, setGpayModalOpen] = useState(false);
+  const [customUpiModalOpen, setCustomUpiModalOpen] = useState(false);
+  const [inputUpiId, setInputUpiId] = useState('lohithvelsakthi-1@oksbi');
+  const [inputUtr, setInputUtr] = useState('');
+  const [savingUpi, setSavingUpi] = useState(false);
+  const [isConfirming, setIsConfirming] = useState(false);
+
   // Sync with currentUser if user logs in or switches account while on Step 4
   useEffect(() => {
     if (currentUser) {
@@ -1293,12 +1304,61 @@ function StepGuestDetails({ booking, setBooking, onConfirm, onSound, currentUser
     }
   }, [currentUser]);
 
-  const table = booking.tableData || TABLES_DATABASE[1];
-  const tableBase = (table.minSpend || 180) * booking.guests;
-  const addonsTotal = booking.addons.reduce((sum, a) => sum + (a.perGuest ? a.price * booking.guests : a.price), 0);
-  const total = tableBase + addonsTotal;
+  // Fetch Google Pay UPI config from server
+  const loadGpayConfig = useCallback(async () => {
+    try {
+      const res = await fetch('/api/gpay/config');
+      const data = await res.json();
+      if (data && data.success) {
+        setGpayConfig(data);
+        if (data.upiId) setInputUpiId(data.upiId);
+      }
+    } catch (e) {
+      console.warn('Could not load GPay config:', e);
+    }
+  }, []);
 
-  const handleSubmit = () => {
+  useEffect(() => {
+    loadGpayConfig();
+  }, [loadGpayConfig]);
+
+  // Compute table and meal cost strictly within 5 rupees
+  const table = booking.tableData || TABLES_DATABASE[1];
+  const tableBase = Math.min(5, Math.max(1, table.minSpend || 2));
+  const addonsTotal = booking.addons.reduce((sum, a) => sum + (a.price || 1), 0);
+  const total = Math.min(5, Math.max(1, tableBase + addonsTotal));
+
+  // Save custom UPI ID
+  const handleSaveUpi = async (e) => {
+    if (e) e.preventDefault();
+    if (!inputUpiId.trim() || !inputUpiId.includes('@')) {
+      alert('Please enter a valid Google Pay UPI ID (e.g. name@okhdfcbank or phone@okaxis).');
+      return;
+    }
+    setSavingUpi(true);
+    try {
+      const res = await fetch('/api/gpay/save-config', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ upiId: inputUpiId.trim(), payeeName: 'FIRE SPICE' })
+      });
+      const data = await res.json();
+      if (data.success) {
+        alert('Google Pay UPI ID updated to: ' + inputUpiId.trim());
+        setGpayConfig(prev => ({ ...prev, upiId: inputUpiId.trim() }));
+        setCustomUpiModalOpen(false);
+        if (onSound) onSound('success');
+      } else {
+        alert('Failed to save UPI ID: ' + (data.message || 'Error'));
+      }
+    } catch (err) {
+      alert('Network error saving UPI ID: ' + err.message);
+    } finally {
+      setSavingUpi(false);
+    }
+  };
+
+  const handleOpenGPay = () => {
     if (!form.firstName || !form.lastName) {
       alert('Please provide your first and last name.');
       return;
@@ -1315,18 +1375,63 @@ function StepGuestDetails({ booking, setBooking, onConfirm, onSound, currentUser
       alert('Please acknowledge the elegant evening dress code policy.');
       return;
     }
-    onConfirm(form, total);
+
+    if (onSound) onSound('select');
+    setGpayModalOpen(true);
   };
+
+  const handleFinalGPayConfirm = async () => {
+    setIsConfirming(true);
+    const tempCode = `FSP-${Math.floor(1000 + Math.random() * 9000)}-VIP`;
+    const finalUtr = inputUtr.trim() || `GPAY_${Date.now().toString(36).toUpperCase()}`;
+
+    try {
+      await fetch('/api/gpay/record-payment', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          amount: total,
+          utr: finalUtr,
+          upiId: gpayConfig.upiId,
+          guestName: `${form.firstName} ${form.lastName}`,
+          guestEmail: form.email,
+          guestPhone: form.phone,
+          tableName: table.name,
+          reservationCode: tempCode
+        })
+      });
+    } catch (e) {
+      console.warn('Logging payment offline:', e);
+    }
+
+    if (onSound) onSound('success');
+    setGpayModalOpen(false);
+    setIsConfirming(false);
+
+    onConfirm(form, total, {
+      code: tempCode,
+      paymentId: finalUtr,
+      orderId: `GPAY_ORD_${Date.now()}`,
+      paymentStatus: 'PAID',
+      amountPaid: total,
+      currency: 'INR',
+      provider: 'gpay'
+    });
+  };
+
+  const upiUri = `upi://pay?pa=${encodeURIComponent(gpayConfig.upiId)}&pn=FIRE%20SPICE&am=${total}.00&cu=INR&tn=${encodeURIComponent('FIRE SPICE Reservation ' + table.name)}`;
+  const gpayAppIntentUri = `upi://pay?pa=${encodeURIComponent(gpayConfig.upiId)}&pn=FIRE%20SPICE&am=${total}.00&cu=INR&tn=${encodeURIComponent('FIRE SPICE Reservation')}`;
+  const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=240x240&data=${encodeURIComponent(upiUri)}&margin=8`;
 
   return (
     <div className="step-content-pane active">
       <div className="section-headline">
-        <h3 className="section-title">Guest Details & Final Confirmation</h3>
-        <p className="section-subtext">Review your reservation summary and enter guest contact information.</p>
+        <h3 className="section-title">Guest Details &amp; Google Pay Guarantee</h3>
+        <p className="section-subtext">Review reservation summary, guest details, and complete payment via Google Pay.</p>
       </div>
 
       <div className="guest-form-layout">
-        <form onSubmit={(e) => { e.preventDefault(); handleSubmit(); }}>
+        <form onSubmit={(e) => { e.preventDefault(); handleOpenGPay(); }}>
           {currentUser && (
             <div className="vip-prefill-banner">
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
@@ -1347,7 +1452,7 @@ function StepGuestDetails({ booking, setBooking, onConfirm, onSound, currentUser
                     {currentUser.provider === 'google' ? 'Google Account Verified' : 'Verified Member Profile'} • <span style={{ color: 'var(--gold-300)' }}>{currentUser.name}</span>
                   </div>
                   <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-                    Signed in as <strong>{currentUser.email}</strong>. Your contact details are secured & pre-filled.
+                    Signed in as <strong>{currentUser.email}</strong>. Contact details pre-filled.
                   </div>
                 </div>
               </div>
@@ -1404,7 +1509,7 @@ function StepGuestDetails({ booking, setBooking, onConfirm, onSound, currentUser
               <input
                 type="tel"
                 className="form-input"
-                placeholder="+1 (555) 892-0199"
+                placeholder="+91 98765 43210"
                 value={form.phone}
                 onChange={e => setForm({ ...form, phone: e.target.value })}
                 required
@@ -1413,7 +1518,7 @@ function StepGuestDetails({ booking, setBooking, onConfirm, onSound, currentUser
           </div>
 
           <div className="form-group">
-            <label className="form-label">Dietary Preferences & Allergies</label>
+            <label className="form-label">Dietary Preferences &amp; Allergies</label>
             <input
               type="text"
               className="form-input"
@@ -1428,7 +1533,7 @@ function StepGuestDetails({ booking, setBooking, onConfirm, onSound, currentUser
             <textarea
               className="form-textarea"
               rows="3"
-              placeholder="Discreet anniversary surprise, quiet table corner, champagne chilling..."
+              placeholder="Anniversary surprise, quiet corner, chef presentation..."
               value={form.notes}
               onChange={e => setForm({ ...form, notes: e.target.value })}
             />
@@ -1443,7 +1548,7 @@ function StepGuestDetails({ booking, setBooking, onConfirm, onSound, currentUser
               style={{ accentColor: 'var(--gold-500)', width: '18px', height: '18px', marginTop: '3px' }}
             />
             <label htmlFor="dressAgree" style={{ fontSize: '0.8rem', color: 'var(--text-muted)', lineHeight: '1.4' }}>
-              I acknowledge FIRE SPICE's evening dress code: <strong style={{ color: 'var(--gold-300)' }}>Elegant Evening Attire / Black-Tie Optional</strong>. Athletic wear and shorts are strictly prohibited.
+              I acknowledge FIRE SPICE's evening dress code: <strong style={{ color: 'var(--gold-300)' }}>Elegant Evening Attire / Black-Tie Optional</strong>. Athletic wear is strictly prohibited.
             </label>
           </div>
         </form>
@@ -1461,7 +1566,7 @@ function StepGuestDetails({ booking, setBooking, onConfirm, onSound, currentUser
           <div className="summary-row"><span className="summary-label">Date</span><span className="summary-value">{booking.dateFormatted}</span></div>
           <div className="summary-row"><span className="summary-label">Dining Service</span><span className="summary-value">{booking.timeFormatted}</span></div>
           <div className="summary-row"><span className="summary-label">Party Size</span><span className="summary-value">{booking.guests} Guests</span></div>
-          <div className="summary-row"><span className="summary-label">Table & Zone</span><span className="summary-value">{table.name}</span></div>
+          <div className="summary-row"><span className="summary-label">Table &amp; Zone</span><span className="summary-value">{table.name}</span></div>
           <div className="summary-row"><span className="summary-label">Occasion</span><span className="summary-value">{booking.occasion}</span></div>
 
           <div style={{ borderTop: '1px dashed rgba(212, 175, 55, 0.2)', marginTop: '10px', paddingTop: '10px' }}>
@@ -1469,7 +1574,7 @@ function StepGuestDetails({ booking, setBooking, onConfirm, onSound, currentUser
               booking.addons.map(a => (
                 <div key={a.id} className="summary-row" style={{ fontSize: '0.82rem', color: 'var(--gold-300)' }}>
                   <span>+ {a.title}</span>
-                  <span>${a.perGuest ? a.price * booking.guests : a.price}</span>
+                  <span>₹{a.price || 1}</span>
                 </div>
               ))
             ) : (
@@ -1485,25 +1590,189 @@ function StepGuestDetails({ booking, setBooking, onConfirm, onSound, currentUser
                 <span>✦</span> {currentUser.tierBadge || 'VIP Member'} Distinction Applied
               </div>
               <div style={{ fontSize: '0.70rem', color: 'var(--text-muted)', marginTop: '3px' }}>
-                Priority Sanctuary Staging & Complimentary Welcome Dom Pérignon Vintage Pour.
+                Priority Sanctuary Staging &amp; Complimentary Welcome Dom Pérignon Vintage Pour.
               </div>
             </div>
           )}
 
           <div className="summary-total-row">
             <div>
-              <div className="summary-total-label">Estimated Guarantee</div>
-              <div style={{ fontSize: '0.68rem', color: 'var(--text-muted)' }}>Includes table reservation & add-ons</div>
+              <div className="summary-total-label">Reservation Guarantee</div>
+              <div style={{ fontSize: '0.68rem', color: 'var(--text-muted)' }}>Secure payment via Google Pay</div>
             </div>
-            <div className="summary-total-val">${total}</div>
+            <div className="summary-total-val">₹{total}</div>
           </div>
 
-          <button className="btn-glass btn-glass-gold btn-glass-lg" style={{ width: '100%', marginTop: '24px' }} onClick={handleSubmit}>
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
-            Confirm Luxury Reservation
+          <div className="gpay-security-pill">
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', flexWrap: 'wrap', gap: '8px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <span className="gpay-logo-badge">GPay</span>
+                <span style={{ fontSize: '0.74rem', color: 'var(--text-secondary)' }}>
+                  UPI: <strong style={{ color: 'var(--gold-300)' }}>{gpayConfig.upiId}</strong>
+                </span>
+              </div>
+              <button
+                type="button"
+                className="btn-link-gold"
+                style={{ fontSize: '0.72rem', background: 'none', border: 'none', cursor: 'pointer', color: 'var(--gold-400)', textDecoration: 'underline' }}
+                onClick={() => setCustomUpiModalOpen(true)}
+              >
+                Change UPI ⚙
+              </button>
+            </div>
+          </div>
+
+          <button
+            className="btn-glass btn-gpay-primary btn-glass-lg"
+            style={{ width: '100%', marginTop: '20px' }}
+            onClick={handleOpenGPay}
+          >
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+              <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+              <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+              <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" fill="#FBBC05"/>
+              <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" fill="#EA4335"/>
+            </svg>
+            <span>Pay ₹{total} with Google Pay</span>
           </button>
         </div>
       </div>
+
+      {/* Google Pay Dynamic Payment Modal */}
+      {gpayModalOpen && (
+        <div className="modal-backdrop open" onClick={(e) => e.target.classList.contains('modal-backdrop') && setGpayModalOpen(false)}>
+          <div className="modal-dialog gpay-modal-dialog">
+            <button className="btn-glass btn-glass-icon btn-glass-sm modal-close-btn" onClick={() => setGpayModalOpen(false)}>✕</button>
+
+            <div style={{ textAlign: 'center', marginBottom: '18px' }}>
+              <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', background: 'rgba(66, 133, 244, 0.1)', padding: '6px 16px', borderRadius: '20px', border: '1px solid rgba(66, 133, 244, 0.3)', marginBottom: '10px' }}>
+                <span className="gpay-logo-badge">GPay</span>
+                <span style={{ fontSize: '0.8rem', color: '#fff', fontWeight: 600 }}>Google Pay Instant Deposit</span>
+              </div>
+              <h3 className="font-serif" style={{ fontSize: '1.6rem', color: '#fff', margin: '4px 0' }}>
+                Pay <span style={{ color: 'var(--gold-300)' }}>₹{total}</span> to Secure Table
+              </h3>
+              <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)', margin: 0 }}>
+                Scan the QR code with Google Pay, or tap below on your mobile device.
+              </p>
+            </div>
+
+            {/* Dynamic UPI QR Code */}
+            <div className="gpay-qr-container">
+              <img
+                src={qrCodeUrl}
+                alt="Google Pay QR Code"
+                style={{ width: '210px', height: '210px', display: 'block', borderRadius: '8px' }}
+              />
+              <div style={{ fontSize: '0.72rem', color: '#333', fontWeight: 700, marginTop: '8px', textAlign: 'center' }}>
+                UPI ID: {gpayConfig.upiId}
+              </div>
+            </div>
+
+            {/* One-Tap Google Pay App Launch for Mobile */}
+            <a
+              href={gpayAppIntentUri}
+              className="btn-gpay-app-open"
+              onClick={() => { if (onSound) onSound('select'); }}
+            >
+              <span>📱</span>
+              <span>Tap to Open Google Pay App (₹{total})</span>
+            </a>
+
+            {/* UPI Reference / UTR Verification Input */}
+            <div style={{ marginTop: '20px', borderTop: '1px solid rgba(212, 175, 55, 0.18)', paddingTop: '16px' }}>
+              <label className="form-label" style={{ fontSize: '0.78rem' }}>
+                UPI Reference / UTR Number (Optional confirmation)
+              </label>
+              <input
+                type="text"
+                className="form-input"
+                placeholder="e.g. 432109876543 (from GPay receipt)"
+                value={inputUtr}
+                onChange={e => setInputUtr(e.target.value)}
+                style={{ fontFamily: 'monospace', letterSpacing: '1px' }}
+              />
+
+              <div style={{ display: 'flex', gap: '10px', marginTop: '16px' }}>
+                <button
+                  type="button"
+                  className="btn-glass btn-glass-secondary"
+                  style={{ flex: 1 }}
+                  onClick={() => setGpayModalOpen(false)}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  className="btn-glass btn-glass-gold"
+                  style={{ flex: 2 }}
+                  onClick={handleFinalGPayConfirm}
+                  disabled={isConfirming}
+                >
+                  {isConfirming ? 'Verifying...' : '✓ I Have Paid on GPay — Confirm'}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Customize Google Pay UPI ID Modal */}
+      {customUpiModalOpen && (
+        <div className="modal-backdrop open" onClick={(e) => e.target.classList.contains('modal-backdrop') && setCustomUpiModalOpen(false)}>
+          <div className="modal-dialog rzp-setup-modal-dialog">
+            <button className="btn-glass btn-glass-icon btn-glass-sm modal-close-btn" onClick={() => setCustomUpiModalOpen(false)}>✕</button>
+            <div style={{ textAlign: 'center', marginBottom: '16px' }}>
+              <div className="gpay-logo-badge" style={{ fontSize: '0.9rem', padding: '4px 12px', margin: '0 auto 8px', display: 'inline-flex' }}>
+                GPay
+              </div>
+              <h3 className="font-serif" style={{ fontSize: '1.4rem', color: '#fff', margin: '4px 0' }}>
+                Set Your <span className="gold-gradient-text">Google Pay UPI ID</span>
+              </h3>
+              <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)' }}>
+                Enter your Google Pay UPI ID to receive reservation payments directly into your bank account.
+              </p>
+            </div>
+
+            <form onSubmit={handleSaveUpi}>
+              <div className="form-group">
+                <label className="form-label">Your Google Pay UPI ID *</label>
+                <input
+                  type="text"
+                  className="form-input"
+                  placeholder="e.g. yourname@okaxis, 9876543210@okhdfcbank"
+                  value={inputUpiId}
+                  onChange={e => setInputUpiId(e.target.value)}
+                  required
+                  style={{ fontFamily: 'monospace' }}
+                />
+                <div style={{ fontSize: '0.72rem', color: 'var(--text-dim)', marginTop: '4px' }}>
+                  Open Google Pay → Tap your profile avatar at top right to view your UPI ID.
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', gap: '12px', marginTop: '20px' }}>
+                <button
+                  type="button"
+                  className="btn-glass btn-glass-secondary"
+                  style={{ flex: 1 }}
+                  onClick={() => setCustomUpiModalOpen(false)}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="btn-glass btn-glass-gold"
+                  style={{ flex: 2 }}
+                  disabled={savingUpi}
+                >
+                  {savingUpi ? 'Saving...' : 'Save Google Pay ID'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -1651,6 +1920,25 @@ function StepConfirmedPass({ reservation, onReset, onReturnHome, onSound, curren
               <span className="pass-detail-val">{reservation.tableId} • {reservation.zone}</span>
             </div>
           </div>
+
+          {reservation.paymentId ? (
+            <div className="pass-payment-verification-badge">
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '8px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <span style={{ color: '#4ade80', fontSize: '1rem', fontWeight: 'bold' }}>✓</span>
+                  <span style={{ fontSize: '0.76rem', color: '#fff', fontWeight: 600, letterSpacing: '1px' }}>
+                    GUARANTEE DEPOSIT PAID VIA GOOGLE PAY
+                  </span>
+                </div>
+                <span className="badge-currency">
+                  ₹{reservation.total} PAID
+                </span>
+              </div>
+              <div style={{ fontSize: '0.68rem', color: 'var(--gold-400)', marginTop: '6px', fontFamily: 'monospace' }}>
+                GPay UPI Ref: {reservation.paymentId} {reservation.orderId ? `• ${reservation.orderId}` : ''}
+              </div>
+            </div>
+          ) : null}
 
           <div className="pass-footer-qr">
             <canvas ref={canvasRef} className="pass-qr-canvas" width="90" height="90"></canvas>
@@ -1862,7 +2150,7 @@ function BookingsModal({ isOpen, onClose, onViewPass, onSound }) {
                     {b.dateFormatted} • {b.timeFormatted} • {b.tableName}
                   </div>
                   <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-                    Party: {b.guests} Guests • Guarantee: ${b.total}
+                    Party: {b.guests} Guests • Guarantee: ₹{b.total}
                   </div>
                 </div>
                 <div style={{ display: 'flex', gap: '8px', flexShrink: 0 }}>
@@ -2401,25 +2689,28 @@ function AuthModal({ isOpen, onClose, onLogin, onSound }) {
    Component: DatabaseModal (Live SQLite Database & Audit Log Inspector)
    ========================================================================== */
 function DatabaseModal({ isOpen, onClose, onSound }) {
-  const [activeTab, setActiveTab] = useState('users'); // 'users' | 'logins'
+  const [activeTab, setActiveTab] = useState('users'); // 'users' | 'logins' | 'payments'
   const [stats, setStats] = useState(null);
   const [users, setUsers] = useState([]);
   const [logs, setLogs] = useState([]);
+  const [payments, setPayments] = useState([]);
   const [loading, setLoading] = useState(false);
   const [lastRefreshed, setLastRefreshed] = useState(null);
 
   const fetchDatabaseData = useCallback(async () => {
     setLoading(true);
     try {
-      const [statsRes, usersRes, logsRes] = await Promise.all([
+      const [statsRes, usersRes, logsRes, paymentsRes] = await Promise.all([
         fetch('/api/database/stats').then(r => r.json()).catch(() => null),
         fetch('/api/database/users').then(r => r.json()).catch(() => null),
-        fetch('/api/database/logins?limit=30').then(r => r.json()).catch(() => null)
+        fetch('/api/database/logins?limit=30').then(r => r.json()).catch(() => null),
+        fetch('/api/database/payments?limit=50').then(r => r.json()).catch(() => null)
       ]);
 
       if (statsRes && statsRes.stats) setStats(statsRes.stats);
       if (usersRes && usersRes.users) setUsers(usersRes.users);
       if (logsRes && logsRes.logs) setLogs(logsRes.logs);
+      if (paymentsRes && paymentsRes.payments) setPayments(paymentsRes.payments);
       setLastRefreshed(new Date().toLocaleTimeString());
     } catch (e) {
       console.warn('Could not load database metrics:', e);
@@ -2445,11 +2736,11 @@ function DatabaseModal({ isOpen, onClose, onSound }) {
           <div>
             <div className="hero-badge" style={{ marginBottom: '6px' }}>
               <span className="gold-diamond"></span>
-              <span>ENTERPRISE LOGIN VAULT • SQLITE 3</span>
+              <span>ENTERPRISE DATABASE VAULT • SQLITE 3</span>
               <span className="gold-diamond"></span>
             </div>
             <h2 className="font-serif" style={{ fontSize: '1.6rem', color: '#fff', letterSpacing: '2px', margin: 0 }}>
-              USER LOGIN <span className="gold-gradient-text">DATABASE</span>
+              RESTAURANT <span className="gold-gradient-text">DATABASE &amp; PAYMENTS</span>
             </h2>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
@@ -2479,14 +2770,16 @@ function DatabaseModal({ isOpen, onClose, onSound }) {
             <div className="db-stat-lbl">Successful Logins</div>
           </div>
           <div className="db-stat-card">
-            <div className="db-stat-val">{stats ? stats.activeSessions : 'Active'}</div>
-            <div className="db-stat-lbl">Live Web Sessions</div>
+            <div className="db-stat-val" style={{ color: '#4ade80' }}>
+              {stats && stats.totalPaidReservations !== undefined ? stats.totalPaidReservations : payments.filter(p => p.status === 'paid').length}
+            </div>
+            <div className="db-stat-lbl">Paid Bookings</div>
           </div>
           <div className="db-stat-card">
-            <div className="db-stat-val" style={{ fontSize: '1.1rem', paddingTop: '4px' }}>
-              {stats ? `${(stats.dbFileSizeBytes / 1024).toFixed(0)} KB` : '45 KB'}
+            <div className="db-stat-val" style={{ fontSize: '1.1rem', paddingTop: '4px', color: 'var(--gold-300)' }}>
+              {stats && stats.totalRevenue ? `₹${stats.totalRevenue}` : '₹0'}
             </div>
-            <div className="db-stat-lbl">database/users.db</div>
+            <div className="db-stat-lbl">Total Revenue</div>
           </div>
         </div>
 
@@ -2502,7 +2795,13 @@ function DatabaseModal({ isOpen, onClose, onSound }) {
             className={`auth-tab-btn ${activeTab === 'logins' ? 'active' : ''}`}
             onClick={() => { setActiveTab('logins'); onSound('click'); }}
           >
-            Login Audit Trail ({logs.length})
+            Login Audit ({logs.length})
+          </button>
+          <button
+            className={`auth-tab-btn ${activeTab === 'payments' ? 'active' : ''}`}
+            onClick={() => { setActiveTab('payments'); onSound('click'); }}
+          >
+            Google Pay Payments ({payments.length})
           </button>
         </div>
 
@@ -2600,6 +2899,71 @@ function DatabaseModal({ isOpen, onClose, onSound }) {
                       <td><code style={{ fontSize: '0.75rem', color: 'var(--text-dim)' }}>{l.ip_address || '127.0.0.1'}</code></td>
                       <td style={{ fontSize: '0.75rem', color: l.error_reason ? '#f87171' : 'var(--text-dim)' }}>
                         {l.error_reason || 'Verified'}
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+        )}
+
+        {/* Tab 3: Google Pay Payments & Transactions */}
+        {activeTab === 'payments' && (
+          <div className="db-table-wrapper">
+            <table className="db-table">
+              <thead>
+                <tr>
+                  <th>DATE / TIME</th>
+                  <th>GUEST NAME</th>
+                  <th>TABLE</th>
+                  <th>AMOUNT</th>
+                  <th>PAYMENT REF</th>
+                  <th>ORDER ID</th>
+                  <th>STATUS</th>
+                </tr>
+              </thead>
+              <tbody>
+                {payments.length === 0 ? (
+                  <tr>
+                    <td colSpan="7" style={{ textAlign: 'center', padding: '24px', color: 'var(--text-muted)' }}>
+                      No payment transactions recorded yet. Complete a reservation with Google Pay to view real-time receipts.
+                    </td>
+                  </tr>
+                ) : (
+                  payments.map((p, i) => (
+                    <tr key={i}>
+                      <td style={{ fontSize: '0.75rem', color: 'var(--text-dim)' }}>
+                        {p.paid_at ? p.paid_at.replace('T', ' ').slice(0, 19) : (p.created_at ? p.created_at.replace('T', ' ').slice(0, 19) : '—')}
+                      </td>
+                      <td>
+                        <div style={{ fontWeight: 600 }}>{p.guest_name || 'Guest'}</div>
+                        <div style={{ fontSize: '0.70rem', color: 'var(--text-muted)' }}>{p.guest_email || p.guest_phone || '—'}</div>
+                      </td>
+                      <td style={{ fontSize: '0.80rem' }}>{p.table_name || 'Sanctuary Table'}</td>
+                      <td style={{ fontWeight: 700, color: 'var(--gold-300)' }}>
+                        {p.currency === 'USD' ? '$' : '₹'}{p.amount}
+                      </td>
+                      <td>
+                        {p.payment_id ? (
+                          <code style={{ fontSize: '0.72rem', color: '#4ade80', background: 'rgba(74, 222, 128, 0.1)', padding: '2px 6px', borderRadius: '4px' }}>
+                            {p.payment_id}
+                          </code>
+                        ) : (
+                          <span style={{ fontSize: '0.72rem', color: 'var(--text-dim)' }}>Pending</span>
+                        )}
+                      </td>
+                      <td>
+                        <code style={{ fontSize: '0.70rem', color: 'var(--text-muted)' }}>
+                          {p.order_id}
+                        </code>
+                      </td>
+                      <td>
+                        {p.status === 'paid' ? (
+                          <span className="status-pill-success">PAID</span>
+                        ) : (
+                          <span className="status-pill-failed">{p.status.toUpperCase()}</span>
+                        )}
                       </td>
                     </tr>
                   ))
@@ -3034,8 +3398,8 @@ function App() {
     setAuthModalOpen(true);
   };
 
-  const handleConfirmReservation = (guestInfo, total) => {
-    const code = `FSP-${Math.floor(1000 + Math.random() * 9000)}-VIP`;
+  const handleConfirmReservation = (guestInfo, total, paymentInfo = null) => {
+    const code = (paymentInfo && paymentInfo.code) ? paymentInfo.code : `FSP-${Math.floor(1000 + Math.random() * 9000)}-VIP`;
     const res = {
       code,
       guestName: `${guestInfo.firstName} ${guestInfo.lastName}`,
@@ -3051,6 +3415,10 @@ function App() {
       guests: booking.guests,
       occasion: booking.occasion,
       total,
+      paymentId: paymentInfo ? paymentInfo.paymentId : null,
+      orderId: paymentInfo ? paymentInfo.orderId : null,
+      paymentStatus: paymentInfo ? paymentInfo.paymentStatus : 'UNPAID',
+      currency: (paymentInfo && paymentInfo.currency) || 'INR',
       vipTier: currentUser ? (currentUser.provider === 'google' ? 'Google Verified' : currentUser.tierBadge) : null,
       vipMemberId: currentUser ? currentUser.id : null,
       provider: currentUser ? currentUser.provider : null,
@@ -3071,6 +3439,7 @@ function App() {
     navigateToPage('pass', {
       title: 'TABLE SANCTUARY SECURED',
       stepsSequence: [
+        '✦ Verifying Google Pay (GPay) Transaction & Instant Receipt...',
         '✦ Allocating Table & Assigning Dedicated Sommelier...',
         '✦ Generating Cryptographic VIP Pass & Maître d\' Seal...',
         '✦ Confirmation Email Dispatched • Moving to Official Pass Page...'

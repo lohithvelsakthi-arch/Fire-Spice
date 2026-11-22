@@ -2,6 +2,7 @@
 node_modules/
 .env
 .env.local
+razorpay-config.json
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*

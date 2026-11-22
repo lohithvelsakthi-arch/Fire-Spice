@@ -72,9 +72,28 @@ function initSchema() {
       FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
     );
 
+    CREATE TABLE IF NOT EXISTS payments (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      order_id TEXT UNIQUE NOT NULL,
+      payment_id TEXT UNIQUE,
+      signature TEXT,
+      amount REAL NOT NULL,
+      currency TEXT NOT NULL DEFAULT 'INR',
+      status TEXT NOT NULL DEFAULT 'created',
+      guest_name TEXT,
+      guest_email TEXT,
+      guest_phone TEXT,
+      table_name TEXT,
+      reservation_code TEXT,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      paid_at DATETIME
+    );
+
     CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
     CREATE INDEX IF NOT EXISTS idx_login_logs_time ON login_logs(login_time DESC);
     CREATE INDEX IF NOT EXISTS idx_sessions_token ON sessions(token);
+    CREATE INDEX IF NOT EXISTS idx_payments_order ON payments(order_id);
+    CREATE INDEX IF NOT EXISTS idx_payments_payment ON payments(payment_id);
   `);
 }
 
@@ -448,11 +467,78 @@ function getRecentLogins(limit = 25) {
   return stmt.all(limit);
 }
 
+/**
+ * Payment & Transaction Helpers
+ */
+function createPaymentOrder({ orderId, amount, currency = 'INR', guestName = '', guestEmail = '', guestPhone = '', tableName = '', reservationCode = '' }) {
+  try {
+    const stmt = db.prepare(`
+      INSERT INTO payments (
+        order_id, amount, currency, status, guest_name, guest_email, guest_phone, table_name, reservation_code
+      ) VALUES (?, ?, ?, 'created', ?, ?, ?, ?, ?)
+    `);
+    stmt.run(orderId, amount, currency, guestName, guestEmail, guestPhone, tableName, reservationCode);
+    return { success: true };
+  } catch (err) {
+    console.error('[DB Payment Order Error]:', err);
+    return { success: false, error: err.message };
+  }
+}
+
+function updatePaymentSuccess({ orderId, paymentId, signature, reservationCode }) {
+  try {
+    const stmt = db.prepare(`
+      UPDATE payments
+      SET payment_id = ?, signature = ?, status = 'paid', reservation_code = COALESCE(?, reservation_code), paid_at = CURRENT_TIMESTAMP
+      WHERE order_id = ?
+    `);
+    stmt.run(paymentId, signature, reservationCode || null, orderId);
+    return { success: true };
+  } catch (err) {
+    console.error('[DB Payment Success Error]:', err);
+    return { success: false, error: err.message };
+  }
+}
+
+function getPaymentByOrderId(orderId) {
+  try {
+    return db.prepare('SELECT * FROM payments WHERE order_id = ?').get(orderId) || null;
+  } catch (err) {
+    return null;
+  }
+}
+
+function recordGPayPayment({ paymentId, orderId, amount, guestName = '', guestEmail = '', guestPhone = '', tableName = '', reservationCode = '', utr = '' }) {
+  try {
+    const stmt = db.prepare(`
+      INSERT INTO payments (
+        order_id, payment_id, signature, amount, currency, status,
+        guest_name, guest_email, guest_phone, table_name, reservation_code, paid_at
+      ) VALUES (?, ?, ?, ?, 'INR', 'paid', ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
+    `);
+    stmt.run(orderId, paymentId, utr || 'GPAY_UPI_VERIFIED', amount, guestName, guestEmail, guestPhone, tableName, reservationCode);
+    return { success: true };
+  } catch (err) {
+    console.error('[DB GPay Record Error]:', err);
+    return { success: false, error: err.message };
+  }
+}
+
+function getAllPayments(limit = 50) {
+  try {
+    return db.prepare('SELECT * FROM payments ORDER BY id DESC LIMIT ?').all(limit);
+  } catch (err) {
+    return [];
+  }
+}
+
 function getDatabaseStats() {
   const userCount = db.prepare('SELECT COUNT(*) AS count FROM users').get().count;
   const loginCount = db.prepare('SELECT COUNT(*) AS count FROM login_logs').get().count;
   const successLogins = db.prepare("SELECT COUNT(*) AS count FROM login_logs WHERE status = 'SUCCESS'").get().count;
   const activeSessions = db.prepare('SELECT COUNT(*) AS count FROM sessions WHERE expires_at > CURRENT_TIMESTAMP').get().count;
+  const paymentCount = db.prepare("SELECT COUNT(*) AS count FROM payments WHERE status = 'paid'").get().count;
+  const totalRevenue = db.prepare("SELECT COALESCE(SUM(amount), 0) AS total FROM payments WHERE status = 'paid'").get().total;
 
   let fileSizeBytes = 0;
   try {
@@ -466,7 +552,9 @@ function getDatabaseStats() {
     totalUsers: userCount,
     totalLoginAttempts: loginCount,
     successfulLogins: successLogins,
-    activeSessions: activeSessions
+    activeSessions: activeSessions,
+    totalPaidReservations: paymentCount,
+    totalRevenue: totalRevenue
   };
 }
 
@@ -486,6 +574,11 @@ module.exports = {
   destroySession,
   getAllUsers,
   getRecentLogins,
-  getDatabaseStats
+  getDatabaseStats,
+  createPaymentOrder,
+  updatePaymentSuccess,
+  getPaymentByOrderId,
+  getAllPayments,
+  recordGPayPayment
 };
 

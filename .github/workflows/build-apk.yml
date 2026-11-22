@@ -59,44 +59,48 @@ jobs:
           APK_FILE=$(find android -name "*.apk" | head -n 1)
           if [ -n "$APK_FILE" ]; then
             echo "Found APK at: $APK_FILE"
-            cp "$APK_FILE" build-output/FireSpice-v1.0.15.apk
+            cp "$APK_FILE" build-output/FireSpice-v1.0.16.apk
           else
             echo "ERROR: No APK found!"
             exit 1
           fi
-          ls -lh build-output/FireSpice-v1.0.15.apk
+          ls -lh build-output/FireSpice-v1.0.16.apk
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: FireSpice-v1.0.15-APK
-          path: build-output/FireSpice-v1.0.15.apk
+          name: FireSpice-v1.0.16-APK
+          path: build-output/FireSpice-v1.0.16.apk
           retention-days: 90
 
       - name: Create or Update GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: v1.0.15
-          name: "FIRE SPICE Android App • Release v1.0.15"
+          tag_name: v1.0.16
+          name: "FIRE SPICE Android App • Release v1.0.16"
           prerelease: false
           draft: false
           make_latest: true
           body: |
             ### 🍷 FIRE SPICE • Haute Gastronomie & Golden Lounge
-            **Official Android Application Release (v1.0.15 — Fixed Android Adaptive Launcher Icon)**
+            **Official Android Application Release (v1.0.16 — Google Pay & UPI Live Payments & Under ₹5 Pricing)**
 
-            #### 🛠️ What's Fixed in v1.0.15:
-            - **Android Home Screen Launcher Icon Fixed**:
-              - Corrected Android 8.0+ / 13+ / 14+ Adaptive Icon specification (`mipmap-anydpi-v26/ic_launcher.xml` and `ic_launcher_round.xml`).
-              - Replaced broken XML layer-list with native density-specific PNG foreground bitmaps (`ic_launcher_foreground.png` for mdpi, hdpi, xhdpi, xxhdpi, xxxhdpi) properly padded within the 72dp safe zone.
-              - Removed the `<monochrome>` attribute that caused Android Material You / Samsung Color Palette / Pixel Themed Icons to tint the launcher icon into a blank solid purple square.
-              - Added `colors.xml` declaring `@color/ic_launcher_background` (`#060608` Obsidian Noir).
-              - Updated all legacy square & circular mipmap icons.
-            - **Full-Color 24K Gold Cloche Logo**: Now renders with full fidelity on all Android home screens, app drawers, and notification trays.
+            #### 🛠️ What's New in v1.0.16:
+            - **Google Pay (GPay) & Direct UPI Payments**:
+              - Direct payment settlement to owner's SBI Google Pay account (`lohithvelsakthi-1@oksbi`).
+              - One-tap Google Pay app launcher on Android (`upi://pay`).
+              - Dynamic real-time UPI QR code generation for instant scanning.
+              - Instant cryptographic verification and SQLite transaction logging.
+            - **All Meal & Table Costs Under ₹5**:
+              - All table minimum spend guarantees, tasting menus, and culinary add-ons adjusted strictly within ₹1 to ₹5.
+            - **Verified VIP Dining Pass**:
+              - Displays official "✓ GUARANTEE DEPOSIT PAID VIA GOOGLE PAY" badge with UPI transaction reference.
+            - **Android Home Screen Icon**:
+              - Full 24K gold FIRE SPICE cloche logo on obsidian noir (`#060608`).
 
             #### 📲 Installation Instructions:
-            1. Download `FireSpice-v1.0.15.apk` onto your Android device.
+            1. Download `FireSpice-v1.0.16.apk` onto your Android device.
             2. Tap → Allow unknown apps → Update / Install → Launch FIRE SPICE!
-          files: build-output/FireSpice-v1.0.15.apk
+          files: build-output/FireSpice-v1.0.16.apk
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
