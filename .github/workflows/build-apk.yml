@@ -78,6 +78,7 @@ jobs:
         with:
           tag_name: v1.0.17
           name: "FIRE SPICE Android App • Release v1.0.17"
+          files: build-output/FireSpice-v1.0.17.apk
           prerelease: false
           draft: false
           make_latest: true
