@@ -3289,35 +3289,26 @@ function CookingEntranceOverlay({ isOpen, isOpening, onGoogleSignIn, onGuestEnte
 
   return (
     <div className={`cooking-stage-overlay ${isOpening ? 'cooking-opening' : ''}`} aria-hidden="true">
-      {/* Background Ambient Heat Glow */}
-      <div className="cooking-bg-glow"></div>
+      {/* Full-Screen Cinematic Video Background Behind Sign-In */}
+      <div className="cooking-video-fullscreen-bg">
+        <video
+          ref={videoRef}
+          src="cooking-intro.mp4"
+          className="cooking-fullscreen-video"
+          autoPlay
+          loop
+          muted
+          playsInline
+          webkit-playsinline="true"
+          preload="auto"
+        />
+        <div className="cooking-video-overlay-scrim"></div>
+      </div>
 
       {/* Flambé Burst Flash on Reveal */}
       <div className="flambe-flare-burst"></div>
 
-      {/* Cinematic Sauté Video Viewport */}
-      <div className="cooking-station">
-        <div className="cooking-video-frame">
-          <div className="cooking-video-tag">✦ LIVE CHEF'S SEARING TABLE ✦</div>
-          <div className="cooking-video-corner tl"></div>
-          <div className="cooking-video-corner tr"></div>
-          <div className="cooking-video-corner bl"></div>
-          <div className="cooking-video-corner br"></div>
-          <video
-            ref={videoRef}
-            src="cooking-intro.mp4"
-            className="cooking-video-element"
-            autoPlay
-            loop
-            muted
-            playsInline
-            webkit-playsinline="true"
-            preload="auto"
-          />
-        </div>
-      </div>
-
-      {/* Center Royal Culinary Card & Google Entrance */}
+      {/* Center Royal Culinary Card & Google Entrance Floating Directly Over Fullscreen Video */}
       <div className="cooking-medallion-card">
         <div className="cooking-chef-crest">
           <img src="icons/icon-192.png" alt="FIRE SPICE Emblem" className="cooking-logo-img" />
@@ -3535,22 +3526,22 @@ function App() {
     }
   }, [onSound]);
 
-  // Trigger opening the cooking animation with golden flambé flourish
+  // Trigger opening the cooking animation with golden flambé flourish (4.0s duration)
   const triggerOpenCooking = useCallback(() => {
     setCookingState('opening');
     onSound('cooking');
 
     setTimeout(() => {
       setCookingState('closed-done');
-    }, 2000);
+    }, 4000);
   }, [onSound]);
 
-  // If user loads the page and is already signed in with Google, unveil the kitchen after a welcoming pause
+  // If user loads the page and is already signed in with Google, unveil the kitchen after 4s
   useEffect(() => {
     if (cookingState === 'closed' && currentUser) {
       const timer = setTimeout(() => {
         triggerOpenCooking();
-      }, 900);
+      }, 4000);
       return () => clearTimeout(timer);
     }
   }, [cookingState, currentUser, triggerOpenCooking]);
@@ -3594,7 +3585,7 @@ function App() {
     window.scrollTo({ top: 0, behavior: 'instant' });
     setTimeout(() => {
       triggerOpenCooking();
-    }, 350);
+    }, 4000);
   };
 
   const handleLogin = (user) => {

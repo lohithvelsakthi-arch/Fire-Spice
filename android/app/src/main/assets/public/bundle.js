@@ -4548,34 +4548,22 @@ function CookingEntranceOverlay({
     className: `cooking-stage-overlay ${isOpening ? 'cooking-opening' : ''}`,
     "aria-hidden": "true"
   }, /*#__PURE__*/React.createElement("div", {
-    className: "cooking-bg-glow"
-  }), /*#__PURE__*/React.createElement("div", {
-    className: "flambe-flare-burst"
-  }), /*#__PURE__*/React.createElement("div", {
-    className: "cooking-station"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "cooking-video-frame"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "cooking-video-tag"
-  }, "✦ LIVE CHEF'S SEARING TABLE ✦"), /*#__PURE__*/React.createElement("div", {
-    className: "cooking-video-corner tl"
-  }), /*#__PURE__*/React.createElement("div", {
-    className: "cooking-video-corner tr"
-  }), /*#__PURE__*/React.createElement("div", {
-    className: "cooking-video-corner bl"
-  }), /*#__PURE__*/React.createElement("div", {
-    className: "cooking-video-corner br"
-  }), /*#__PURE__*/React.createElement("video", {
+    className: "cooking-video-fullscreen-bg"
+  }, /*#__PURE__*/React.createElement("video", {
     ref: videoRef,
     src: "cooking-intro.mp4",
-    className: "cooking-video-element",
+    className: "cooking-fullscreen-video",
     autoPlay: true,
     loop: true,
     muted: true,
     playsInline: true,
     "webkit-playsinline": "true",
     preload: "auto"
-  }))), /*#__PURE__*/React.createElement("div", {
+  }), /*#__PURE__*/React.createElement("div", {
+    className: "cooking-video-overlay-scrim"
+  })), /*#__PURE__*/React.createElement("div", {
+    className: "flambe-flare-burst"
+  }), /*#__PURE__*/React.createElement("div", {
     className: "cooking-medallion-card"
   }, /*#__PURE__*/React.createElement("div", {
     className: "cooking-chef-crest"
@@ -4799,21 +4787,21 @@ function App() {
     }
   }, [onSound]);
 
-  // Trigger opening the cooking animation with golden flambé flourish
+  // Trigger opening the cooking animation with golden flambé flourish (4.0s duration)
   const triggerOpenCooking = useCallback(() => {
     setCookingState('opening');
     onSound('cooking');
     setTimeout(() => {
       setCookingState('closed-done');
-    }, 2000);
+    }, 4000);
   }, [onSound]);
 
-  // If user loads the page and is already signed in with Google, unveil the kitchen after a welcoming pause
+  // If user loads the page and is already signed in with Google, unveil the kitchen after 4s
   useEffect(() => {
     if (cookingState === 'closed' && currentUser) {
       const timer = setTimeout(() => {
         triggerOpenCooking();
-      }, 900);
+      }, 4000);
       return () => clearTimeout(timer);
     }
   }, [cookingState, currentUser, triggerOpenCooking]);
@@ -4857,7 +4845,7 @@ function App() {
     });
     setTimeout(() => {
       triggerOpenCooking();
-    }, 350);
+    }, 4000);
   };
   const handleLogin = user => {
     setCurrentUser(user);

@@ -1,6 +1,6 @@
 {
   "name": "firespice-luxury-restaurant",
-  "version": "1.0.21",
+  "version": "1.0.22",
   "description": "FIRE SPICE - Haute Gastronomie & Golden Lounge Restaurant Table Booking Application",
   "main": "server.js",
   "scripts": {

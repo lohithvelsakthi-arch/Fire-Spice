@@ -489,7 +489,7 @@ const server = http.createServer(async (req, res) => {
   // =========================================================================
   if (pathname === '/download/apk' || pathname === '/FireSpice.apk' || pathname === '/download/FireSpice.apk') {
     res.writeHead(302, {
-      'Location': 'https://github.com/lohithvelsakthi-arch/Fire-Spice/releases/latest/download/FireSpice-v1.0.21.apk'
+      'Location': 'https://github.com/lohithvelsakthi-arch/Fire-Spice/releases/latest/download/FireSpice-v1.0.22.apk'
     });
     res.end();
     return;
