@@ -59,12 +59,12 @@ jobs:
           APK_FILE=$(find android -name "*.apk" | head -n 1)
           TAG="${{ github.ref_name }}"
           if [ "$TAG" = "main" ] || [ -z "$TAG" ]; then
-            TAG="v1.0.20"
+            TAG="v1.0.21"
           fi
           if [ -n "$APK_FILE" ]; then
             echo "Found APK at: $APK_FILE"
             cp "$APK_FILE" "build-output/FireSpice-${TAG}.apk"
-            cp "$APK_FILE" "build-output/FireSpice-v1.0.20.apk"
+            cp "$APK_FILE" "build-output/FireSpice-v1.0.21.apk"
             cp "$APK_FILE" "build-output/FireSpice-latest.apk"
           else
             echo "ERROR: No APK found!"
@@ -82,30 +82,28 @@ jobs:
       - name: Create or Update GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ github.ref_type == 'tag' && github.ref_name || 'v1.0.20' }}
-          name: "FIRE SPICE Android App • Release ${{ github.ref_type == 'tag' && github.ref_name || 'v1.0.20' }}"
+          tag_name: ${{ github.ref_type == 'tag' && github.ref_name || 'v1.0.21' }}
+          name: "FIRE SPICE Android App • Release ${{ github.ref_type == 'tag' && github.ref_name || 'v1.0.21' }}"
           prerelease: false
           draft: false
           make_latest: true
           body: |
             ### 🍷 FIRE SPICE • Haute Gastronomie & Golden Lounge
-            **Official Android Application Release (v1.0.20 — Master Chef's Sauté & Flaming Flambé Culinary Animation)**
+            **Official Android Application Release (v1.0.21 — Cinematic Searing Pan Video Intro)**
 
-            #### 🛠️ What's New in v1.0.20:
-            - **Haute Gastronomie Chef's Cooking Animation**:
-              - Replaced curtain design with an exquisite luxury cooking animation on the first entrance page.
-              - Polished titanium & brass sauté skillet on active stove burners with flickering blue & golden gas flames.
-              - Rhythmic culinary tossing animation with vibrant spices, fiery crimson chili, saffron embers, fresh rosemary, and garlic lofting into the air.
-              - Aromatic rising steam wisps and sizzling ember sparks.
-              - Center culinary medallion with Michelin distinction and Google Sign-In prompt.
-              - When signing in with Google (or clicking "Enter Dining Sanctuary"), an expansive golden flambé burst flares up with a sizzling culinary arpeggio chime, seamlessly unveiling the dining sanctuary!
-              - Dedicated "🍳 Cooking" replay button in header and mobile navigation to replay the animation anytime.
+            #### 🛠️ What's New in v1.0.21:
+            - **Cinematic Culinary Video Intro**:
+              - Replaced CSS animation with user-provided high-definition cinematic video (`cooking-intro.mp4`) showing fiery chili peppers and spices tossing from a searing pan.
+              - Framed in a luxury black-and-gold culinary viewport with ambient heat glow and golden chamfered border.
+              - Instant autoplay with muted looping across mobile WebView (Android APK) and desktop web browsers.
+              - Smooth golden flambé veil reveal upon signing in with Google or entering as guest.
+              - Offline video asset bundled directly into the Android APK assets for instant zero-latency playback.
             - **Google Pay & Under ₹5 Pricing Maintained**:
               - Direct UPI transfers to `lohithvelsakthi-1@oksbi` (Payee: FIRE SPICE - Lohith Vel).
               - All table reservations, tasting menus, and add-ons strictly within ₹1 to ₹5.
 
             #### 📲 Installation Instructions:
-            1. Download `FireSpice-v1.0.20.apk` onto your Android device.
+            1. Download `FireSpice-v1.0.21.apk` onto your Android device.
             2. Tap → Allow unknown apps → Update / Install → Launch FIRE SPICE!
           files: build-output/*.apk
         env:

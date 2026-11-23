@@ -20,7 +20,9 @@ const MIME_TYPES = {
   '.jpg': 'image/jpeg',
   '.jpeg': 'image/jpeg',
   '.svg': 'image/svg+xml',
-  '.ico': 'image/x-icon'
+  '.ico': 'image/x-icon',
+  '.mp4': 'video/mp4',
+  '.webm': 'video/webm'
 };
 
 function sendJson(res, statusCode, data) {
@@ -487,7 +489,7 @@ const server = http.createServer(async (req, res) => {
   // =========================================================================
   if (pathname === '/download/apk' || pathname === '/FireSpice.apk' || pathname === '/download/FireSpice.apk') {
     res.writeHead(302, {
-      'Location': 'https://github.com/lohithvelsakthi-arch/Fire-Spice/releases/latest/download/FireSpice-v1.0.18.apk'
+      'Location': 'https://github.com/lohithvelsakthi-arch/Fire-Spice/releases/latest/download/FireSpice-v1.0.21.apk'
     });
     res.end();
     return;
@@ -518,7 +520,29 @@ const server = http.createServer(async (req, res) => {
       contentType = 'application/manifest+json; charset=utf-8';
     }
 
-    const headers = { 'Content-Type': contentType };
+    // Support HTTP Range requests for smooth video streaming (.mp4, .webm)
+    const range = req.headers.range;
+    if (range && (ext === '.mp4' || ext === '.webm')) {
+      const parts = range.replace(/bytes=/, '').split('-');
+      const start = parseInt(parts[0], 10);
+      const end = parts[1] ? parseInt(parts[1], 10) : stats.size - 1;
+      const chunksize = (end - start) + 1;
+      const file = fs.createReadStream(filePath, { start, end });
+      res.writeHead(206, {
+        'Content-Range': `bytes ${start}-${end}/${stats.size}`,
+        'Accept-Ranges': 'bytes',
+        'Content-Length': chunksize,
+        'Content-Type': contentType,
+      });
+      file.pipe(res);
+      return;
+    }
+
+    const headers = {
+      'Content-Type': contentType,
+      'Content-Length': stats.size,
+      'Accept-Ranges': 'bytes'
+    };
     if (filePath.endsWith('sw.js')) {
       headers['Service-Worker-Allowed'] = '/';
       headers['Cache-Control'] = 'no-cache, no-store, must-revalidate';

@@ -3276,6 +3276,17 @@ function PageTransitionOverlay({ transition }) {
 function CookingEntranceOverlay({ isOpen, isOpening, onGoogleSignIn, onGuestEnter, currentUser }) {
   if (!isOpen && !isOpening) return null;
 
+  const videoRef = useRef(null);
+
+  useEffect(() => {
+    if (videoRef.current) {
+      videoRef.current.muted = true;
+      videoRef.current.play().catch(e => {
+        console.log('Video autoplay:', e);
+      });
+    }
+  }, []);
+
   return (
     <div className={`cooking-stage-overlay ${isOpening ? 'cooking-opening' : ''}`} aria-hidden="true">
       {/* Background Ambient Heat Glow */}
@@ -3284,46 +3295,25 @@ function CookingEntranceOverlay({ isOpen, isOpening, onGoogleSignIn, onGuestEnte
       {/* Flambé Burst Flash on Reveal */}
       <div className="flambe-flare-burst"></div>
 
-      {/* Sauté Skillet Culinary Cooking Station */}
+      {/* Cinematic Sauté Video Viewport */}
       <div className="cooking-station">
-        {/* Rising Aromatic Steam */}
-        <div className="cooking-steam-wrap">
-          <div className="steam-wisp"></div>
-          <div className="steam-wisp"></div>
-          <div className="steam-wisp"></div>
-        </div>
-
-        {/* Tossing Sauté Skillet */}
-        <div className="cooking-pan-rig">
-          <div className="skillet-handle"></div>
-          <div className="cooking-skillet">
-            <div className="skillet-interior"></div>
-          </div>
-
-          {/* Tossing Gourmet Ingredients */}
-          <div className="tossing-ingredients-container">
-            <div className="ing-chili" title="Fiery Crimson Chili"></div>
-            <div className="ing-rosemary" title="Aromatic Herb Sprig"></div>
-            <div className="ing-spice-1" title="Golden Saffron Searing Morsel"></div>
-            <div className="ing-spice-2" title="Smoked Paprika Morsel"></div>
-            <div className="ing-garlic" title="Caramelized Garlic Clove"></div>
-          </div>
-        </div>
-
-        {/* Flickering Blue & Golden Burner Flames */}
-        <div className="burner-flames-wrap">
-          <div className="burner-jet"></div>
-          <div className="burner-jet"></div>
-          <div className="burner-jet"></div>
-          <div className="burner-jet"></div>
-        </div>
-
-        {/* Sizzling Spark Embers */}
-        <div className="cooking-sparks-wrap">
-          <div className="spark-dot"></div>
-          <div className="spark-dot"></div>
-          <div className="spark-dot"></div>
-          <div className="spark-dot"></div>
+        <div className="cooking-video-frame">
+          <div className="cooking-video-tag">✦ LIVE CHEF'S SEARING TABLE ✦</div>
+          <div className="cooking-video-corner tl"></div>
+          <div className="cooking-video-corner tr"></div>
+          <div className="cooking-video-corner bl"></div>
+          <div className="cooking-video-corner br"></div>
+          <video
+            ref={videoRef}
+            src="cooking-intro.mp4"
+            className="cooking-video-element"
+            autoPlay
+            loop
+            muted
+            playsInline
+            webkit-playsinline="true"
+            preload="auto"
+          />
         </div>
       </div>
 

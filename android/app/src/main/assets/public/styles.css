@@ -4550,15 +4550,88 @@ body {
   animation: heatPulse 3s ease-in-out infinite alternate;
 }
 
-/* ── CHEF'S SAUTÉ SKILLET STATION ── */
+/* ── CHEF'S CULINARY VIDEO VIEWPORT STATION ── */
 .cooking-station {
   position: relative;
-  width: 320px;
-  height: 220px;
+  width: 90%;
+  max-width: 440px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 22px;
+  z-index: 5;
+}
+
+.cooking-video-frame {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border-radius: 20px;
+  overflow: hidden;
+  border: 1.8px solid rgba(212, 175, 55, 0.65);
+  box-shadow:
+    0 22px 50px rgba(0, 0, 0, 0.95),
+    0 0 35px rgba(235, 94, 28, 0.35),
+    inset 0 0 24px rgba(0, 0, 0, 0.7);
+  background: #000000;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 24px;
+  transition: transform 0.4s ease, box-shadow 0.4s ease;
+}
+
+.cooking-video-frame:hover {
+  box-shadow:
+    0 24px 60px rgba(0, 0, 0, 0.98),
+    0 0 45px rgba(235, 94, 28, 0.5),
+    inset 0 0 20px rgba(212, 175, 55, 0.2);
+}
+
+.cooking-video-element {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  pointer-events: none;
+}
+
+/* Luxury Corner Brackets */
+.cooking-video-corner {
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  border-color: rgba(212, 175, 55, 0.9);
+  border-style: solid;
+  pointer-events: none;
+  z-index: 4;
+}
+.cooking-video-corner.tl { top: 8px; left: 8px; border-width: 2px 0 0 2px; border-top-left-radius: 6px; }
+.cooking-video-corner.tr { top: 8px; right: 8px; border-width: 2px 2px 0 0; border-top-right-radius: 6px; }
+.cooking-video-corner.bl { bottom: 8px; left: 8px; border-width: 0 0 2px 2px; border-bottom-left-radius: 6px; }
+.cooking-video-corner.br { bottom: 8px; right: 8px; border-width: 0 2px 2px 0; border-bottom-right-radius: 6px; }
+
+/* Haute Gastronomie Badge Bar atop Video */
+.cooking-video-tag {
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 5;
+  font-family: 'Cinzel', serif;
+  font-size: 0.65rem;
+  letter-spacing: 2px;
+  color: var(--gold-300);
+  background: rgba(10, 8, 12, 0.85);
+  border: 1px solid rgba(212, 175, 55, 0.45);
+  padding: 4px 14px;
+  border-radius: 9999px;
+  text-transform: uppercase;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  pointer-events: none;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.7);
+  white-space: nowrap;
 }
 
 /* Sauté Pan Assembly */
@@ -5222,33 +5295,19 @@ body {
 /* Mobile Responsiveness for Cooking Animation */
 @media (max-width: 768px) {
   .cooking-station {
-    width: 270px;
-    height: 190px;
+    width: 92%;
+    max-width: 380px;
     margin-bottom: 16px;
   }
 
-  .cooking-pan-rig {
-    width: 160px;
-    height: 160px;
+  .cooking-video-frame {
+    border-radius: 16px;
   }
 
-  .cooking-skillet {
-    width: 120px;
-    height: 60px;
-    left: 24px;
-    bottom: 22px;
-  }
-
-  .skillet-handle {
-    width: 70px;
-    left: -40px;
-    top: 44px;
-  }
-
-  .burner-flames-wrap {
-    left: 36px;
-    width: 96px;
-    height: 32px;
+  .cooking-video-tag {
+    font-size: 0.58rem;
+    padding: 3px 10px;
+    letter-spacing: 1.5px;
   }
 
   .cooking-medallion-card {

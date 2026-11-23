@@ -52,10 +52,16 @@ try {
       });
     }
 
+    // Sync video for offline playback in mobile APK and web
+    if (fs.existsSync('cooking-intro.mp4')) {
+      console.log('Syncing cooking-intro.mp4 -> www/cooking-intro.mp4...');
+      fs.copyFileSync('cooking-intro.mp4', 'www/cooking-intro.mp4');
+    }
+
     if (fs.existsSync('sw.js')) fs.copyFileSync('sw.js', 'www/sw.js');
     if (fs.existsSync('manifest.json')) fs.copyFileSync('manifest.json', 'www/manifest.json');
 
-    console.log('Synced bundle.js, index.html, styles.css, sw.js, manifest.json, vendor/emailjs.min.js, logo.png, icons/ -> www/');
+    console.log('Synced bundle.js, index.html, styles.css, cooking-intro.mp4, sw.js, manifest.json, vendor/emailjs.min.js, logo.png, icons/ -> www/');
   }
 } catch (err) {
   console.error('SYNTAX/TRANSPILE ERROR:');

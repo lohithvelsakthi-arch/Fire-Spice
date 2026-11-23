@@ -4535,6 +4535,15 @@ function CookingEntranceOverlay({
   currentUser
 }) {
   if (!isOpen && !isOpening) return null;
+  const videoRef = useRef(null);
+  useEffect(() => {
+    if (videoRef.current) {
+      videoRef.current.muted = true;
+      videoRef.current.play().catch(e => {
+        console.log('Video autoplay:', e);
+      });
+    }
+  }, []);
   return /*#__PURE__*/React.createElement("div", {
     className: `cooking-stage-overlay ${isOpening ? 'cooking-opening' : ''}`,
     "aria-hidden": "true"
@@ -4545,58 +4554,27 @@ function CookingEntranceOverlay({
   }), /*#__PURE__*/React.createElement("div", {
     className: "cooking-station"
   }, /*#__PURE__*/React.createElement("div", {
-    className: "cooking-steam-wrap"
+    className: "cooking-video-frame"
   }, /*#__PURE__*/React.createElement("div", {
-    className: "steam-wisp"
+    className: "cooking-video-tag"
+  }, "✦ LIVE CHEF'S SEARING TABLE ✦"), /*#__PURE__*/React.createElement("div", {
+    className: "cooking-video-corner tl"
   }), /*#__PURE__*/React.createElement("div", {
-    className: "steam-wisp"
+    className: "cooking-video-corner tr"
   }), /*#__PURE__*/React.createElement("div", {
-    className: "steam-wisp"
-  })), /*#__PURE__*/React.createElement("div", {
-    className: "cooking-pan-rig"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "skillet-handle"
+    className: "cooking-video-corner bl"
   }), /*#__PURE__*/React.createElement("div", {
-    className: "cooking-skillet"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "skillet-interior"
-  })), /*#__PURE__*/React.createElement("div", {
-    className: "tossing-ingredients-container"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "ing-chili",
-    title: "Fiery Crimson Chili"
-  }), /*#__PURE__*/React.createElement("div", {
-    className: "ing-rosemary",
-    title: "Aromatic Herb Sprig"
-  }), /*#__PURE__*/React.createElement("div", {
-    className: "ing-spice-1",
-    title: "Golden Saffron Searing Morsel"
-  }), /*#__PURE__*/React.createElement("div", {
-    className: "ing-spice-2",
-    title: "Smoked Paprika Morsel"
-  }), /*#__PURE__*/React.createElement("div", {
-    className: "ing-garlic",
-    title: "Caramelized Garlic Clove"
-  }))), /*#__PURE__*/React.createElement("div", {
-    className: "burner-flames-wrap"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "burner-jet"
-  }), /*#__PURE__*/React.createElement("div", {
-    className: "burner-jet"
-  }), /*#__PURE__*/React.createElement("div", {
-    className: "burner-jet"
-  }), /*#__PURE__*/React.createElement("div", {
-    className: "burner-jet"
-  })), /*#__PURE__*/React.createElement("div", {
-    className: "cooking-sparks-wrap"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "spark-dot"
-  }), /*#__PURE__*/React.createElement("div", {
-    className: "spark-dot"
-  }), /*#__PURE__*/React.createElement("div", {
-    className: "spark-dot"
-  }), /*#__PURE__*/React.createElement("div", {
-    className: "spark-dot"
+    className: "cooking-video-corner br"
+  }), /*#__PURE__*/React.createElement("video", {
+    ref: videoRef,
+    src: "cooking-intro.mp4",
+    className: "cooking-video-element",
+    autoPlay: true,
+    loop: true,
+    muted: true,
+    playsInline: true,
+    "webkit-playsinline": "true",
+    preload: "auto"
   }))), /*#__PURE__*/React.createElement("div", {
     className: "cooking-medallion-card"
   }, /*#__PURE__*/React.createElement("div", {

@@ -21,7 +21,7 @@
   <link rel="manifest" href="manifest.json">
 
   <!-- Luxury Black & Gold Glassmorphic Stylesheet -->
-  <link rel="stylesheet" href="styles.css?v=1.0.20">
+  <link rel="stylesheet" href="styles.css?v=1.0.21">
 
   <!-- Google Fonts: Non-blocking load so app renders instantaneously offline -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -45,44 +45,24 @@
     <div id="app-preloader" class="cooking-stage-overlay">
       <div class="cooking-bg-glow"></div>
       
-      <!-- Sauté Skillet Culinary Cooking Station -->
+      <!-- Cinematic Sauté Video Viewport Station -->
       <div class="cooking-station">
-        <!-- Rising Aromatic Steam -->
-        <div class="cooking-steam-wrap">
-          <div class="steam-wisp"></div>
-          <div class="steam-wisp"></div>
-          <div class="steam-wisp"></div>
-        </div>
-
-        <!-- Tossing Sauté Skillet -->
-        <div class="cooking-pan-rig">
-          <div class="skillet-handle"></div>
-          <div class="cooking-skillet">
-            <div class="skillet-interior"></div>
-          </div>
-          <div class="tossing-ingredients-container">
-            <div class="ing-chili"></div>
-            <div class="ing-rosemary"></div>
-            <div class="ing-spice-1"></div>
-            <div class="ing-spice-2"></div>
-            <div class="ing-garlic"></div>
-          </div>
-        </div>
-
-        <!-- Flickering Blue & Golden Burner Flames -->
-        <div class="burner-flames-wrap">
-          <div class="burner-jet"></div>
-          <div class="burner-jet"></div>
-          <div class="burner-jet"></div>
-          <div class="burner-jet"></div>
-        </div>
-
-        <!-- Sizzling Spark Embers -->
-        <div class="cooking-sparks-wrap">
-          <div class="spark-dot"></div>
-          <div class="spark-dot"></div>
-          <div class="spark-dot"></div>
-          <div class="spark-dot"></div>
+        <div class="cooking-video-frame">
+          <div class="cooking-video-tag">✦ LIVE CHEF'S SEARING TABLE ✦</div>
+          <div class="cooking-video-corner tl"></div>
+          <div class="cooking-video-corner tr"></div>
+          <div class="cooking-video-corner bl"></div>
+          <div class="cooking-video-corner br"></div>
+          <video
+            src="cooking-intro.mp4"
+            class="cooking-video-element"
+            autoplay
+            loop
+            muted
+            playsinline
+            webkit-playsinline="true"
+            preload="auto"
+          ></video>
         </div>
       </div>
 
