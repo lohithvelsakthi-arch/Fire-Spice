@@ -4507,5 +4507,434 @@ body {
   -webkit-backdrop-filter: blur(24px);
 }
 
+/* ==========================================================================
+   Royal Red Velvet Theater Curtain with 24K Golden Bottom Border
+   Grand entrance animation on initial load & Google Sign-In
+   ========================================================================== */
+
+.curtain-stage-overlay {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 999999;
+  overflow: hidden;
+  pointer-events: auto;
+  user-select: none;
+  perspective: 1200px;
+  background: transparent;
+  transition: opacity 0.5s ease 1.8s, visibility 0.5s ease 1.8s;
+}
+
+.curtain-stage-overlay.curtain-hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+/* Multi-layered draped velvet panels */
+.curtain-panel {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 50.5%;
+  height: 100%;
+  will-change: transform;
+  /* Deep theatrical crimson velvet gradient with realistic vertical light/shadow pleats */
+  background:
+    repeating-linear-gradient(
+      90deg,
+      rgba(40, 0, 5, 0.98) 0px,
+      rgba(115, 8, 22, 0.95) 24px,
+      rgba(180, 22, 38, 0.97) 48px,
+      rgba(225, 45, 62, 0.88) 64px,
+      rgba(145, 14, 28, 0.96) 82px,
+      rgba(60, 3, 10, 0.98) 104px,
+      rgba(22, 0, 4, 0.99) 124px
+    ),
+    linear-gradient(
+      180deg,
+      #330005 0%,
+      #660512 25%,
+      #8c0c1b 50%,
+      #ab1426 75%,
+      #45030a 100%
+    );
+  box-shadow: inset 0 0 120px rgba(0, 0, 0, 0.9);
+  overflow: hidden;
+}
+
+.curtain-fabric-shimmer {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 30%, rgba(255, 180, 180, 0.12) 0%, transparent 65%);
+  pointer-events: none;
+}
+
+.curtain-panel-left {
+  left: 0;
+  transform-origin: left center;
+  box-shadow: 14px 0 45px rgba(0, 0, 0, 0.95), inset -12px 0 30px rgba(0, 0, 0, 0.7);
+  z-index: 2;
+}
+
+.curtain-panel-right {
+  right: 0;
+  transform-origin: right center;
+  box-shadow: -14px 0 45px rgba(0, 0, 0, 0.95), inset 12px 0 30px rgba(0, 0, 0, 0.7);
+  z-index: 1;
+}
+
+/* Luxurious Golden Border at the bottom of the curtain */
+.curtain-gold-bottom-border {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 52px;
+  background: linear-gradient(
+    180deg,
+    #fff8d6 0%,
+    #f5d376 15%,
+    #d4af37 45%,
+    #aa8222 75%,
+    #694e0f 100%
+  );
+  border-top: 3px solid #fff5cc;
+  box-shadow:
+    0 -6px 22px rgba(212, 175, 55, 0.75),
+    0 -1px 4px rgba(255, 245, 195, 0.9),
+    0 10px 30px rgba(0, 0, 0, 0.98);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+/* Decorative Gold Ribbon Piping Above Fringe */
+.curtain-gold-piping {
+  height: 8px;
+  background: linear-gradient(90deg, #aa8222, #faebad, #d4af37, #faebad, #aa8222);
+  border-top: 1px solid #ffffff;
+  border-bottom: 1px solid #735510;
+}
+
+/* Braided bullion fringe and tassels along bottom edge */
+.curtain-gold-fringe {
+  height: 24px;
+  width: 100%;
+  background: repeating-linear-gradient(
+    90deg,
+    #faebad 0px,
+    #d4af37 4px,
+    #997316 6px,
+    #57410b 9px,
+    #faebad 12px
+  );
+  border-top: 2px solid rgba(110, 80, 15, 0.85);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.75);
+  position: relative;
+}
+
+.curtain-gold-fringe::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: #3a2b06;
+}
+
+/* Grand Opera House Top Valance Swag */
+.curtain-valance {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 72px;
+  background:
+    radial-gradient(ellipse at 50% -20%, rgba(255, 230, 160, 0.28) 0%, transparent 60%),
+    repeating-linear-gradient(90deg, #400208 0px, #820a17 30px, #a81525 60px, #61040f 90px),
+    #52030c;
+  border-bottom: 4px solid #d4af37;
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.9), 0 2px 14px rgba(212, 175, 55, 0.5);
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 1.3s cubic-bezier(0.7, 0, 0.2, 1);
+}
+
+.curtain-valance-crest {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-family: 'Cinzel', serif;
+  font-size: 0.88rem;
+  font-weight: 700;
+  letter-spacing: 3px;
+  color: #fff4d1;
+  text-shadow: 0 0 12px rgba(212, 175, 55, 0.6);
+  text-transform: uppercase;
+}
+
+.curtain-valance-fringe {
+  position: absolute;
+  bottom: -10px;
+  left: 0;
+  right: 0;
+  height: 10px;
+  background: repeating-linear-gradient(
+    90deg,
+    #faebad 0px,
+    #d4af37 3px,
+    #8c6812 6px
+  );
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.6);
+}
+
+/* Center Golden Medallion & Google Entrance Callout */
+.curtain-center-medallion {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 38px 34px;
+  background: rgba(12, 10, 14, 0.92);
+  border: 2px solid var(--gold-400);
+  border-radius: 28px;
+  box-shadow:
+    0 25px 80px rgba(0, 0, 0, 0.95),
+    0 0 50px rgba(212, 175, 55, 0.4),
+    inset 0 1px 2px rgba(255, 255, 255, 0.45);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  max-width: 460px;
+  width: 90%;
+  transition: opacity 0.5s ease, transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.curtain-medallion-crest {
+  margin-bottom: 14px;
+}
+
+.curtain-logo-img {
+  width: 76px;
+  height: 76px;
+  object-fit: contain;
+  border-radius: 18px;
+  border: 1px solid rgba(212, 175, 55, 0.5);
+  background: rgba(6, 6, 8, 0.8);
+  padding: 6px;
+  box-shadow: 0 0 28px rgba(212, 175, 55, 0.45);
+}
+
+.curtain-medallion-badge {
+  font-family: 'Cinzel', serif;
+  font-size: 0.72rem;
+  letter-spacing: 2px;
+  color: var(--gold-300);
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  background: rgba(212, 175, 55, 0.08);
+  padding: 4px 12px;
+  border-radius: 9999px;
+  margin-bottom: 12px;
+  text-transform: uppercase;
+}
+
+.curtain-medallion-title {
+  font-family: 'Cinzel', serif;
+  font-size: 1.65rem;
+  letter-spacing: 2px;
+  color: #ffffff;
+  margin-bottom: 10px;
+  line-height: 1.25;
+}
+
+.curtain-medallion-desc {
+  font-size: 0.92rem;
+  color: var(--text-muted);
+  line-height: 1.55;
+  margin-bottom: 22px;
+  max-width: 380px;
+}
+
+.curtain-actions-wrap {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.btn-curtain-google {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  width: 100%;
+  min-height: 52px;
+  padding: 13px 22px;
+  background: #ffffff;
+  color: #1f1f1f;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.98rem;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  border: 1px solid rgba(212, 175, 55, 0.5);
+  border-radius: 14px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.6), 0 0 20px rgba(255, 255, 255, 0.25);
+  cursor: pointer;
+  transition: all 0.25s ease;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+.btn-curtain-google:hover {
+  transform: translateY(-2px);
+  background: #f8f9fa;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.7), 0 0 25px rgba(212, 175, 55, 0.4);
+}
+
+.btn-curtain-google:active {
+  transform: scale(0.97);
+}
+
+.curtain-guest-link {
+  background: none;
+  border: none;
+  color: var(--gold-400);
+  font-size: 0.82rem;
+  letter-spacing: 0.8px;
+  cursor: pointer;
+  padding: 6px 12px;
+  text-decoration: underline;
+  opacity: 0.85;
+  transition: opacity 0.2s ease;
+}
+
+.curtain-guest-link:hover {
+  opacity: 1;
+}
+
+.btn-curtain-cta {
+  min-height: 52px;
+  padding: 14px 28px;
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  width: 100%;
+}
+
+/* ==========================================================================
+   Curtain Opening Keyframe Animations
+   ========================================================================== */
+
+.curtain-stage-overlay.curtain-opening {
+  pointer-events: none;
+}
+
+.curtain-stage-overlay.curtain-opening .curtain-panel-left {
+  animation: openCurtainLeft 1.9s cubic-bezier(0.77, 0, 0.175, 1) forwards;
+}
+
+.curtain-stage-overlay.curtain-opening .curtain-panel-right {
+  animation: openCurtainRight 1.9s cubic-bezier(0.77, 0, 0.175, 1) forwards;
+}
+
+.curtain-stage-overlay.curtain-opening .curtain-valance {
+  transform: translateY(-100%);
+  transition: transform 1.3s cubic-bezier(0.7, 0, 0.2, 1) 0.3s;
+}
+
+.curtain-stage-overlay.curtain-opening .curtain-center-medallion {
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(0.8);
+  pointer-events: none;
+}
+
+@keyframes openCurtainLeft {
+  0% {
+    transform: translateX(0) scaleX(1);
+  }
+  30% {
+    transform: translateX(-18%) scaleX(0.88);
+  }
+  65% {
+    transform: translateX(-65%) scaleX(0.6);
+  }
+  100% {
+    transform: translateX(-104%) scaleX(0.35);
+  }
+}
+
+@keyframes openCurtainRight {
+  0% {
+    transform: translateX(0) scaleX(1);
+  }
+  30% {
+    transform: translateX(18%) scaleX(0.88);
+  }
+  65% {
+    transform: translateX(65%) scaleX(0.6);
+  }
+  100% {
+    transform: translateX(104%) scaleX(0.35);
+  }
+}
+
+/* Mobile Responsiveness for Curtain */
+@media (max-width: 768px) {
+  .curtain-center-medallion {
+    padding: 26px 20px;
+    border-radius: 22px;
+    width: 92%;
+    max-width: 360px;
+  }
+
+  .curtain-logo-img {
+    width: 64px;
+    height: 64px;
+  }
+
+  .curtain-medallion-title {
+    font-size: 1.35rem;
+    letter-spacing: 1.5px;
+  }
+
+  .curtain-medallion-desc {
+    font-size: 0.85rem;
+    margin-bottom: 18px;
+  }
+
+  .curtain-gold-bottom-border {
+    height: 42px;
+  }
+
+  .curtain-gold-fringe {
+    height: 18px;
+  }
+
+  .curtain-valance {
+    height: 56px;
+  }
+
+  .curtain-valance-crest {
+    font-size: 0.72rem;
+    letter-spacing: 1.8px;
+  }
+
+  .btn-curtain-google {
+    min-height: 50px;
+    font-size: 0.92rem;
+  }
+}
+
 
 

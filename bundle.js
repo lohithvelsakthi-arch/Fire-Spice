@@ -389,6 +389,23 @@ function playChime(enabled, type = 'click') {
     if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
     if (!audioCtx) return;
     const now = audioCtx.currentTime;
+    if (type === 'curtain') {
+      // Grand Opera House Ascending Harp & Bell Arpeggio
+      [523.25, 659.25, 783.99, 1046.50, 1318.51, 1567.98, 2093.00].forEach((freq, idx) => {
+        const subOsc = audioCtx.createOscillator();
+        const subGain = audioCtx.createGain();
+        subOsc.type = 'triangle';
+        subOsc.frequency.setValueAtTime(freq, now + idx * 0.09);
+        subGain.gain.setValueAtTime(0, now + idx * 0.09);
+        subGain.gain.linearRampToValueAtTime(0.08, now + idx * 0.09 + 0.03);
+        subGain.gain.exponentialRampToValueAtTime(0.0001, now + idx * 0.09 + 1.8);
+        subOsc.connect(subGain);
+        subGain.connect(audioCtx.destination);
+        subOsc.start(now + idx * 0.09);
+        subOsc.stop(now + idx * 0.09 + 1.85);
+      });
+      return;
+    }
     if (type === 'confirm') {
       [1046.5, 1318.5, 1567.98, 2093.0].forEach((freq, idx) => {
         const subOsc = audioCtx.createOscillator();
@@ -524,7 +541,8 @@ function Header({
   isStandalone,
   currentStep,
   activeView,
-  onSwitchView
+  onSwitchView,
+  onReplayCurtain
 }) {
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
@@ -950,7 +968,24 @@ function Header({
     y1: "15",
     x2: "12",
     y2: "3"
-  })), "Install App on Device"), /*#__PURE__*/React.createElement("button", {
+  })), "Install App on Device"), onReplayCurtain && /*#__PURE__*/React.createElement("button", {
+    className: "btn-glass btn-glass-sm",
+    style: {
+      width: '100%',
+      justifyContent: 'flex-start',
+      color: '#faebad',
+      borderColor: 'rgba(212, 175, 55, 0.4)'
+    },
+    onClick: () => {
+      setUserDropdownOpen(false);
+      onReplayCurtain();
+    }
+  }, /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontSize: '13px',
+      marginRight: '6px'
+    }
+  }, "🎭"), /*#__PURE__*/React.createElement("span", null, "Replay Red Curtain Entrance")), /*#__PURE__*/React.createElement("button", {
     className: "btn-glass btn-glass-sm",
     style: {
       width: '100%',
@@ -2930,7 +2965,8 @@ function AmbianceController({
   setSpeed,
   dim,
   setDim,
-  onSound
+  onSound,
+  onReplayCurtain
 }) {
   const [collapsed, setCollapsed] = useState(true);
   return /*#__PURE__*/React.createElement("aside", {
@@ -3001,7 +3037,24 @@ function AmbianceController({
       setDim('deep');
       onSound('click');
     }
-  }, "Deep")));
+  }, "Deep"), onReplayCurtain && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("span", {
+    className: "ctrl-sep",
+    style: {
+      color: 'rgba(212, 175, 55, 0.3)'
+    }
+  }, "|"), /*#__PURE__*/React.createElement("button", {
+    className: "btn-glass btn-glass-sm btn-glass-pill",
+    style: {
+      borderColor: 'rgba(212, 175, 55, 0.55)',
+      color: '#faebad',
+      fontWeight: 600
+    },
+    onClick: () => {
+      onReplayCurtain();
+      onSound('click');
+    },
+    title: "Replay Red Velvet Grand Curtain Entrance"
+  }, "🎭 Grand Curtain"))));
 }
 
 /* ==========================================================================
@@ -4417,6 +4470,98 @@ function PageTransitionOverlay({
 }
 
 /* ==========================================================================
+   Component: RedCurtainOverlay
+   Grand Theater Red Velvet Curtain with 24K Golden Bottom Border
+   Triggered on first load & Google Sign-In entrance
+   ========================================================================== */
+function RedCurtainOverlay({
+  isOpen,
+  isOpening,
+  onGoogleSignIn,
+  onGuestEnter,
+  currentUser
+}) {
+  if (!isOpen && !isOpening) return null;
+  return /*#__PURE__*/React.createElement("div", {
+    className: `curtain-stage-overlay ${isOpening ? 'curtain-opening' : ''}`,
+    "aria-hidden": "true"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "curtain-valance"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "curtain-valance-crest"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "gold-diamond"
+  }), /*#__PURE__*/React.createElement("span", null, "FIRE SPICE • GRAND SANCTUARY"), /*#__PURE__*/React.createElement("span", {
+    className: "gold-diamond"
+  })), /*#__PURE__*/React.createElement("div", {
+    className: "curtain-valance-fringe"
+  })), /*#__PURE__*/React.createElement("div", {
+    className: "curtain-panel curtain-panel-left"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "curtain-fabric-shimmer"
+  }), /*#__PURE__*/React.createElement("div", {
+    className: "curtain-gold-bottom-border"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "curtain-gold-piping"
+  }), /*#__PURE__*/React.createElement("div", {
+    className: "curtain-gold-fringe"
+  }))), /*#__PURE__*/React.createElement("div", {
+    className: "curtain-panel curtain-panel-right"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "curtain-fabric-shimmer"
+  }), /*#__PURE__*/React.createElement("div", {
+    className: "curtain-gold-bottom-border"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "curtain-gold-piping"
+  }), /*#__PURE__*/React.createElement("div", {
+    className: "curtain-gold-fringe"
+  }))), /*#__PURE__*/React.createElement("div", {
+    className: "curtain-center-medallion"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "curtain-medallion-crest"
+  }, /*#__PURE__*/React.createElement("img", {
+    src: "icons/icon-192.png",
+    alt: "FIRE SPICE Emblem",
+    className: "curtain-logo-img"
+  })), /*#__PURE__*/React.createElement("div", {
+    className: "curtain-medallion-badge"
+  }, /*#__PURE__*/React.createElement("span", null, "HAUTE GASTRONOMIE & GOLDEN LOUNGE")), /*#__PURE__*/React.createElement("h2", {
+    className: "curtain-medallion-title"
+  }, "WELCOME TO ", /*#__PURE__*/React.createElement("span", {
+    className: "gold-gradient-text"
+  }, "FIRE SPICE")), /*#__PURE__*/React.createElement("p", {
+    className: "curtain-medallion-desc"
+  }, currentUser ? `Welcome back, ${currentUser.name || 'Honored Guest'} • Unveiling your private sanctuary.` : 'Sign in with Google to part the grand red curtains and unveil the dining room.'), currentUser ? /*#__PURE__*/React.createElement("button", {
+    className: "btn-glass btn-glass-gold btn-curtain-cta",
+    onClick: onGoogleSignIn
+  }, /*#__PURE__*/React.createElement("span", null, "🎭 Part Grand Curtains →")) : /*#__PURE__*/React.createElement("div", {
+    className: "curtain-actions-wrap"
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "btn-curtain-google",
+    onClick: onGoogleSignIn
+  }, /*#__PURE__*/React.createElement("svg", {
+    width: "22",
+    height: "22",
+    viewBox: "0 0 24 24"
+  }, /*#__PURE__*/React.createElement("path", {
+    fill: "#4285F4",
+    d: "M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+  }), /*#__PURE__*/React.createElement("path", {
+    fill: "#34A853",
+    d: "M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+  }), /*#__PURE__*/React.createElement("path", {
+    fill: "#FBBC05",
+    d: "M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"
+  }), /*#__PURE__*/React.createElement("path", {
+    fill: "#EA4335",
+    d: "M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"
+  })), /*#__PURE__*/React.createElement("span", null, "Sign in with Google to Open")), /*#__PURE__*/React.createElement("button", {
+    className: "curtain-guest-link",
+    onClick: onGuestEnter
+  }, "Or preview sanctuary as guest →"))));
+}
+
+/* ==========================================================================
    Main Application Root Component
    ========================================================================== */
 function App() {
@@ -4427,6 +4572,16 @@ function App() {
       return stored ? 'reserve' : 'home';
     } catch (e) {
       return 'home';
+    }
+  });
+
+  // Red Curtain state for the initial entrance page ('closed' | 'opening' | 'closed-done')
+  const [curtainState, setCurtainState] = useState(() => {
+    try {
+      const opened = sessionStorage.getItem('firespice_curtain_opened');
+      return opened ? 'closed-done' : 'closed';
+    } catch (e) {
+      return 'closed';
     }
   });
   const [pageTransition, setPageTransition] = useState({
@@ -4445,15 +4600,8 @@ function App() {
       return null;
     }
   });
-  // Auto-open authentication modal at the very beginning if user is not signed in
-  const [authModalOpen, setAuthModalOpen] = useState(() => {
-    try {
-      const stored = localStorage.getItem('firespice_user');
-      return !stored;
-    } catch (e) {
-      return true;
-    }
-  });
+  // Auto-open authentication modal only if user requests it or curtain is done
+  const [authModalOpen, setAuthModalOpen] = useState(false);
   const [confirmedReservation, setConfirmedReservation] = useState(null);
   const [databaseModalOpen, setDatabaseModalOpen] = useState(false);
   const [deferredPrompt, setDeferredPrompt] = useState(null);
@@ -4602,6 +4750,43 @@ function App() {
       }, duration);
     }
   }, [onSound]);
+
+  // Trigger opening the red velvet curtain with golden bottom border
+  const triggerOpenCurtain = useCallback(() => {
+    setCurtainState('opening');
+    onSound('curtain');
+    try {
+      sessionStorage.setItem('firespice_curtain_opened', 'true');
+    } catch (e) {}
+    setTimeout(() => {
+      setCurtainState('closed-done');
+    }, 2000);
+  }, [onSound]);
+
+  // If user loads the page and is already signed in with Google, automatically part curtains after a brief welcome pause
+  useEffect(() => {
+    if (curtainState === 'closed' && currentUser && currentUser.provider === 'google') {
+      const timer = setTimeout(() => {
+        triggerOpenCurtain();
+      }, 700);
+      return () => clearTimeout(timer);
+    }
+  }, [curtainState, currentUser, triggerOpenCurtain]);
+  const handleGoogleSignInFromCurtain = () => {
+    onSound('select');
+    const googleProfile = DEFAULT_VIP_MEMBERS[0]; // Lohith Vel (Google Verified Patron)
+    handleLogin(googleProfile);
+  };
+  const handleGuestEnterFromCurtain = () => {
+    onSound('select');
+    triggerOpenCurtain();
+  };
+  const handleReplayCurtain = () => {
+    setCurtainState('closed');
+    setTimeout(() => {
+      triggerOpenCurtain();
+    }, 250);
+  };
   const handleLogin = user => {
     setCurrentUser(user);
     try {
@@ -4609,6 +4794,11 @@ function App() {
     } catch (e) {}
     // Fire owner login notification email (non-blocking)
     notifyOwnerLogin(user);
+
+    // If red curtain is still closed on the first loading page, part the curtains!
+    if (curtainState === 'closed') {
+      triggerOpenCurtain();
+    }
     // Automatically pre-fill the reservation details with the user's info
     setBooking(prev => ({
       ...prev,
@@ -4715,6 +4905,12 @@ function App() {
   }, /*#__PURE__*/React.createElement(RollingBackground, {
     speed: speed,
     dim: dim
+  }), /*#__PURE__*/React.createElement(RedCurtainOverlay, {
+    isOpen: curtainState === 'closed',
+    isOpening: curtainState === 'opening',
+    onGoogleSignIn: handleGoogleSignInFromCurtain,
+    onGuestEnter: handleGuestEnterFromCurtain,
+    currentUser: currentUser
   }), /*#__PURE__*/React.createElement(PageTransitionOverlay, {
     transition: pageTransition
   }), /*#__PURE__*/React.createElement(Header, {
@@ -4749,7 +4945,8 @@ function App() {
     activeView: activeView,
     onSwitchView: (view, targetStep = 1) => navigateToPage(view, {
       step: targetStep
-    })
+    }),
+    onReplayCurtain: handleReplayCurtain
   }), activeView === 'home' && /*#__PURE__*/React.createElement("div", {
     className: "page-view-wrapper"
   }, /*#__PURE__*/React.createElement(HeroSection, {
@@ -4969,6 +5166,13 @@ function App() {
     onInstall: handleInstallClick,
     isIos: isIos,
     onSound: onSound
+  }), /*#__PURE__*/React.createElement(AmbianceController, {
+    speed: speed,
+    setSpeed: setSpeed,
+    dim: dim,
+    setDim: setDim,
+    onSound: onSound,
+    onReplayCurtain: handleReplayCurtain
   }), /*#__PURE__*/React.createElement("footer", {
     className: "luxury-footer"
   }, /*#__PURE__*/React.createElement("div", {
