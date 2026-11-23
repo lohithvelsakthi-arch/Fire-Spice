@@ -389,20 +389,44 @@ function playChime(enabled, type = 'click') {
     if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
     if (!audioCtx) return;
     const now = audioCtx.currentTime;
-    if (type === 'curtain') {
-      // Grand Opera House Ascending Harp & Bell Arpeggio
-      [523.25, 659.25, 783.99, 1046.50, 1318.51, 1567.98, 2093.00].forEach((freq, idx) => {
+    if (type === 'cooking' || type === 'curtain') {
+      // Sizzling Sauté Pan & Golden Flambé Sound Synthesizer
+      // 1. Sizzle noise (white noise through bandpass filter)
+      try {
+        const bufferSize = Math.floor(audioCtx.sampleRate * 0.45);
+        const noiseBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+        const output = noiseBuffer.getChannelData(0);
+        for (let i = 0; i < bufferSize; i++) {
+          output[i] = Math.random() * 2 - 1;
+        }
+        const whiteNoise = audioCtx.createBufferSource();
+        whiteNoise.buffer = noiseBuffer;
+        const filter = audioCtx.createBiquadFilter();
+        filter.type = 'bandpass';
+        filter.frequency.setValueAtTime(2800, now);
+        filter.Q.setValueAtTime(2.2, now);
+        const noiseGain = audioCtx.createGain();
+        noiseGain.gain.setValueAtTime(0.08, now);
+        noiseGain.gain.exponentialRampToValueAtTime(0.001, now + 0.42);
+        whiteNoise.connect(filter);
+        filter.connect(noiseGain);
+        noiseGain.connect(audioCtx.destination);
+        whiteNoise.start(now);
+      } catch (ne) {}
+
+      // 2. Radiant Culinary Flambé Chime Arpeggio
+      [587.33, 739.99, 880.00, 1174.66, 1479.98, 1760.00].forEach((freq, idx) => {
         const subOsc = audioCtx.createOscillator();
         const subGain = audioCtx.createGain();
         subOsc.type = 'triangle';
-        subOsc.frequency.setValueAtTime(freq, now + idx * 0.09);
-        subGain.gain.setValueAtTime(0, now + idx * 0.09);
-        subGain.gain.linearRampToValueAtTime(0.08, now + idx * 0.09 + 0.03);
-        subGain.gain.exponentialRampToValueAtTime(0.0001, now + idx * 0.09 + 1.8);
+        subOsc.frequency.setValueAtTime(freq, now + 0.15 + idx * 0.08);
+        subGain.gain.setValueAtTime(0, now + 0.15 + idx * 0.08);
+        subGain.gain.linearRampToValueAtTime(0.08, now + 0.15 + idx * 0.08 + 0.03);
+        subGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.15 + idx * 0.08 + 1.6);
         subOsc.connect(subGain);
         subGain.connect(audioCtx.destination);
-        subOsc.start(now + idx * 0.09);
-        subOsc.stop(now + idx * 0.09 + 1.85);
+        subOsc.start(now + 0.15 + idx * 0.08);
+        subOsc.stop(now + 0.15 + idx * 0.08 + 1.65);
       });
       return;
     }
@@ -542,7 +566,7 @@ function Header({
   currentStep,
   activeView,
   onSwitchView,
-  onReplayCurtain
+  onReplayCooking
 }) {
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
@@ -726,25 +750,25 @@ function Header({
     y2: "16.65"
   })), /*#__PURE__*/React.createElement("span", {
     className: "nav-btn-text"
-  }, "Find Reservation")), onReplayCurtain && /*#__PURE__*/React.createElement("button", {
+  }, "Find Reservation")), onReplayCooking && /*#__PURE__*/React.createElement("button", {
     className: "btn-glass btn-glass-sm",
-    onClick: onReplayCurtain,
-    title: "Replay Royal Red Curtain Entrance",
+    onClick: onReplayCooking,
+    title: "Replay Haute Gastronomie Cooking Animation",
     style: {
       display: 'inline-flex',
       alignItems: 'center',
       gap: '6px',
-      color: '#faebad',
-      borderColor: 'rgba(212, 175, 55, 0.4)',
-      background: 'rgba(212, 175, 55, 0.12)'
+      color: '#ffb703',
+      borderColor: 'rgba(235, 94, 28, 0.45)',
+      background: 'rgba(235, 94, 28, 0.12)'
     }
   }, /*#__PURE__*/React.createElement("span", {
     style: {
       fontSize: '13px'
     }
-  }, "🎭"), /*#__PURE__*/React.createElement("span", {
+  }, "🍳"), /*#__PURE__*/React.createElement("span", {
     className: "nav-btn-text"
-  }, "Curtain")), currentUser ? /*#__PURE__*/React.createElement("div", {
+  }, "Cooking Animation")), currentUser ? /*#__PURE__*/React.createElement("div", {
     className: "vip-user-wrapper",
     ref: dropdownRef
   }, /*#__PURE__*/React.createElement("button", {
@@ -986,24 +1010,24 @@ function Header({
     y1: "15",
     x2: "12",
     y2: "3"
-  })), "Install App on Device"), onReplayCurtain && /*#__PURE__*/React.createElement("button", {
+  })), "Install App on Device"), onReplayCooking && /*#__PURE__*/React.createElement("button", {
     className: "btn-glass btn-glass-sm",
     style: {
       width: '100%',
       justifyContent: 'flex-start',
-      color: '#faebad',
-      borderColor: 'rgba(212, 175, 55, 0.4)'
+      color: '#ffb703',
+      borderColor: 'rgba(235, 94, 28, 0.45)'
     },
     onClick: () => {
       setUserDropdownOpen(false);
-      onReplayCurtain();
+      onReplayCooking();
     }
   }, /*#__PURE__*/React.createElement("span", {
     style: {
       fontSize: '13px',
       marginRight: '6px'
     }
-  }, "🎭"), /*#__PURE__*/React.createElement("span", null, "Replay Red Curtain Entrance")), /*#__PURE__*/React.createElement("button", {
+  }, "🍳"), /*#__PURE__*/React.createElement("span", null, "Replay Cooking Animation")), /*#__PURE__*/React.createElement("button", {
     className: "btn-glass btn-glass-sm",
     style: {
       width: '100%',
@@ -1176,18 +1200,18 @@ function Header({
     y1: "1",
     x2: "14",
     y2: "4"
-  })), /*#__PURE__*/React.createElement("span", null, "Menu")), onReplayCurtain && /*#__PURE__*/React.createElement("button", {
+  })), /*#__PURE__*/React.createElement("span", null, "Menu")), onReplayCooking && /*#__PURE__*/React.createElement("button", {
     className: "mobile-sub-nav-btn",
-    onClick: onReplayCurtain,
-    title: "Replay Royal Red Curtain",
+    onClick: onReplayCooking,
+    title: "Replay Cooking Animation",
     style: {
-      color: '#faebad'
+      color: '#ffb703'
     }
   }, /*#__PURE__*/React.createElement("span", {
     style: {
       fontSize: '13px'
     }
-  }, "🎭"), /*#__PURE__*/React.createElement("span", null, "Curtain"))));
+  }, "🍳"), /*#__PURE__*/React.createElement("span", null, "Cooking"))));
 }
 
 /* ==========================================================================
@@ -2995,7 +3019,7 @@ function AmbianceController({
   dim,
   setDim,
   onSound,
-  onReplayCurtain
+  onReplayCooking
 }) {
   const [collapsed, setCollapsed] = useState(true);
   return /*#__PURE__*/React.createElement("aside", {
@@ -3066,7 +3090,7 @@ function AmbianceController({
       setDim('deep');
       onSound('click');
     }
-  }, "Deep"), onReplayCurtain && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("span", {
+  }, "Deep"), onReplayCooking && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("span", {
     className: "ctrl-sep",
     style: {
       color: 'rgba(212, 175, 55, 0.3)'
@@ -3074,16 +3098,16 @@ function AmbianceController({
   }, "|"), /*#__PURE__*/React.createElement("button", {
     className: "btn-glass btn-glass-sm btn-glass-pill",
     style: {
-      borderColor: 'rgba(212, 175, 55, 0.55)',
-      color: '#faebad',
+      borderColor: 'rgba(235, 94, 28, 0.55)',
+      color: '#ffb703',
       fontWeight: 600
     },
     onClick: () => {
-      onReplayCurtain();
+      onReplayCooking();
       onSound('click');
     },
-    title: "Replay Red Velvet Grand Curtain Entrance"
-  }, "🎭 Grand Curtain"))));
+    title: "Replay Haute Gastronomie Cooking Animation"
+  }, "🍳 Cooking Animation"))));
 }
 
 /* ==========================================================================
@@ -4499,11 +4523,11 @@ function PageTransitionOverlay({
 }
 
 /* ==========================================================================
-   Component: RedCurtainOverlay
-   Grand Theater Red Velvet Curtain with 24K Golden Bottom Border
+   Component: CookingEntranceOverlay
+   Master Chef Sauté Station & Flaming Culinary Unveil
    Triggered on first load & Google Sign-In entrance
    ========================================================================== */
-function RedCurtainOverlay({
+function CookingEntranceOverlay({
   isOpen,
   isOpening,
   onGoogleSignIn,
@@ -4512,61 +4536,90 @@ function RedCurtainOverlay({
 }) {
   if (!isOpen && !isOpening) return null;
   return /*#__PURE__*/React.createElement("div", {
-    className: `curtain-stage-overlay ${isOpening ? 'curtain-opening' : ''}`,
+    className: `cooking-stage-overlay ${isOpening ? 'cooking-opening' : ''}`,
     "aria-hidden": "true"
   }, /*#__PURE__*/React.createElement("div", {
-    className: "curtain-valance"
+    className: "cooking-bg-glow"
+  }), /*#__PURE__*/React.createElement("div", {
+    className: "flambe-flare-burst"
+  }), /*#__PURE__*/React.createElement("div", {
+    className: "cooking-station"
   }, /*#__PURE__*/React.createElement("div", {
-    className: "curtain-valance-crest"
-  }, /*#__PURE__*/React.createElement("span", {
-    className: "gold-diamond"
-  }), /*#__PURE__*/React.createElement("span", null, "FIRE SPICE • GRAND SANCTUARY"), /*#__PURE__*/React.createElement("span", {
-    className: "gold-diamond"
+    className: "cooking-steam-wrap"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "steam-wisp"
+  }), /*#__PURE__*/React.createElement("div", {
+    className: "steam-wisp"
+  }), /*#__PURE__*/React.createElement("div", {
+    className: "steam-wisp"
   })), /*#__PURE__*/React.createElement("div", {
-    className: "curtain-valance-fringe"
+    className: "cooking-pan-rig"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "skillet-handle"
+  }), /*#__PURE__*/React.createElement("div", {
+    className: "cooking-skillet"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "skillet-interior"
   })), /*#__PURE__*/React.createElement("div", {
-    className: "curtain-panel curtain-panel-left"
+    className: "tossing-ingredients-container"
   }, /*#__PURE__*/React.createElement("div", {
-    className: "curtain-fabric-shimmer"
+    className: "ing-chili",
+    title: "Fiery Crimson Chili"
   }), /*#__PURE__*/React.createElement("div", {
-    className: "curtain-gold-bottom-border"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "curtain-gold-piping"
+    className: "ing-rosemary",
+    title: "Aromatic Herb Sprig"
   }), /*#__PURE__*/React.createElement("div", {
-    className: "curtain-gold-fringe"
+    className: "ing-spice-1",
+    title: "Golden Saffron Searing Morsel"
+  }), /*#__PURE__*/React.createElement("div", {
+    className: "ing-spice-2",
+    title: "Smoked Paprika Morsel"
+  }), /*#__PURE__*/React.createElement("div", {
+    className: "ing-garlic",
+    title: "Caramelized Garlic Clove"
   }))), /*#__PURE__*/React.createElement("div", {
-    className: "curtain-panel curtain-panel-right"
+    className: "burner-flames-wrap"
   }, /*#__PURE__*/React.createElement("div", {
-    className: "curtain-fabric-shimmer"
+    className: "burner-jet"
   }), /*#__PURE__*/React.createElement("div", {
-    className: "curtain-gold-bottom-border"
+    className: "burner-jet"
+  }), /*#__PURE__*/React.createElement("div", {
+    className: "burner-jet"
+  }), /*#__PURE__*/React.createElement("div", {
+    className: "burner-jet"
+  })), /*#__PURE__*/React.createElement("div", {
+    className: "cooking-sparks-wrap"
   }, /*#__PURE__*/React.createElement("div", {
-    className: "curtain-gold-piping"
+    className: "spark-dot"
   }), /*#__PURE__*/React.createElement("div", {
-    className: "curtain-gold-fringe"
+    className: "spark-dot"
+  }), /*#__PURE__*/React.createElement("div", {
+    className: "spark-dot"
+  }), /*#__PURE__*/React.createElement("div", {
+    className: "spark-dot"
   }))), /*#__PURE__*/React.createElement("div", {
-    className: "curtain-center-medallion"
+    className: "cooking-medallion-card"
   }, /*#__PURE__*/React.createElement("div", {
-    className: "curtain-medallion-crest"
+    className: "cooking-chef-crest"
   }, /*#__PURE__*/React.createElement("img", {
     src: "icons/icon-192.png",
     alt: "FIRE SPICE Emblem",
-    className: "curtain-logo-img"
+    className: "cooking-logo-img"
   })), /*#__PURE__*/React.createElement("div", {
-    className: "curtain-medallion-badge"
-  }, /*#__PURE__*/React.createElement("span", null, "HAUTE GASTRONOMIE & GOLDEN LOUNGE")), /*#__PURE__*/React.createElement("h2", {
-    className: "curtain-medallion-title"
+    className: "cooking-chef-badge"
+  }, /*#__PURE__*/React.createElement("span", null, "✦ HAUTE GASTRONOMIE • CHEF'S SEARING TABLE ✦")), /*#__PURE__*/React.createElement("h2", {
+    className: "cooking-card-title"
   }, "WELCOME TO ", /*#__PURE__*/React.createElement("span", {
     className: "gold-gradient-text"
   }, "FIRE SPICE")), /*#__PURE__*/React.createElement("p", {
-    className: "curtain-medallion-desc"
-  }, currentUser ? `Welcome back, ${currentUser.name || 'Honored Guest'} • Unveiling your private sanctuary.` : 'Sign in with Google to part the grand red curtains and unveil the dining room.'), currentUser ? /*#__PURE__*/React.createElement("button", {
-    className: "btn-glass btn-glass-gold btn-curtain-cta",
+    className: "cooking-card-desc"
+  }, currentUser ? `Welcome back, ${currentUser.name || 'Honored Guest'} • Unveiling the Master Chef's table.` : 'The master kitchen is searing rare spices. Sign in with Google to enter your dining sanctuary.'), currentUser ? /*#__PURE__*/React.createElement("button", {
+    className: "btn-glass btn-glass-gold btn-cooking-cta",
     onClick: onGoogleSignIn
-  }, /*#__PURE__*/React.createElement("span", null, "🎭 Part Grand Curtains →")) : /*#__PURE__*/React.createElement("div", {
-    className: "curtain-actions-wrap"
+  }, /*#__PURE__*/React.createElement("span", null, "🍳 Enter Dining Sanctuary →")) : /*#__PURE__*/React.createElement("div", {
+    className: "cooking-actions-wrap"
   }, /*#__PURE__*/React.createElement("button", {
-    className: "btn-curtain-google",
+    className: "btn-cooking-google",
     onClick: onGoogleSignIn
   }, /*#__PURE__*/React.createElement("svg", {
     width: "22",
@@ -4584,10 +4637,10 @@ function RedCurtainOverlay({
   }), /*#__PURE__*/React.createElement("path", {
     fill: "#EA4335",
     d: "M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"
-  })), /*#__PURE__*/React.createElement("span", null, "Sign in with Google to Open")), /*#__PURE__*/React.createElement("button", {
-    className: "curtain-guest-link",
+  })), /*#__PURE__*/React.createElement("span", null, "Sign in with Google to Enter")), /*#__PURE__*/React.createElement("button", {
+    className: "cooking-guest-link",
     onClick: onGuestEnter
-  }, "Or preview sanctuary as guest →"))));
+  }, "Or preview kitchen as guest →"))));
 }
 
 /* ==========================================================================
@@ -4595,12 +4648,12 @@ function RedCurtainOverlay({
    ========================================================================== */
 function App() {
   const [step, setStep] = useState(1);
-  // Always begin on the first loading page (entrance) so patrons experience the grand red velvet curtain opening
+  // Always begin on the first loading page (entrance) so patrons experience the grand culinary cooking animation
   const [activeView, setActiveView] = useState('home');
 
-  // Red Curtain state for the initial entrance page ('closed' | 'opening' | 'closed-done')
-  // Starts closed on the first loading page with the 24K golden bottom border
-  const [curtainState, setCurtainState] = useState('closed');
+  // Cooking state for the initial entrance page ('closed' | 'opening' | 'closed-done')
+  // Starts closed on the first loading page with the sizzling chef's skillet & tossing spices
+  const [cookingState, setCookingState] = useState('closed');
   const [pageTransition, setPageTransition] = useState({
     active: false,
     title: '',
@@ -4768,25 +4821,25 @@ function App() {
     }
   }, [onSound]);
 
-  // Trigger opening the red velvet curtain with golden bottom border
-  const triggerOpenCurtain = useCallback(() => {
-    setCurtainState('opening');
-    onSound('curtain');
+  // Trigger opening the cooking animation with golden flambé flourish
+  const triggerOpenCooking = useCallback(() => {
+    setCookingState('opening');
+    onSound('cooking');
     setTimeout(() => {
-      setCurtainState('closed-done');
-    }, 2200);
+      setCookingState('closed-done');
+    }, 2000);
   }, [onSound]);
 
-  // If user loads the page and is already signed in with Google, part the grand red curtains after a welcoming pause
+  // If user loads the page and is already signed in with Google, unveil the kitchen after a welcoming pause
   useEffect(() => {
-    if (curtainState === 'closed' && currentUser) {
+    if (cookingState === 'closed' && currentUser) {
       const timer = setTimeout(() => {
-        triggerOpenCurtain();
+        triggerOpenCooking();
       }, 900);
       return () => clearTimeout(timer);
     }
-  }, [curtainState, currentUser, triggerOpenCurtain]);
-  const handleGoogleSignInFromCurtain = () => {
+  }, [cookingState, currentUser, triggerOpenCooking]);
+  const handleGoogleSignInFromCooking = () => {
     onSound('select');
     const googleProfile = DEFAULT_VIP_MEMBERS[0]; // Lohith Vel (Google Verified Patron)
     setCurrentUser(googleProfile);
@@ -4809,23 +4862,23 @@ function App() {
       }
     }));
 
-    // Trigger grand red curtain opening animation! NO black transition screen!
-    triggerOpenCurtain();
+    // Trigger grand cooking animation reveal! NO black transition screen!
+    triggerOpenCooking();
   };
-  const handleGuestEnterFromCurtain = () => {
+  const handleGuestEnterFromCooking = () => {
     onSound('select');
-    triggerOpenCurtain();
+    triggerOpenCooking();
   };
-  const handleReplayCurtain = () => {
-    onSound('curtain');
+  const handleReplayCooking = () => {
+    onSound('cooking');
     setActiveView('home');
-    setCurtainState('closed');
+    setCookingState('closed');
     window.scrollTo({
       top: 0,
       behavior: 'instant'
     });
     setTimeout(() => {
-      triggerOpenCurtain();
+      triggerOpenCooking();
     }, 350);
   };
   const handleLogin = user => {
@@ -4851,9 +4904,9 @@ function App() {
     }));
     setAuthModalOpen(false);
 
-    // If red curtain is still closed on the first loading page, part the curtains without black transition!
-    if (curtainState === 'closed' || curtainState === 'opening') {
-      triggerOpenCurtain();
+    // If cooking animation is still active on the first loading page, unveil without black transition!
+    if (cookingState === 'closed' || cookingState === 'opening') {
+      triggerOpenCooking();
     } else {
       // Normal in-page reservation transition when already inside
       navigateToPage('reserve', {
@@ -4868,11 +4921,11 @@ function App() {
     setCurrentUser(null);
     try {
       localStorage.removeItem('firespice_user');
-      sessionStorage.removeItem('firespice_curtain_opened');
+      sessionStorage.removeItem('firespice_cooking_opened');
     } catch (e) {}
     onSound('click');
     setActiveView('home');
-    setCurtainState('closed');
+    setCookingState('closed');
     setAuthModalOpen(false);
   };
   const handleConfirmReservation = (guestInfo, total, paymentInfo = null) => {
@@ -4949,11 +5002,11 @@ function App() {
   }, /*#__PURE__*/React.createElement(RollingBackground, {
     speed: speed,
     dim: dim
-  }), /*#__PURE__*/React.createElement(RedCurtainOverlay, {
-    isOpen: curtainState === 'closed',
-    isOpening: curtainState === 'opening',
-    onGoogleSignIn: handleGoogleSignInFromCurtain,
-    onGuestEnter: handleGuestEnterFromCurtain,
+  }), /*#__PURE__*/React.createElement(CookingEntranceOverlay, {
+    isOpen: cookingState === 'closed',
+    isOpening: cookingState === 'opening',
+    onGoogleSignIn: handleGoogleSignInFromCooking,
+    onGuestEnter: handleGuestEnterFromCooking,
     currentUser: currentUser
   }), /*#__PURE__*/React.createElement(PageTransitionOverlay, {
     transition: pageTransition
@@ -4990,7 +5043,7 @@ function App() {
     onSwitchView: (view, targetStep = 1) => navigateToPage(view, {
       step: targetStep
     }),
-    onReplayCurtain: handleReplayCurtain
+    onReplayCooking: handleReplayCooking
   }), activeView === 'home' && /*#__PURE__*/React.createElement("div", {
     className: "page-view-wrapper"
   }, /*#__PURE__*/React.createElement(HeroSection, {
@@ -5216,7 +5269,7 @@ function App() {
     dim: dim,
     setDim: setDim,
     onSound: onSound,
-    onReplayCurtain: handleReplayCurtain
+    onReplayCooking: handleReplayCooking
   }), /*#__PURE__*/React.createElement("footer", {
     className: "luxury-footer"
   }, /*#__PURE__*/React.createElement("div", {

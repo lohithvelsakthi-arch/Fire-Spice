@@ -416,20 +416,47 @@ function playChime(enabled, type = 'click') {
     if (!audioCtx) return;
 
     const now = audioCtx.currentTime;
-    if (type === 'curtain') {
-      // Grand Opera House Ascending Harp & Bell Arpeggio
-      [523.25, 659.25, 783.99, 1046.50, 1318.51, 1567.98, 2093.00].forEach((freq, idx) => {
+    if (type === 'cooking' || type === 'curtain') {
+      // Sizzling Sauté Pan & Golden Flambé Sound Synthesizer
+      // 1. Sizzle noise (white noise through bandpass filter)
+      try {
+        const bufferSize = Math.floor(audioCtx.sampleRate * 0.45);
+        const noiseBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+        const output = noiseBuffer.getChannelData(0);
+        for (let i = 0; i < bufferSize; i++) {
+          output[i] = Math.random() * 2 - 1;
+        }
+        const whiteNoise = audioCtx.createBufferSource();
+        whiteNoise.buffer = noiseBuffer;
+
+        const filter = audioCtx.createBiquadFilter();
+        filter.type = 'bandpass';
+        filter.frequency.setValueAtTime(2800, now);
+        filter.Q.setValueAtTime(2.2, now);
+
+        const noiseGain = audioCtx.createGain();
+        noiseGain.gain.setValueAtTime(0.08, now);
+        noiseGain.gain.exponentialRampToValueAtTime(0.001, now + 0.42);
+
+        whiteNoise.connect(filter);
+        filter.connect(noiseGain);
+        noiseGain.connect(audioCtx.destination);
+        whiteNoise.start(now);
+      } catch (ne) {}
+
+      // 2. Radiant Culinary Flambé Chime Arpeggio
+      [587.33, 739.99, 880.00, 1174.66, 1479.98, 1760.00].forEach((freq, idx) => {
         const subOsc = audioCtx.createOscillator();
         const subGain = audioCtx.createGain();
         subOsc.type = 'triangle';
-        subOsc.frequency.setValueAtTime(freq, now + idx * 0.09);
-        subGain.gain.setValueAtTime(0, now + idx * 0.09);
-        subGain.gain.linearRampToValueAtTime(0.08, now + idx * 0.09 + 0.03);
-        subGain.gain.exponentialRampToValueAtTime(0.0001, now + idx * 0.09 + 1.8);
+        subOsc.frequency.setValueAtTime(freq, now + 0.15 + idx * 0.08);
+        subGain.gain.setValueAtTime(0, now + 0.15 + idx * 0.08);
+        subGain.gain.linearRampToValueAtTime(0.08, now + 0.15 + idx * 0.08 + 0.03);
+        subGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.15 + idx * 0.08 + 1.6);
         subOsc.connect(subGain);
         subGain.connect(audioCtx.destination);
-        subOsc.start(now + idx * 0.09);
-        subOsc.stop(now + idx * 0.09 + 1.85);
+        subOsc.start(now + 0.15 + idx * 0.08);
+        subOsc.stop(now + 0.15 + idx * 0.08 + 1.65);
       });
       return;
     }
@@ -534,7 +561,7 @@ function RollingBackground({ speed, dim }) {
 /* ==========================================================================
    Component: Header
    ========================================================================== */
-function Header({ onNav, audioEnabled, onToggleAudio, onOpenBookings, currentUser, onOpenAuth, onLogout, onOpenDatabase, onOpenInstall, isStandalone, currentStep, activeView, onSwitchView, onReplayCurtain }) {
+function Header({ onNav, audioEnabled, onToggleAudio, onOpenBookings, currentUser, onOpenAuth, onLogout, onOpenDatabase, onOpenInstall, isStandalone, currentStep, activeView, onSwitchView, onReplayCooking }) {
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
 
@@ -623,15 +650,15 @@ function Header({ onNav, audioEnabled, onToggleAudio, onOpenBookings, currentUse
             <span className="nav-btn-text">Find Reservation</span>
           </button>
 
-          {onReplayCurtain && (
+          {onReplayCooking && (
             <button
               className="btn-glass btn-glass-sm"
-              onClick={onReplayCurtain}
-              title="Replay Royal Red Curtain Entrance"
-              style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', color: '#faebad', borderColor: 'rgba(212, 175, 55, 0.4)', background: 'rgba(212, 175, 55, 0.12)' }}
+              onClick={onReplayCooking}
+              title="Replay Haute Gastronomie Cooking Animation"
+              style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', color: '#ffb703', borderColor: 'rgba(235, 94, 28, 0.45)', background: 'rgba(235, 94, 28, 0.12)' }}
             >
-              <span style={{ fontSize: '13px' }}>🎭</span>
-              <span className="nav-btn-text">Curtain</span>
+              <span style={{ fontSize: '13px' }}>🍳</span>
+              <span className="nav-btn-text">Cooking Animation</span>
             </button>
           )}
 
@@ -766,17 +793,17 @@ function Header({ onNav, audioEnabled, onToggleAudio, onOpenBookings, currentUse
                     </button>
                   )}
 
-                  {onReplayCurtain && (
+                  {onReplayCooking && (
                     <button
                       className="btn-glass btn-glass-sm"
-                      style={{ width: '100%', justifyContent: 'flex-start', color: '#faebad', borderColor: 'rgba(212, 175, 55, 0.4)' }}
+                      style={{ width: '100%', justifyContent: 'flex-start', color: '#ffb703', borderColor: 'rgba(235, 94, 28, 0.45)' }}
                       onClick={() => {
                         setUserDropdownOpen(false);
-                        onReplayCurtain();
+                        onReplayCooking();
                       }}
                     >
-                      <span style={{ fontSize: '13px', marginRight: '6px' }}>🎭</span>
-                      <span>Replay Red Curtain Entrance</span>
+                      <span style={{ fontSize: '13px', marginRight: '6px' }}>🍳</span>
+                      <span>Replay Cooking Animation</span>
                     </button>
                   )}
 
@@ -852,15 +879,15 @@ function Header({ onNav, audioEnabled, onToggleAudio, onOpenBookings, currentUse
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 8h1a4 4 0 0 1 0 8h-1"></path><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"></path><line x1="6" y1="1" x2="6" y2="4"></line><line x1="10" y1="1" x2="10" y2="4"></line><line x1="14" y1="1" x2="14" y2="4"></line></svg>
         <span>Menu</span>
       </button>
-      {onReplayCurtain && (
+      {onReplayCooking && (
         <button
           className="mobile-sub-nav-btn"
-          onClick={onReplayCurtain}
-          title="Replay Royal Red Curtain"
-          style={{ color: '#faebad' }}
+          onClick={onReplayCooking}
+          title="Replay Cooking Animation"
+          style={{ color: '#ffb703' }}
         >
-          <span style={{ fontSize: '13px' }}>🎭</span>
-          <span>Curtain</span>
+          <span style={{ fontSize: '13px' }}>🍳</span>
+          <span>Cooking</span>
         </button>
       )}
     </div>
@@ -2085,7 +2112,7 @@ function MenuShowcase({ onSound }) {
 /* ==========================================================================
    Component: Ambiance Controller (Protected UX)
    ========================================================================== */
-function AmbianceController({ speed, setSpeed, dim, setDim, onSound, onReplayCurtain }) {
+function AmbianceController({ speed, setSpeed, dim, setDim, onSound, onReplayCooking }) {
   const [collapsed, setCollapsed] = useState(true);
 
   return (
@@ -2113,16 +2140,16 @@ function AmbianceController({ speed, setSpeed, dim, setDim, onSound, onReplayCur
         <button className={`btn-glass btn-glass-sm btn-glass-pill ${dim === 'comfort' ? 'active' : ''}`} onClick={() => { setDim('comfort'); onSound('click'); }}>Comfort</button>
         <button className={`btn-glass btn-glass-sm btn-glass-pill ${dim === 'deep' ? 'active' : ''}`} onClick={() => { setDim('deep'); onSound('click'); }}>Deep</button>
 
-        {onReplayCurtain && (
+        {onReplayCooking && (
           <>
             <span className="ctrl-sep" style={{ color: 'rgba(212, 175, 55, 0.3)' }}>|</span>
             <button
               className="btn-glass btn-glass-sm btn-glass-pill"
-              style={{ borderColor: 'rgba(212, 175, 55, 0.55)', color: '#faebad', fontWeight: 600 }}
-              onClick={() => { onReplayCurtain(); onSound('click'); }}
-              title="Replay Red Velvet Grand Curtain Entrance"
+              style={{ borderColor: 'rgba(235, 94, 28, 0.55)', color: '#ffb703', fontWeight: 600 }}
+              onClick={() => { onReplayCooking(); onSound('click'); }}
+              title="Replay Haute Gastronomie Cooking Animation"
             >
-              🎭 Grand Curtain
+              🍳 Cooking Animation
             </button>
           </>
         )}
@@ -3242,73 +3269,92 @@ function PageTransitionOverlay({ transition }) {
 }
 
 /* ==========================================================================
-   Component: RedCurtainOverlay
-   Grand Theater Red Velvet Curtain with 24K Golden Bottom Border
+   Component: CookingEntranceOverlay
+   Master Chef Sauté Station & Flaming Culinary Unveil
    Triggered on first load & Google Sign-In entrance
    ========================================================================== */
-function RedCurtainOverlay({ isOpen, isOpening, onGoogleSignIn, onGuestEnter, currentUser }) {
+function CookingEntranceOverlay({ isOpen, isOpening, onGoogleSignIn, onGuestEnter, currentUser }) {
   if (!isOpen && !isOpening) return null;
 
   return (
-    <div className={`curtain-stage-overlay ${isOpening ? 'curtain-opening' : ''}`} aria-hidden="true">
-      {/* Top Opera House Valance / Swag */}
-      <div className="curtain-valance">
-        <div className="curtain-valance-crest">
-          <span className="gold-diamond"></span>
-          <span>FIRE SPICE • GRAND SANCTUARY</span>
-          <span className="gold-diamond"></span>
+    <div className={`cooking-stage-overlay ${isOpening ? 'cooking-opening' : ''}`} aria-hidden="true">
+      {/* Background Ambient Heat Glow */}
+      <div className="cooking-bg-glow"></div>
+
+      {/* Flambé Burst Flash on Reveal */}
+      <div className="flambe-flare-burst"></div>
+
+      {/* Sauté Skillet Culinary Cooking Station */}
+      <div className="cooking-station">
+        {/* Rising Aromatic Steam */}
+        <div className="cooking-steam-wrap">
+          <div className="steam-wisp"></div>
+          <div className="steam-wisp"></div>
+          <div className="steam-wisp"></div>
         </div>
-        <div className="curtain-valance-fringe"></div>
+
+        {/* Tossing Sauté Skillet */}
+        <div className="cooking-pan-rig">
+          <div className="skillet-handle"></div>
+          <div className="cooking-skillet">
+            <div className="skillet-interior"></div>
+          </div>
+
+          {/* Tossing Gourmet Ingredients */}
+          <div className="tossing-ingredients-container">
+            <div className="ing-chili" title="Fiery Crimson Chili"></div>
+            <div className="ing-rosemary" title="Aromatic Herb Sprig"></div>
+            <div className="ing-spice-1" title="Golden Saffron Searing Morsel"></div>
+            <div className="ing-spice-2" title="Smoked Paprika Morsel"></div>
+            <div className="ing-garlic" title="Caramelized Garlic Clove"></div>
+          </div>
+        </div>
+
+        {/* Flickering Blue & Golden Burner Flames */}
+        <div className="burner-flames-wrap">
+          <div className="burner-jet"></div>
+          <div className="burner-jet"></div>
+          <div className="burner-jet"></div>
+          <div className="burner-jet"></div>
+        </div>
+
+        {/* Sizzling Spark Embers */}
+        <div className="cooking-sparks-wrap">
+          <div className="spark-dot"></div>
+          <div className="spark-dot"></div>
+          <div className="spark-dot"></div>
+          <div className="spark-dot"></div>
+        </div>
       </div>
 
-      {/* Left Velvet Panel */}
-      <div className="curtain-panel curtain-panel-left">
-        <div className="curtain-fabric-shimmer"></div>
-        {/* Golden Bottom Border with Bullion Fringe */}
-        <div className="curtain-gold-bottom-border">
-          <div className="curtain-gold-piping"></div>
-          <div className="curtain-gold-fringe"></div>
+      {/* Center Royal Culinary Card & Google Entrance */}
+      <div className="cooking-medallion-card">
+        <div className="cooking-chef-crest">
+          <img src="icons/icon-192.png" alt="FIRE SPICE Emblem" className="cooking-logo-img" />
         </div>
-      </div>
-
-      {/* Right Velvet Panel */}
-      <div className="curtain-panel curtain-panel-right">
-        <div className="curtain-fabric-shimmer"></div>
-        {/* Golden Bottom Border with Bullion Fringe */}
-        <div className="curtain-gold-bottom-border">
-          <div className="curtain-gold-piping"></div>
-          <div className="curtain-gold-fringe"></div>
+        <div className="cooking-chef-badge">
+          <span>✦ HAUTE GASTRONOMIE • CHEF'S SEARING TABLE ✦</span>
         </div>
-      </div>
-
-      {/* Center Royal Medallion & Google Entrance Gateway */}
-      <div className="curtain-center-medallion">
-        <div className="curtain-medallion-crest">
-          <img src="icons/icon-192.png" alt="FIRE SPICE Emblem" className="curtain-logo-img" />
-        </div>
-        <div className="curtain-medallion-badge">
-          <span>HAUTE GASTRONOMIE &amp; GOLDEN LOUNGE</span>
-        </div>
-        <h2 className="curtain-medallion-title">
+        <h2 className="cooking-card-title">
           WELCOME TO <span className="gold-gradient-text">FIRE SPICE</span>
         </h2>
-        <p className="curtain-medallion-desc">
+        <p className="cooking-card-desc">
           {currentUser
-            ? `Welcome back, ${currentUser.name || 'Honored Guest'} • Unveiling your private sanctuary.`
-            : 'Sign in with Google to part the grand red curtains and unveil the dining room.'}
+            ? `Welcome back, ${currentUser.name || 'Honored Guest'} • Unveiling the Master Chef's table.`
+            : 'The master kitchen is searing rare spices. Sign in with Google to enter your dining sanctuary.'}
         </p>
 
         {currentUser ? (
           <button
-            className="btn-glass btn-glass-gold btn-curtain-cta"
+            className="btn-glass btn-glass-gold btn-cooking-cta"
             onClick={onGoogleSignIn}
           >
-            <span>🎭 Part Grand Curtains →</span>
+            <span>🍳 Enter Dining Sanctuary →</span>
           </button>
         ) : (
-          <div className="curtain-actions-wrap">
+          <div className="cooking-actions-wrap">
             <button
-              className="btn-curtain-google"
+              className="btn-cooking-google"
               onClick={onGoogleSignIn}
             >
               <svg width="22" height="22" viewBox="0 0 24 24">
@@ -3317,13 +3363,13 @@ function RedCurtainOverlay({ isOpen, isOpening, onGoogleSignIn, onGuestEnter, cu
                 <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" />
                 <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" />
               </svg>
-              <span>Sign in with Google to Open</span>
+              <span>Sign in with Google to Enter</span>
             </button>
             <button
-              className="curtain-guest-link"
+              className="cooking-guest-link"
               onClick={onGuestEnter}
             >
-              Or preview sanctuary as guest →
+              Or preview kitchen as guest →
             </button>
           </div>
         )}
@@ -3337,12 +3383,12 @@ function RedCurtainOverlay({ isOpen, isOpening, onGoogleSignIn, onGuestEnter, cu
    ========================================================================== */
 function App() {
   const [step, setStep] = useState(1);
-  // Always begin on the first loading page (entrance) so patrons experience the grand red velvet curtain opening
+  // Always begin on the first loading page (entrance) so patrons experience the grand culinary cooking animation
   const [activeView, setActiveView] = useState('home');
 
-  // Red Curtain state for the initial entrance page ('closed' | 'opening' | 'closed-done')
-  // Starts closed on the first loading page with the 24K golden bottom border
-  const [curtainState, setCurtainState] = useState('closed');
+  // Cooking state for the initial entrance page ('closed' | 'opening' | 'closed-done')
+  // Starts closed on the first loading page with the sizzling chef's skillet & tossing spices
+  const [cookingState, setCookingState] = useState('closed');
 
   const [pageTransition, setPageTransition] = useState({
     active: false,
@@ -3499,27 +3545,27 @@ function App() {
     }
   }, [onSound]);
 
-  // Trigger opening the red velvet curtain with golden bottom border
-  const triggerOpenCurtain = useCallback(() => {
-    setCurtainState('opening');
-    onSound('curtain');
+  // Trigger opening the cooking animation with golden flambé flourish
+  const triggerOpenCooking = useCallback(() => {
+    setCookingState('opening');
+    onSound('cooking');
 
     setTimeout(() => {
-      setCurtainState('closed-done');
-    }, 2200);
+      setCookingState('closed-done');
+    }, 2000);
   }, [onSound]);
 
-  // If user loads the page and is already signed in with Google, part the grand red curtains after a welcoming pause
+  // If user loads the page and is already signed in with Google, unveil the kitchen after a welcoming pause
   useEffect(() => {
-    if (curtainState === 'closed' && currentUser) {
+    if (cookingState === 'closed' && currentUser) {
       const timer = setTimeout(() => {
-        triggerOpenCurtain();
+        triggerOpenCooking();
       }, 900);
       return () => clearTimeout(timer);
     }
-  }, [curtainState, currentUser, triggerOpenCurtain]);
+  }, [cookingState, currentUser, triggerOpenCooking]);
 
-  const handleGoogleSignInFromCurtain = () => {
+  const handleGoogleSignInFromCooking = () => {
     onSound('select');
     const googleProfile = DEFAULT_VIP_MEMBERS[0]; // Lohith Vel (Google Verified Patron)
     setCurrentUser(googleProfile);
@@ -3542,22 +3588,22 @@ function App() {
       }
     }));
 
-    // Trigger grand red curtain opening animation! NO black transition screen!
-    triggerOpenCurtain();
+    // Trigger grand cooking animation reveal! NO black transition screen!
+    triggerOpenCooking();
   };
 
-  const handleGuestEnterFromCurtain = () => {
+  const handleGuestEnterFromCooking = () => {
     onSound('select');
-    triggerOpenCurtain();
+    triggerOpenCooking();
   };
 
-  const handleReplayCurtain = () => {
-    onSound('curtain');
+  const handleReplayCooking = () => {
+    onSound('cooking');
     setActiveView('home');
-    setCurtainState('closed');
+    setCookingState('closed');
     window.scrollTo({ top: 0, behavior: 'instant' });
     setTimeout(() => {
-      triggerOpenCurtain();
+      triggerOpenCooking();
     }, 350);
   };
 
@@ -3585,9 +3631,9 @@ function App() {
 
     setAuthModalOpen(false);
 
-    // If red curtain is still closed on the first loading page, part the curtains without black transition!
-    if (curtainState === 'closed' || curtainState === 'opening') {
-      triggerOpenCurtain();
+    // If cooking animation is still active on the first loading page, unveil without black transition!
+    if (cookingState === 'closed' || cookingState === 'opening') {
+      triggerOpenCooking();
     } else {
       // Normal in-page reservation transition when already inside
       navigateToPage('reserve', {
@@ -3607,11 +3653,11 @@ function App() {
     setCurrentUser(null);
     try {
       localStorage.removeItem('firespice_user');
-      sessionStorage.removeItem('firespice_curtain_opened');
+      sessionStorage.removeItem('firespice_cooking_opened');
     } catch (e) {}
     onSound('click');
     setActiveView('home');
-    setCurtainState('closed');
+    setCookingState('closed');
     setAuthModalOpen(false);
   };
 
@@ -3702,12 +3748,12 @@ function App() {
     <div className="app-wrapper">
       <RollingBackground speed={speed} dim={dim} />
 
-      {/* Royal Red Velvet Theater Curtain with 24K Golden Bottom Border */}
-      <RedCurtainOverlay
-        isOpen={curtainState === 'closed'}
-        isOpening={curtainState === 'opening'}
-        onGoogleSignIn={handleGoogleSignInFromCurtain}
-        onGuestEnter={handleGuestEnterFromCurtain}
+      {/* Haute Gastronomie Chef's Cooking Animation Overlay */}
+      <CookingEntranceOverlay
+        isOpen={cookingState === 'closed'}
+        isOpening={cookingState === 'opening'}
+        onGoogleSignIn={handleGoogleSignInFromCooking}
+        onGuestEnter={handleGuestEnterFromCooking}
         currentUser={currentUser}
       />
 
@@ -3727,7 +3773,7 @@ function App() {
         currentStep={step}
         activeView={activeView}
         onSwitchView={(view, targetStep = 1) => navigateToPage(view, { step: targetStep })}
-        onReplayCurtain={handleReplayCurtain}
+        onReplayCooking={handleReplayCooking}
       />
 
       {/* ── PAGE VIEW 1: GRAND LOUNGE & TASTING MENU (HOME) ── */}
@@ -3928,14 +3974,14 @@ function App() {
         onSound={onSound}
       />
 
-      {/* Floating Atmosphere Controller with Curtain Replay */}
+      {/* Floating Atmosphere Controller with Cooking Replay */}
       <AmbianceController
         speed={speed}
         setSpeed={setSpeed}
         dim={dim}
         setDim={setDim}
         onSound={onSound}
-        onReplayCurtain={handleReplayCurtain}
+        onReplayCooking={handleReplayCooking}
       />
 
       <footer className="luxury-footer">
