@@ -623,6 +623,18 @@ function Header({ onNav, audioEnabled, onToggleAudio, onOpenBookings, currentUse
             <span className="nav-btn-text">Find Reservation</span>
           </button>
 
+          {onReplayCurtain && (
+            <button
+              className="btn-glass btn-glass-sm"
+              onClick={onReplayCurtain}
+              title="Replay Royal Red Curtain Entrance"
+              style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', color: '#faebad', borderColor: 'rgba(212, 175, 55, 0.4)', background: 'rgba(212, 175, 55, 0.12)' }}
+            >
+              <span style={{ fontSize: '13px' }}>🎭</span>
+              <span className="nav-btn-text">Curtain</span>
+            </button>
+          )}
+
         {currentUser ? (
           <div className="vip-user-wrapper" ref={dropdownRef}>
             <button
@@ -840,6 +852,17 @@ function Header({ onNav, audioEnabled, onToggleAudio, onOpenBookings, currentUse
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 8h1a4 4 0 0 1 0 8h-1"></path><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"></path><line x1="6" y1="1" x2="6" y2="4"></line><line x1="10" y1="1" x2="10" y2="4"></line><line x1="14" y1="1" x2="14" y2="4"></line></svg>
         <span>Menu</span>
       </button>
+      {onReplayCurtain && (
+        <button
+          className="mobile-sub-nav-btn"
+          onClick={onReplayCurtain}
+          title="Replay Royal Red Curtain"
+          style={{ color: '#faebad' }}
+        >
+          <span style={{ fontSize: '13px' }}>🎭</span>
+          <span>Curtain</span>
+        </button>
+      )}
     </div>
     </>
   );
@@ -3314,24 +3337,12 @@ function RedCurtainOverlay({ isOpen, isOpening, onGoogleSignIn, onGuestEnter, cu
    ========================================================================== */
 function App() {
   const [step, setStep] = useState(1);
-  const [activeView, setActiveView] = useState(() => {
-    try {
-      const stored = localStorage.getItem('firespice_user');
-      return stored ? 'reserve' : 'home';
-    } catch (e) {
-      return 'home';
-    }
-  });
+  // Always begin on the first loading page (entrance) so patrons experience the grand red velvet curtain opening
+  const [activeView, setActiveView] = useState('home');
 
   // Red Curtain state for the initial entrance page ('closed' | 'opening' | 'closed-done')
-  const [curtainState, setCurtainState] = useState(() => {
-    try {
-      const opened = sessionStorage.getItem('firespice_curtain_opened');
-      return opened ? 'closed-done' : 'closed';
-    } catch (e) {
-      return 'closed';
-    }
-  });
+  // Starts closed on the first loading page with the 24K golden bottom border
+  const [curtainState, setCurtainState] = useState('closed');
 
   const [pageTransition, setPageTransition] = useState({
     active: false,
@@ -3492,21 +3503,18 @@ function App() {
   const triggerOpenCurtain = useCallback(() => {
     setCurtainState('opening');
     onSound('curtain');
-    try {
-      sessionStorage.setItem('firespice_curtain_opened', 'true');
-    } catch (e) {}
 
     setTimeout(() => {
       setCurtainState('closed-done');
-    }, 2000);
+    }, 2200);
   }, [onSound]);
 
-  // If user loads the page and is already signed in with Google, automatically part curtains after a brief welcome pause
+  // If user loads the page and is already signed in with Google, part the grand red curtains after a welcoming pause
   useEffect(() => {
-    if (curtainState === 'closed' && currentUser && currentUser.provider === 'google') {
+    if (curtainState === 'closed' && currentUser) {
       const timer = setTimeout(() => {
         triggerOpenCurtain();
-      }, 700);
+      }, 900);
       return () => clearTimeout(timer);
     }
   }, [curtainState, currentUser, triggerOpenCurtain]);
@@ -3514,7 +3522,28 @@ function App() {
   const handleGoogleSignInFromCurtain = () => {
     onSound('select');
     const googleProfile = DEFAULT_VIP_MEMBERS[0]; // Lohith Vel (Google Verified Patron)
-    handleLogin(googleProfile);
+    setCurrentUser(googleProfile);
+    try {
+      localStorage.setItem('firespice_user', JSON.stringify(googleProfile));
+    } catch (e) {}
+    notifyOwnerLogin(googleProfile);
+
+    // Pre-fill booking details with Google VIP profile
+    setBooking(prev => ({
+      ...prev,
+      guestInfo: {
+        ...prev.guestInfo,
+        firstName: googleProfile.firstName || prev.guestInfo.firstName,
+        lastName: googleProfile.lastName || prev.guestInfo.lastName,
+        email: googleProfile.email || prev.guestInfo.email,
+        phone: googleProfile.phone || prev.guestInfo.phone,
+        dietary: googleProfile.dietary || prev.guestInfo.dietary,
+        notes: googleProfile.notes || prev.guestInfo.notes
+      }
+    }));
+
+    // Trigger grand red curtain opening animation! NO black transition screen!
+    triggerOpenCurtain();
   };
 
   const handleGuestEnterFromCurtain = () => {
@@ -3523,10 +3552,13 @@ function App() {
   };
 
   const handleReplayCurtain = () => {
+    onSound('curtain');
+    setActiveView('home');
     setCurtainState('closed');
+    window.scrollTo({ top: 0, behavior: 'instant' });
     setTimeout(() => {
       triggerOpenCurtain();
-    }, 250);
+    }, 350);
   };
 
   const handleLogin = (user) => {
@@ -3537,10 +3569,6 @@ function App() {
     // Fire owner login notification email (non-blocking)
     notifyOwnerLogin(user);
 
-    // If red curtain is still closed on the first loading page, part the curtains!
-    if (curtainState === 'closed') {
-      triggerOpenCurtain();
-    }
     // Automatically pre-fill the reservation details with the user's info
     setBooking(prev => ({
       ...prev,
@@ -3557,27 +3585,34 @@ function App() {
 
     setAuthModalOpen(false);
 
-    // ✦ Interactive In-Page Simulation: Load Table Reservation Page!
-    navigateToPage('reserve', {
-      title: 'PATRON AUTHENTICATED',
-      stepsSequence: [
-        `✦ Welcome, ${user.firstName || user.name || 'Patron'} • Verifying VIP Credentials...`,
-        '✦ Loading Table Reservation Sanctuary (Page 1)...',
-        '✦ Dining Calendar & Party Console Ready'
-      ],
-      step: 1,
-      phaseDuration: 450
-    });
+    // If red curtain is still closed on the first loading page, part the curtains without black transition!
+    if (curtainState === 'closed' || curtainState === 'opening') {
+      triggerOpenCurtain();
+    } else {
+      // Normal in-page reservation transition when already inside
+      navigateToPage('reserve', {
+        title: 'PATRON AUTHENTICATED',
+        stepsSequence: [
+          `✦ Welcome, ${user.firstName || user.name || 'Patron'} • Verifying VIP Credentials...`,
+          '✦ Loading Table Reservation Sanctuary (Page 1)...',
+          '✦ Dining Calendar & Party Console Ready'
+        ],
+        step: 1,
+        phaseDuration: 450
+      });
+    }
   };
 
   const handleLogout = () => {
     setCurrentUser(null);
     try {
       localStorage.removeItem('firespice_user');
+      sessionStorage.removeItem('firespice_curtain_opened');
     } catch (e) {}
     onSound('click');
     setActiveView('home');
-    setAuthModalOpen(true);
+    setCurtainState('closed');
+    setAuthModalOpen(false);
   };
 
   const handleConfirmReservation = (guestInfo, total, paymentInfo = null) => {

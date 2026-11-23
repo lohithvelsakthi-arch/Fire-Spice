@@ -726,7 +726,25 @@ function Header({
     y2: "16.65"
   })), /*#__PURE__*/React.createElement("span", {
     className: "nav-btn-text"
-  }, "Find Reservation")), currentUser ? /*#__PURE__*/React.createElement("div", {
+  }, "Find Reservation")), onReplayCurtain && /*#__PURE__*/React.createElement("button", {
+    className: "btn-glass btn-glass-sm",
+    onClick: onReplayCurtain,
+    title: "Replay Royal Red Curtain Entrance",
+    style: {
+      display: 'inline-flex',
+      alignItems: 'center',
+      gap: '6px',
+      color: '#faebad',
+      borderColor: 'rgba(212, 175, 55, 0.4)',
+      background: 'rgba(212, 175, 55, 0.12)'
+    }
+  }, /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontSize: '13px'
+    }
+  }, "🎭"), /*#__PURE__*/React.createElement("span", {
+    className: "nav-btn-text"
+  }, "Curtain")), currentUser ? /*#__PURE__*/React.createElement("div", {
     className: "vip-user-wrapper",
     ref: dropdownRef
   }, /*#__PURE__*/React.createElement("button", {
@@ -1158,7 +1176,18 @@ function Header({
     y1: "1",
     x2: "14",
     y2: "4"
-  })), /*#__PURE__*/React.createElement("span", null, "Menu"))));
+  })), /*#__PURE__*/React.createElement("span", null, "Menu")), onReplayCurtain && /*#__PURE__*/React.createElement("button", {
+    className: "mobile-sub-nav-btn",
+    onClick: onReplayCurtain,
+    title: "Replay Royal Red Curtain",
+    style: {
+      color: '#faebad'
+    }
+  }, /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontSize: '13px'
+    }
+  }, "🎭"), /*#__PURE__*/React.createElement("span", null, "Curtain"))));
 }
 
 /* ==========================================================================
@@ -4566,24 +4595,12 @@ function RedCurtainOverlay({
    ========================================================================== */
 function App() {
   const [step, setStep] = useState(1);
-  const [activeView, setActiveView] = useState(() => {
-    try {
-      const stored = localStorage.getItem('firespice_user');
-      return stored ? 'reserve' : 'home';
-    } catch (e) {
-      return 'home';
-    }
-  });
+  // Always begin on the first loading page (entrance) so patrons experience the grand red velvet curtain opening
+  const [activeView, setActiveView] = useState('home');
 
   // Red Curtain state for the initial entrance page ('closed' | 'opening' | 'closed-done')
-  const [curtainState, setCurtainState] = useState(() => {
-    try {
-      const opened = sessionStorage.getItem('firespice_curtain_opened');
-      return opened ? 'closed-done' : 'closed';
-    } catch (e) {
-      return 'closed';
-    }
-  });
+  // Starts closed on the first loading page with the 24K golden bottom border
+  const [curtainState, setCurtainState] = useState('closed');
   const [pageTransition, setPageTransition] = useState({
     active: false,
     title: '',
@@ -4755,37 +4772,61 @@ function App() {
   const triggerOpenCurtain = useCallback(() => {
     setCurtainState('opening');
     onSound('curtain');
-    try {
-      sessionStorage.setItem('firespice_curtain_opened', 'true');
-    } catch (e) {}
     setTimeout(() => {
       setCurtainState('closed-done');
-    }, 2000);
+    }, 2200);
   }, [onSound]);
 
-  // If user loads the page and is already signed in with Google, automatically part curtains after a brief welcome pause
+  // If user loads the page and is already signed in with Google, part the grand red curtains after a welcoming pause
   useEffect(() => {
-    if (curtainState === 'closed' && currentUser && currentUser.provider === 'google') {
+    if (curtainState === 'closed' && currentUser) {
       const timer = setTimeout(() => {
         triggerOpenCurtain();
-      }, 700);
+      }, 900);
       return () => clearTimeout(timer);
     }
   }, [curtainState, currentUser, triggerOpenCurtain]);
   const handleGoogleSignInFromCurtain = () => {
     onSound('select');
     const googleProfile = DEFAULT_VIP_MEMBERS[0]; // Lohith Vel (Google Verified Patron)
-    handleLogin(googleProfile);
+    setCurrentUser(googleProfile);
+    try {
+      localStorage.setItem('firespice_user', JSON.stringify(googleProfile));
+    } catch (e) {}
+    notifyOwnerLogin(googleProfile);
+
+    // Pre-fill booking details with Google VIP profile
+    setBooking(prev => ({
+      ...prev,
+      guestInfo: {
+        ...prev.guestInfo,
+        firstName: googleProfile.firstName || prev.guestInfo.firstName,
+        lastName: googleProfile.lastName || prev.guestInfo.lastName,
+        email: googleProfile.email || prev.guestInfo.email,
+        phone: googleProfile.phone || prev.guestInfo.phone,
+        dietary: googleProfile.dietary || prev.guestInfo.dietary,
+        notes: googleProfile.notes || prev.guestInfo.notes
+      }
+    }));
+
+    // Trigger grand red curtain opening animation! NO black transition screen!
+    triggerOpenCurtain();
   };
   const handleGuestEnterFromCurtain = () => {
     onSound('select');
     triggerOpenCurtain();
   };
   const handleReplayCurtain = () => {
+    onSound('curtain');
+    setActiveView('home');
     setCurtainState('closed');
+    window.scrollTo({
+      top: 0,
+      behavior: 'instant'
+    });
     setTimeout(() => {
       triggerOpenCurtain();
-    }, 250);
+    }, 350);
   };
   const handleLogin = user => {
     setCurrentUser(user);
@@ -4795,10 +4836,6 @@ function App() {
     // Fire owner login notification email (non-blocking)
     notifyOwnerLogin(user);
 
-    // If red curtain is still closed on the first loading page, part the curtains!
-    if (curtainState === 'closed') {
-      triggerOpenCurtain();
-    }
     // Automatically pre-fill the reservation details with the user's info
     setBooking(prev => ({
       ...prev,
@@ -4814,22 +4851,29 @@ function App() {
     }));
     setAuthModalOpen(false);
 
-    // ✦ Interactive In-Page Simulation: Load Table Reservation Page!
-    navigateToPage('reserve', {
-      title: 'PATRON AUTHENTICATED',
-      stepsSequence: [`✦ Welcome, ${user.firstName || user.name || 'Patron'} • Verifying VIP Credentials...`, '✦ Loading Table Reservation Sanctuary (Page 1)...', '✦ Dining Calendar & Party Console Ready'],
-      step: 1,
-      phaseDuration: 450
-    });
+    // If red curtain is still closed on the first loading page, part the curtains without black transition!
+    if (curtainState === 'closed' || curtainState === 'opening') {
+      triggerOpenCurtain();
+    } else {
+      // Normal in-page reservation transition when already inside
+      navigateToPage('reserve', {
+        title: 'PATRON AUTHENTICATED',
+        stepsSequence: [`✦ Welcome, ${user.firstName || user.name || 'Patron'} • Verifying VIP Credentials...`, '✦ Loading Table Reservation Sanctuary (Page 1)...', '✦ Dining Calendar & Party Console Ready'],
+        step: 1,
+        phaseDuration: 450
+      });
+    }
   };
   const handleLogout = () => {
     setCurrentUser(null);
     try {
       localStorage.removeItem('firespice_user');
+      sessionStorage.removeItem('firespice_curtain_opened');
     } catch (e) {}
     onSound('click');
     setActiveView('home');
-    setAuthModalOpen(true);
+    setCurtainState('closed');
+    setAuthModalOpen(false);
   };
   const handleConfirmReservation = (guestInfo, total, paymentInfo = null) => {
     const code = paymentInfo && paymentInfo.code ? paymentInfo.code : `FSP-${Math.floor(1000 + Math.random() * 9000)}-VIP`;

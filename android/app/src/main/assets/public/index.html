@@ -21,7 +21,7 @@
   <link rel="manifest" href="manifest.json">
 
   <!-- Luxury Black & Gold Glassmorphic Stylesheet -->
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="styles.css?v=1.0.19">
 
   <!-- Google Fonts: Non-blocking load so app renders instantaneously offline -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -40,16 +40,56 @@
   <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 </head>
 <body>
-  <!-- React App Root Container with Instant Luxury Preloader -->
+  <!-- React App Root Container with Instant Royal Red Velvet Curtain Preloader -->
   <div id="root">
-    <div id="app-preloader" class="preloader-overlay">
-      <div class="preloader-crest">
-        <img src="icons/icon-192.png" alt="FIRE SPICE" class="preloader-logo-img">
+    <div id="app-preloader" class="curtain-stage-overlay">
+      <!-- Top Opera Valance -->
+      <div class="curtain-valance">
+        <div class="curtain-valance-crest">
+          <span class="gold-diamond"></span>
+          <span>FIRE SPICE • GRAND SANCTUARY</span>
+          <span class="gold-diamond"></span>
+        </div>
+        <div class="curtain-valance-fringe"></div>
       </div>
-      <h1 class="preloader-title">FIRE SPICE</h1>
-      <p class="preloader-subtitle">HAUTE GASTRONOMIE &amp; GOLDEN LOUNGE</p>
-      <div class="preloader-bar">
-        <div class="preloader-bar-fill"></div>
+
+      <!-- Left Red Velvet Panel -->
+      <div class="curtain-panel curtain-panel-left">
+        <div class="curtain-fabric-shimmer"></div>
+        <!-- 24K Golden Bottom Border with Fringe -->
+        <div class="curtain-gold-bottom-border">
+          <div class="curtain-gold-piping"></div>
+          <div class="curtain-gold-fringe"></div>
+        </div>
+      </div>
+
+      <!-- Right Red Velvet Panel -->
+      <div class="curtain-panel curtain-panel-right">
+        <div class="curtain-fabric-shimmer"></div>
+        <!-- 24K Golden Bottom Border with Fringe -->
+        <div class="curtain-gold-bottom-border">
+          <div class="curtain-gold-piping"></div>
+          <div class="curtain-gold-fringe"></div>
+        </div>
+      </div>
+
+      <!-- Center Medallion & Loading State -->
+      <div class="curtain-center-medallion">
+        <div class="curtain-medallion-crest">
+          <img src="icons/icon-192.png" alt="FIRE SPICE Emblem" class="curtain-logo-img">
+        </div>
+        <div class="curtain-medallion-badge">
+          <span>HAUTE GASTRONOMIE &amp; GOLDEN LOUNGE</span>
+        </div>
+        <h2 class="curtain-medallion-title">
+          WELCOME TO <span class="gold-gradient-text">FIRE SPICE</span>
+        </h2>
+        <p class="curtain-medallion-desc">
+          Preparing Grand Theater Stage &amp; Dining Sanctuary...
+        </p>
+        <div class="preloader-bar" style="margin-top: 10px;">
+          <div class="preloader-bar-fill"></div>
+        </div>
       </div>
     </div>
   </div>
@@ -91,7 +131,7 @@
   </script>
 
   <!-- React 18 Application Bundle -->
-  <script src="bundle.js"></script>
+  <script src="bundle.js?v=1.0.19"></script>
 
 </body>
 </html>

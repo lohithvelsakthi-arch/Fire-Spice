@@ -1,10 +1,10 @@
 /**
  * FIRE SPICE - Progressive Web App Service Worker
- * Version: firespice-v1.0.0
+ * Version: firespice-v1.0.19
  * Provides offline caching, lightning-fast boot, and seamless standalone app execution.
  */
 
-const CACHE_NAME = 'firespice-v1.0.0';
+const CACHE_NAME = 'firespice-v1.0.19';
 
 const PRECACHE_ASSETS = [
   './',
@@ -70,6 +70,23 @@ self.addEventListener('fetch', (event) => {
           return response;
         })
         .catch(() => caches.match('./index.html'))
+    );
+    return;
+  }
+
+  // Network-First for core application bundle & styles so fresh animations and code are never blocked by stale cache
+  const isAppCode = url.pathname.endsWith('.js') || url.pathname.endsWith('.css') || url.pathname.endsWith('.html') || url.pathname === '/';
+  if (isAppCode) {
+    event.respondWith(
+      fetch(event.request)
+        .then((networkResponse) => {
+          if (networkResponse && networkResponse.status === 200) {
+            const responseToCache = networkResponse.clone();
+            caches.open(CACHE_NAME).then((cache) => cache.put(event.request, responseToCache));
+          }
+          return networkResponse;
+        })
+        .catch(() => caches.match(event.request))
     );
     return;
   }

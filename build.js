@@ -52,7 +52,10 @@ try {
       });
     }
 
-    console.log('Synced bundle.js, index.html, styles.css, vendor/emailjs.min.js, logo.png, icons/ -> www/');
+    if (fs.existsSync('sw.js')) fs.copyFileSync('sw.js', 'www/sw.js');
+    if (fs.existsSync('manifest.json')) fs.copyFileSync('manifest.json', 'www/manifest.json');
+
+    console.log('Synced bundle.js, index.html, styles.css, sw.js, manifest.json, vendor/emailjs.min.js, logo.png, icons/ -> www/');
   }
 } catch (err) {
   console.error('SYNTAX/TRANSPILE ERROR:');

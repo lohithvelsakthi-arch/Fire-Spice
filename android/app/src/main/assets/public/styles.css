@@ -4517,13 +4517,13 @@ body {
   inset: 0;
   width: 100vw;
   height: 100vh;
-  z-index: 999999;
+  z-index: 99999999 !important;
   overflow: hidden;
   pointer-events: auto;
   user-select: none;
   perspective: 1200px;
   background: transparent;
-  transition: opacity 0.5s ease 1.8s, visibility 0.5s ease 1.8s;
+  transition: opacity 0.5s ease 2.0s, visibility 0.5s ease 2.0s;
 }
 
 .curtain-stage-overlay.curtain-hidden {
@@ -4544,65 +4544,73 @@ body {
   background:
     repeating-linear-gradient(
       90deg,
-      rgba(40, 0, 5, 0.98) 0px,
-      rgba(115, 8, 22, 0.95) 24px,
-      rgba(180, 22, 38, 0.97) 48px,
-      rgba(225, 45, 62, 0.88) 64px,
-      rgba(145, 14, 28, 0.96) 82px,
-      rgba(60, 3, 10, 0.98) 104px,
-      rgba(22, 0, 4, 0.99) 124px
+      rgba(35, 0, 4, 0.99) 0px,
+      rgba(105, 6, 18, 0.96) 24px,
+      rgba(175, 18, 34, 0.97) 48px,
+      rgba(235, 42, 60, 0.90) 64px,
+      rgba(145, 12, 26, 0.96) 82px,
+      rgba(55, 2, 8, 0.98) 104px,
+      rgba(18, 0, 3, 0.99) 124px
     ),
     linear-gradient(
       180deg,
-      #330005 0%,
-      #660512 25%,
-      #8c0c1b 50%,
-      #ab1426 75%,
-      #45030a 100%
+      #2b0004 0%,
+      #5c040f 25%,
+      #8a0b1a 50%,
+      #ad1224 75%,
+      #3d0208 100%
     );
-  box-shadow: inset 0 0 120px rgba(0, 0, 0, 0.9);
+  box-shadow: inset 0 0 140px rgba(0, 0, 0, 0.92);
   overflow: hidden;
 }
 
 .curtain-fabric-shimmer {
   position: absolute;
   inset: 0;
-  background: radial-gradient(circle at 50% 30%, rgba(255, 180, 180, 0.12) 0%, transparent 65%);
+  background: radial-gradient(circle at 50% 30%, rgba(255, 200, 200, 0.14) 0%, transparent 65%);
   pointer-events: none;
 }
 
 .curtain-panel-left {
   left: 0;
   transform-origin: left center;
-  box-shadow: 14px 0 45px rgba(0, 0, 0, 0.95), inset -12px 0 30px rgba(0, 0, 0, 0.7);
+  box-shadow: 16px 0 50px rgba(0, 0, 0, 0.96), inset -14px 0 32px rgba(0, 0, 0, 0.75);
   z-index: 2;
 }
 
 .curtain-panel-right {
   right: 0;
   transform-origin: right center;
-  box-shadow: -14px 0 45px rgba(0, 0, 0, 0.95), inset 12px 0 30px rgba(0, 0, 0, 0.7);
+  box-shadow: -16px 0 50px rgba(0, 0, 0, 0.96), inset 14px 0 32px rgba(0, 0, 0, 0.75);
   z-index: 1;
 }
 
-/* Luxurious Golden Border at the bottom of the curtain */
+/* Luxurious 24K Golden Border at the bottom of the red curtain */
 .curtain-gold-bottom-border {
   position: absolute;
   bottom: 0;
   left: 0;
   right: 0;
-  height: 52px;
+  height: 64px;
   background: linear-gradient(
     180deg,
-    #fff8d6 0%,
-    #f5d376 15%,
-    #d4af37 45%,
-    #aa8222 75%,
-    #694e0f 100%
+    #fffbe6 0%,
+    #fae075 14%,
+    #d4af37 42%,
+    #b08620 68%,
+    #735310 90%,
+    #422e06 100%
   );
-  border-top: 3px solid #fff5cc;
+  border-top: 3px solid #fff9db;
   box-shadow:
-    0 -6px 22px rgba(212, 175, 55, 0.75),
+    0 -8px 26px rgba(212, 175, 55, 0.85),
+    0 -2px 6px rgba(255, 248, 214, 0.95),
+    0 12px 35px rgba(0, 0, 0, 0.98);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  z-index: 4;
+}
     0 -1px 4px rgba(255, 245, 195, 0.9),
     0 10px 30px rgba(0, 0, 0, 0.98);
   display: flex;
@@ -4612,26 +4620,28 @@ body {
 
 /* Decorative Gold Ribbon Piping Above Fringe */
 .curtain-gold-piping {
-  height: 8px;
+  height: 10px;
   background: linear-gradient(90deg, #aa8222, #faebad, #d4af37, #faebad, #aa8222);
   border-top: 1px solid #ffffff;
   border-bottom: 1px solid #735510;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
 }
 
 /* Braided bullion fringe and tassels along bottom edge */
 .curtain-gold-fringe {
-  height: 24px;
+  height: 28px;
   width: 100%;
   background: repeating-linear-gradient(
     90deg,
-    #faebad 0px,
-    #d4af37 4px,
-    #997316 6px,
-    #57410b 9px,
-    #faebad 12px
+    #fff3bf 0px,
+    #faebad 2px,
+    #d4af37 5px,
+    #997316 8px,
+    #57410b 11px,
+    #fff3bf 14px
   );
-  border-top: 2px solid rgba(110, 80, 15, 0.85);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.75);
+  border-top: 2px solid rgba(110, 80, 15, 0.9);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.8);
   position: relative;
 }
 
@@ -4641,8 +4651,8 @@ body {
   bottom: 0;
   left: 0;
   right: 0;
-  height: 4px;
-  background: #3a2b06;
+  height: 5px;
+  background: #2b1f04;
 }
 
 /* Grand Opera House Top Valance Swag */
@@ -4841,36 +4851,37 @@ body {
 }
 
 .curtain-stage-overlay.curtain-opening .curtain-panel-left {
-  animation: openCurtainLeft 1.9s cubic-bezier(0.77, 0, 0.175, 1) forwards;
+  animation: openCurtainLeft 2.2s cubic-bezier(0.77, 0, 0.175, 1) forwards;
 }
 
 .curtain-stage-overlay.curtain-opening .curtain-panel-right {
-  animation: openCurtainRight 1.9s cubic-bezier(0.77, 0, 0.175, 1) forwards;
+  animation: openCurtainRight 2.2s cubic-bezier(0.77, 0, 0.175, 1) forwards;
 }
 
 .curtain-stage-overlay.curtain-opening .curtain-valance {
   transform: translateY(-100%);
-  transition: transform 1.3s cubic-bezier(0.7, 0, 0.2, 1) 0.3s;
+  transition: transform 1.5s cubic-bezier(0.7, 0, 0.2, 1) 0.2s;
 }
 
 .curtain-stage-overlay.curtain-opening .curtain-center-medallion {
   opacity: 0;
-  transform: translate(-50%, -50%) scale(0.8);
+  transform: translate(-50%, -50%) scale(0.75);
   pointer-events: none;
+  transition: opacity 0.4s ease, transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 @keyframes openCurtainLeft {
   0% {
     transform: translateX(0) scaleX(1);
   }
-  30% {
-    transform: translateX(-18%) scaleX(0.88);
+  25% {
+    transform: translateX(-15%) scaleX(0.92);
   }
-  65% {
-    transform: translateX(-65%) scaleX(0.6);
+  60% {
+    transform: translateX(-60%) scaleX(0.65);
   }
   100% {
-    transform: translateX(-104%) scaleX(0.35);
+    transform: translateX(-105%) scaleX(0.3);
   }
 }
 
@@ -4878,14 +4889,14 @@ body {
   0% {
     transform: translateX(0) scaleX(1);
   }
-  30% {
-    transform: translateX(18%) scaleX(0.88);
+  25% {
+    transform: translateX(15%) scaleX(0.92);
   }
-  65% {
-    transform: translateX(65%) scaleX(0.6);
+  60% {
+    transform: translateX(60%) scaleX(0.65);
   }
   100% {
-    transform: translateX(104%) scaleX(0.35);
+    transform: translateX(105%) scaleX(0.3);
   }
 }
 
@@ -4914,11 +4925,11 @@ body {
   }
 
   .curtain-gold-bottom-border {
-    height: 42px;
+    height: 48px;
   }
 
   .curtain-gold-fringe {
-    height: 18px;
+    height: 20px;
   }
 
   .curtain-valance {
