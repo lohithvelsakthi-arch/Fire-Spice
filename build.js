@@ -44,7 +44,8 @@ try {
     }
 
     // Sync logo and icons
-    if (fs.existsSync('logo.png')) fs.copyFileSync('logo.png', 'www/logo.png');
+    const logoSrc = fs.existsSync('assets/logo.png') ? 'assets/logo.png' : (fs.existsSync('logo.png') ? 'logo.png' : null);
+    if (logoSrc) fs.copyFileSync(logoSrc, 'www/logo.png');
     if (fs.existsSync('icons')) {
       if (!fs.existsSync('www/icons')) fs.mkdirSync('www/icons', { recursive: true });
       fs.readdirSync('icons').forEach(file => {
@@ -56,6 +57,10 @@ try {
     if (fs.existsSync('cooking-intro.mp4')) {
       console.log('Syncing cooking-intro.mp4 -> www/cooking-intro.mp4...');
       fs.copyFileSync('cooking-intro.mp4', 'www/cooking-intro.mp4');
+    }
+    if (fs.existsSync('booking-pass-reveal.mp4')) {
+      console.log('Syncing booking-pass-reveal.mp4 -> www/booking-pass-reveal.mp4...');
+      fs.copyFileSync('booking-pass-reveal.mp4', 'www/booking-pass-reveal.mp4');
     }
 
     if (fs.existsSync('sw.js')) fs.copyFileSync('sw.js', 'www/sw.js');

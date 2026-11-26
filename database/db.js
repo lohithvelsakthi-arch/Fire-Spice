@@ -119,7 +119,7 @@ function verifyPassword(password, storedHash) {
 function seedVIPs() {
   const checkStmt = db.prepare('SELECT COUNT(*) AS count FROM users');
   const result = checkStmt.get();
-  
+
   if (result.count === 0) {
     console.log('[Database] Seeding initial VIP patrons into SQLite users.db...');
 
@@ -543,7 +543,7 @@ function getDatabaseStats() {
   let fileSizeBytes = 0;
   try {
     fileSizeBytes = fs.statSync(DB_PATH).size;
-  } catch (e) {}
+  } catch (e) { }
 
   return {
     engine: 'SQLite 3 (Node.js native node:sqlite)',

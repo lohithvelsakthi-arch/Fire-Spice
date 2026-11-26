@@ -1,15 +1,14 @@
 {
   "name": "firespice-luxury-restaurant",
-  "version": "1.0.22",
+  "version": "1.0.23",
   "description": "FIRE SPICE - Haute Gastronomie & Golden Lounge Restaurant Table Booking Application",
   "main": "server.js",
   "scripts": {
     "build": "node build.js",
     "start": "node build.js && node server.js",
-    "db": "node db-cli.js users",
-    "db:logins": "node db-cli.js logins",
-    "db:stats": "node db-cli.js stats",
-    "icons": "node generate_icons.js"
+    "db": "node scripts/db-cli.js users",
+    "db:logins": "node scripts/db-cli.js logins",
+    "db:stats": "node scripts/db-cli.js stats"
   },
   "keywords": [
     "restaurant",

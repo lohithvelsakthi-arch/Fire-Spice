@@ -4,13 +4,13 @@
  * Use this command-line tool to inspect and manage user logins, sessions, and patron accounts.
  *
  * Usage:
- *   node db-cli.js users      - List all registered patrons and login counts
- *   node db-cli.js logins     - View recent login audit log records
- *   node db-cli.js stats      - Display database metrics and engine status
- *   node db-cli.js sessions   - View active login sessions
+ *   node scripts/db-cli.js users      - List all registered patrons and login counts
+ *   node scripts/db-cli.js logins     - View recent login audit log records
+ *   node scripts/db-cli.js stats      - Display database metrics and engine status
+ *   node scripts/db-cli.js sessions   - View active login sessions
  */
 
-const db = require('./database/db.js');
+const db = require('../database/db.js');
 
 const cmd = process.argv[2] || 'help';
 
@@ -108,12 +108,12 @@ switch (cmd.toLowerCase()) {
   default:
     printHeader('HELP & AVAILABLE COMMANDS');
     console.log('Commands:');
-    console.log('  node db-cli.js users      -> List all registered patron accounts');
-    console.log('  node db-cli.js logins     -> View recent login audit trail');
-    console.log('  node db-cli.js stats      -> Display database metrics and engine status');
-    console.log('  node db-cli.js sessions   -> View currently active login sessions\n');
+    console.log('  node scripts/db-cli.js users      -> List all registered patron accounts');
+    console.log('  node scripts/db-cli.js logins     -> View recent login audit trail');
+    console.log('  node scripts/db-cli.js stats      -> Display database metrics and engine status');
+    console.log('  node scripts/db-cli.js sessions   -> View currently active login sessions\n');
     console.log('Example:');
-    console.log('  node db-cli.js users\n');
+    console.log('  node scripts/db-cli.js users\n');
     break;
 }
 

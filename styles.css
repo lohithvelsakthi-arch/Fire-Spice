@@ -128,8 +128,8 @@ body {
   width: max-content;
   will-change: transform;
   animation: rollHorizontal var(--roll-speed, 65s) linear infinite;
-  opacity: var(--ambient-opacity, var(--gallery-opacity, 0.78));
-  filter: blur(var(--ambient-blur, var(--gallery-blur, 0.5px))) brightness(0.96) contrast(1.12) saturate(1.1);
+  opacity: var(--ambient-opacity, 0.88);
+  filter: blur(var(--ambient-blur, 0px)) brightness(0.96) contrast(1.12) saturate(1.1);
   transition: opacity 0.5s ease, filter 0.5s ease;
   -webkit-backface-visibility: hidden;
   backface-visibility: hidden;
@@ -1593,49 +1593,6 @@ body {
 }
 
 /* ==========================================================================
-   Ambiance Floating Controller (Controls Rolling Photos without UI Clutter)
-   ========================================================================== */
-
-.ambient-controller-pill {
-  position: fixed;
-  bottom: 24px;
-  left: 24px;
-  z-index: 40;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 8px 16px;
-  border-radius: 9999px;
-  background: rgba(12, 12, 16, 0.75);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(212, 175, 55, 0.28);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
-  font-size: 0.8rem;
-  color: var(--text-muted);
-}
-
-.ambiance-toggle-btn {
-  display: none;
-}
-
-.ambiance-controls-drawer {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.ambient-controller-pill .ctrl-label {
-  font-size: 0.72rem;
-  letter-spacing: 1px;
-  color: var(--gold-400);
-  text-transform: uppercase;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-/* ==========================================================================
    Menu Showcase Section
    ========================================================================== */
 
@@ -2855,45 +2812,6 @@ body {
     letter-spacing: 1.5px !important;
   }
 
-  .ambient-controller-pill {
-    bottom: max(16px, var(--sab, 0px));
-    right: 14px;
-    left: auto;
-    padding: 6px 12px;
-    border-radius: 9999px;
-    z-index: 40;
-    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.75);
-  }
-
-  .ambient-controller-pill.collapsed .ambiance-controls-drawer {
-    display: none;
-  }
-
-  .ambient-controller-pill:not(.collapsed) {
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    border-radius: 18px;
-    padding: 12px 14px;
-    width: calc(100vw - 28px);
-    max-width: 380px;
-  }
-
-  .ambient-controller-pill:not(.collapsed) .ambiance-controls-drawer {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-    padding-top: 8px;
-    margin-top: 8px;
-    border-top: 1px solid rgba(212, 175, 55, 0.2);
-  }
-
-  .ambiance-toggle-btn {
-    display: inline-flex !important;
-    align-items: center;
-    gap: 6px;
-  }
-
   /* Modals */
   .auth-modal-dialog,
   .install-modal-dialog,
@@ -3692,7 +3610,7 @@ body {
 @media (max-width: 768px) {
   .booking-console-container {
     padding: 0 8px;
-    margin-bottom: 80px; /* Clear ambient controller pill */
+    margin-bottom: 32px;
   }
 
   .console-card {
@@ -3924,27 +3842,6 @@ body {
     transform: scale(0.97) !important;
     filter: brightness(1.15);
     transition: transform 0.08s ease, filter 0.08s ease;
-  }
-}
-
-/* ------------------------------------------------------------------
-   11. Ambient Controller — compact, non-intrusive on mobile
-   ------------------------------------------------------------------ */
-@media (max-width: 768px) {
-  .ambient-controller-pill {
-    bottom: max(20px, var(--sab, 16px));
-    right: 14px;
-    left: auto;
-    z-index: 44;
-  }
-
-  .ambiance-toggle-btn {
-    min-height: 44px;
-    padding: 10px 16px;
-    border-radius: 999px;
-    font-size: 0.82rem;
-    letter-spacing: 0.5px;
-    gap: 8px;
   }
 }
 
@@ -5288,3 +5185,213 @@ body {
 
 
 
+
+/* ==========================================================================
+   BookingPassRevealOverlay — Cinematic Waiter Transition Before VIP Pass
+   ========================================================================== */
+
+.booking-reveal-overlay {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 99999998;
+  overflow: hidden;
+  pointer-events: auto;
+  user-select: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: bookingRevealFadeIn 0.5s ease forwards;
+}
+
+.booking-reveal-overlay.booking-reveal-fading {
+  animation: bookingRevealFadeOut 0.6s ease forwards;
+  pointer-events: none;
+}
+
+.booking-reveal-video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+  z-index: 1;
+}
+
+.booking-reveal-scrim {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  background:
+    radial-gradient(ellipse at 50% 50%, rgba(6, 6, 8, 0.32) 0%, rgba(6, 6, 8, 0.65) 60%, rgba(6, 6, 8, 0.92) 100%),
+    linear-gradient(180deg, rgba(6, 6, 8, 0.55) 0%, rgba(6, 6, 8, 0.2) 50%, rgba(6, 6, 8, 0.85) 100%);
+  pointer-events: none;
+}
+
+.booking-reveal-content {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 32px 24px;
+  animation: bookingRevealContentSlide 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.3s both;
+}
+
+.booking-reveal-crest {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 50% 40%, rgba(212, 175, 55, 0.3), rgba(6, 6, 8, 0.9));
+  border: 2px solid rgba(212, 175, 55, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+  box-shadow: 0 0 40px rgba(212, 175, 55, 0.3), 0 8px 32px rgba(0, 0, 0, 0.6);
+  animation: bookingCrestPulse 2s ease-in-out infinite alternate;
+}
+
+.booking-reveal-logo {
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.booking-reveal-badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'Cinzel', serif;
+  font-size: 0.68rem;
+  letter-spacing: 2.5px;
+  color: var(--gold-400);
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+
+.booking-reveal-title {
+  font-family: 'Cinzel', serif;
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  margin-bottom: 20px;
+  text-shadow: 0 2px 20px rgba(212, 175, 55, 0.3);
+}
+
+.booking-reveal-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 24px;
+}
+
+.booking-reveal-step {
+  font-family: 'Cinzel', serif;
+  font-size: 0.76rem;
+  letter-spacing: 1.5px;
+  color: var(--text-muted);
+  opacity: 0.6;
+  transition: opacity 0.4s ease, color 0.4s ease;
+}
+
+.booking-reveal-step.active {
+  color: var(--gold-300);
+  opacity: 1;
+}
+
+.booking-reveal-step.pulse {
+  color: var(--gold-400);
+  opacity: 1;
+  animation: bookingStepPulse 1.2s ease-in-out infinite;
+}
+
+.booking-reveal-progress-wrap {
+  width: 240px;
+  height: 3px;
+  background: rgba(212, 175, 55, 0.15);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.booking-reveal-progress-bar {
+  height: 100%;
+  border-radius: 3px;
+  background: linear-gradient(90deg, var(--gold-500), var(--gold-300));
+  animation: bookingProgressFill 4.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+/* ── Keyframes ── */
+
+@keyframes bookingRevealFadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes bookingRevealFadeOut {
+  from { opacity: 1; }
+  to   { opacity: 0; }
+}
+
+@keyframes bookingRevealContentSlide {
+  from {
+    opacity: 0;
+    transform: translateY(30px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes bookingCrestPulse {
+  from { box-shadow: 0 0 30px rgba(212, 175, 55, 0.2), 0 8px 32px rgba(0, 0, 0, 0.6); }
+  to   { box-shadow: 0 0 50px rgba(212, 175, 55, 0.45), 0 8px 32px rgba(0, 0, 0, 0.6); }
+}
+
+@keyframes bookingStepPulse {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.5; }
+}
+
+@keyframes bookingProgressFill {
+  0%   { width: 0%; }
+  30%  { width: 35%; }
+  60%  { width: 65%; }
+  85%  { width: 88%; }
+  100% { width: 100%; }
+}
+
+/* ── Mobile Responsive ── */
+
+@media (max-width: 600px) {
+  .booking-reveal-crest {
+    width: 64px;
+    height: 64px;
+  }
+
+  .booking-reveal-logo {
+    width: 44px;
+    height: 44px;
+  }
+
+  .booking-reveal-title {
+    font-size: 1.2rem;
+    letter-spacing: 2px;
+  }
+
+  .booking-reveal-step {
+    font-size: 0.68rem;
+  }
+
+  .booking-reveal-progress-wrap {
+    width: 180px;
+  }
+}

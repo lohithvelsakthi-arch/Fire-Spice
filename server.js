@@ -56,6 +56,18 @@ function readJsonBody(req) {
   });
 }
 
+function resolveConfigPath(filename) {
+  const inConfig = path.join(ROOT, 'config', filename);
+  if (fs.existsSync(inConfig)) return inConfig;
+  return path.join(ROOT, filename);
+}
+
+function getWritableConfigPath(filename) {
+  const configDir = path.join(ROOT, 'config');
+  if (!fs.existsSync(configDir)) fs.mkdirSync(configDir, { recursive: true });
+  return path.join(configDir, filename);
+}
+
 /**
  * Razorpay Gateway Configuration & REST API Integration
  */
@@ -66,7 +78,7 @@ function getRazorpayConfig() {
     currency: process.env.RAZORPAY_CURRENCY || 'INR',
     businessName: 'FIRE SPICE'
   };
-  const configPath = path.join(ROOT, 'razorpay-config.json');
+  const configPath = resolveConfigPath('razorpay-config.json');
   if (fs.existsSync(configPath)) {
     try {
       const fileData = JSON.parse(fs.readFileSync(configPath, 'utf8'));
@@ -87,7 +99,7 @@ function getGPayConfig() {
     payeeName: 'FIRE SPICE - Lohith Vel',
     currency: 'INR'
   };
-  const configPath = path.join(ROOT, 'gpay-config.json');
+  const configPath = resolveConfigPath('gpay-config.json');
   if (fs.existsSync(configPath)) {
     try {
       const fileData = JSON.parse(fs.readFileSync(configPath, 'utf8'));
@@ -281,10 +293,11 @@ const server = http.createServer(async (req, res) => {
       // 9b. Configure / Update Razorpay API Credentials
       if (pathname === '/api/payment/save-keys' && req.method === 'POST') {
         const body = await readJsonBody(req);
-        const configPath = path.join(ROOT, 'razorpay-config.json');
+        const readPath = resolveConfigPath('razorpay-config.json');
+        const configPath = getWritableConfigPath('razorpay-config.json');
         let current = {};
-        if (fs.existsSync(configPath)) {
-          try { current = JSON.parse(fs.readFileSync(configPath, 'utf8')); } catch (e) {}
+        if (fs.existsSync(readPath)) {
+          try { current = JSON.parse(fs.readFileSync(readPath, 'utf8')); } catch (e) {}
         }
         if (typeof body.keyId === 'string') current.keyId = body.keyId.trim();
         if (typeof body.keySecret === 'string') current.keySecret = body.keySecret.trim();
@@ -435,7 +448,7 @@ const server = http.createServer(async (req, res) => {
       // 10b. Save / Update Google Pay UPI ID
       if (pathname === '/api/gpay/save-config' && req.method === 'POST') {
         const body = await readJsonBody(req);
-        const configPath = path.join(ROOT, 'gpay-config.json');
+        const configPath = getWritableConfigPath('gpay-config.json');
         let current = getGPayConfig();
         if (body.upiId) current.upiId = body.upiId.trim();
         if (body.payeeName) current.payeeName = body.payeeName.trim();
@@ -489,7 +502,7 @@ const server = http.createServer(async (req, res) => {
   // =========================================================================
   if (pathname === '/download/apk' || pathname === '/FireSpice.apk' || pathname === '/download/FireSpice.apk') {
     res.writeHead(302, {
-      'Location': 'https://github.com/lohithvelsakthi-arch/Fire-Spice/releases/latest/download/FireSpice-v1.0.22.apk'
+      'Location': 'https://github.com/lohithvelsakthi-arch/Fire-Spice/releases/latest/download/FireSpice-latest.apk'
     });
     res.end();
     return;
@@ -499,6 +512,9 @@ const server = http.createServer(async (req, res) => {
   // Static File Serving
   // =========================================================================
   let filePath = path.join(ROOT, pathname === '/' ? 'index.html' : pathname);
+  if (pathname === '/logo.png' && !fs.existsSync(filePath)) {
+    filePath = path.join(ROOT, 'assets', 'logo.png');
+  }
 
   // Prevent directory traversal
   if (!filePath.startsWith(ROOT)) {
@@ -559,7 +575,7 @@ function startServer(p) {
     console.log(`✨ FIRE SPICE Luxury Restaurant Application (React 18) ✨`);
     console.log(`🗄️  Database: SQLite 3 Engine Active (${db.DB_PATH})`);
     console.log(`🌐 Server:   http://localhost:${p}`);
-    console.log(`📊 DB CLI:   Run 'node db-cli.js users' to inspect database`);
+    console.log(`📊 DB CLI:   Run 'node scripts/db-cli.js users' to inspect database`);
     console.log(`======================================================\n`);
   });
 }

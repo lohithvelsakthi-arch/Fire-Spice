@@ -1,10 +1,10 @@
 /**
  * FIRE SPICE - Progressive Web App Service Worker
- * Version: firespice-v1.0.22
+ * Version: firespice-v1.0.23
  * Provides offline caching, lightning-fast boot, and seamless standalone app execution.
  */
 
-const CACHE_NAME = 'firespice-v1.0.22';
+const CACHE_NAME = 'firespice-v1.0.23';
 
 const PRECACHE_ASSETS = [
   './',

@@ -9,7 +9,8 @@
 
 | Version | APK | Release Notes |
 |---|---|---|
-| **v1.0.7** *(Latest)* | [FireSpice-v1.0.7.apk](https://github.com/lohithvelsakthi-arch/Fire-Spice/releases/download/v1.0.7/FireSpice-v1.0.7.apk) | Customer booking confirmation emails |
+| **Latest** | [FireSpice-latest.apk](https://github.com/lohithvelsakthi-arch/Fire-Spice/releases/latest/download/FireSpice-latest.apk) | Full-screen 4s cooking intro video, GPay direct UPI & mobile polish |
+| v1.0.7 | [FireSpice-v1.0.7.apk](https://github.com/lohithvelsakthi-arch/Fire-Spice/releases/download/v1.0.7/FireSpice-v1.0.7.apk) | Customer booking confirmation emails |
 | v1.0.6 | [FireSpice-v1.0.6.apk](https://github.com/lohithvelsakthi-arch/Fire-Spice/releases/download/v1.0.6/FireSpice-v1.0.6.apk) | Full mobile interactive polish |
 | v1.0.5 | [FireSpice-v1.0.5.apk](https://github.com/lohithvelsakthi-arch/Fire-Spice/releases/download/v1.0.5/FireSpice-v1.0.5.apk) | Owner login notifications |
 | v1.0.4 | [FireSpice-v1.0.4.apk](https://github.com/lohithvelsakthi-arch/Fire-Spice/releases/download/v1.0.4/FireSpice-v1.0.4.apk) | Mobile responsive layout |
@@ -110,9 +111,19 @@ Fire-Spice/
 ├── build.js             ← Custom Babel transpiler + www sync
 ├── bundle.js            ← Generated output (do not edit)
 ├── server.js            ← Node.js HTTP + API server
+├── cooking-intro.mp4    ← Full-screen cinematic cooking intro video
+├── assets/
+│   ├── logo.png
+│   └── logo_transparent.png
+├── config/
+│   ├── gpay-config.json
+│   └── razorpay-config.example.json
 ├── database/
 │   ├── db.js            ← SQLite schema, auth, session management
 │   └── users.db         ← SQLite database file (auto-created)
+├── scripts/
+│   └── db-cli.js        ← Database CLI utility (`npm run db`)
+├── Versions/            ← Organized Android APK releases (`FireSpice-v*.apk`)
 ├── vendor/
 │   ├── react.production.min.js
 │   ├── react-dom.production.min.js

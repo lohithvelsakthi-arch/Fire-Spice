@@ -503,7 +503,7 @@ function playChime(enabled, type = 'click') {
 /* ==========================================================================
    Component: Horizontal Rolling Ribbon Gallery (Protected UX)
    ========================================================================== */
-function RollingBackground({ speed, dim }) {
+function RollingBackground({ speed = 'normal', dim = 'rich' }) {
   const images = [
     { title: 'The Golden Atrium', url: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=1000&q=80' },
     { title: 'Grand Cru Vault', url: 'https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?auto=format&fit=crop&w=1000&q=80' },
@@ -1860,6 +1860,8 @@ function StepGuestDetails({ booking, setBooking, onConfirm, onSound, currentUser
    ========================================================================== */
 function StepConfirmedPass({ reservation, onReset, onReturnHome, onSound, currentUser }) {
   const canvasRef = useRef(null);
+  const [passDownloading, setPassDownloading] = useState(false);
+  const [passSavedMsg, setPassSavedMsg] = useState('');
 
   useEffect(() => {
     if (!canvasRef.current || !reservation) return;
@@ -1941,6 +1943,284 @@ function StepConfirmedPass({ reservation, onReset, onReturnHome, onSound, curren
     link.download = `FIRESPICE-Reservation-${reservation.code}.ics`;
     link.click();
     onSound('click');
+  };
+
+  const downloadVipPass = async () => {
+    if (!reservation || passDownloading) return;
+    setPassDownloading(true);
+    setPassSavedMsg('');
+    onSound('confirm');
+
+    try {
+      const W = 1200;
+      const H = reservation.paymentId ? 820 : 720;
+      const passCanvas = document.createElement('canvas');
+      passCanvas.width = W;
+      passCanvas.height = H;
+      const ctx = passCanvas.getContext('2d');
+
+      const drawRoundRect = (x, y, w, h, r) => {
+        ctx.beginPath();
+        ctx.moveTo(x + r, y);
+        ctx.lineTo(x + w - r, y);
+        ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+        ctx.lineTo(x + w, y + h - r);
+        ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+        ctx.lineTo(x + r, y + h);
+        ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+        ctx.lineTo(x, y + r);
+        ctx.quadraticCurveTo(x, y, x + r, y);
+        ctx.closePath();
+      };
+
+      // Background obsidian gradient
+      const bgGrad = ctx.createLinearGradient(0, 0, W, H);
+      bgGrad.addColorStop(0, '#07070a');
+      bgGrad.addColorStop(0.5, '#121118');
+      bgGrad.addColorStop(1, '#060608');
+      ctx.fillStyle = bgGrad;
+      ctx.fillRect(0, 0, W, H);
+
+      // Subtle radial gold glow
+      const glow = ctx.createRadialGradient(W * 0.5, 110, 20, W * 0.5, 110, 560);
+      glow.addColorStop(0, 'rgba(212, 175, 55, 0.16)');
+      glow.addColorStop(1, 'rgba(212, 175, 55, 0)');
+      ctx.fillStyle = glow;
+      ctx.fillRect(0, 0, W, H);
+
+      // Outer & inner luxury gold frames
+      drawRoundRect(24, 24, W - 48, H - 48, 24);
+      ctx.strokeStyle = 'rgba(212, 175, 55, 0.65)';
+      ctx.lineWidth = 2.5;
+      ctx.stroke();
+
+      drawRoundRect(38, 38, W - 76, H - 76, 18);
+      ctx.strokeStyle = 'rgba(212, 175, 55, 0.22)';
+      ctx.lineWidth = 1;
+      ctx.stroke();
+
+      // Load crest logo safely
+      const loadLogo = () => new Promise((resolve) => {
+        const img = new Image();
+        img.crossOrigin = 'anonymous';
+        const timer = setTimeout(() => resolve(null), 1500);
+        img.onload = () => { clearTimeout(timer); resolve(img); };
+        img.onerror = () => { clearTimeout(timer); resolve(null); };
+        img.src = 'icons/icon-192.png';
+      });
+      const logoImg = await loadLogo();
+
+      // Header: Logo + Brand
+      const headerY = 72;
+      drawRoundRect(68, headerY, 84, 84, 16);
+      ctx.fillStyle = '#060608';
+      ctx.fill();
+      ctx.strokeStyle = 'rgba(212, 175, 55, 0.6)';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      if (logoImg) {
+        ctx.save();
+        drawRoundRect(72, headerY + 4, 76, 76, 12);
+        ctx.clip();
+        ctx.drawImage(logoImg, 72, headerY + 4, 76, 76);
+        ctx.restore();
+      } else {
+        ctx.fillStyle = '#f9e7a2';
+        ctx.font = 'bold 30px Georgia, serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('FS', 110, headerY + 42);
+      }
+
+      ctx.textAlign = 'left';
+      ctx.textBaseline = 'alphabetic';
+      ctx.fillStyle = '#faebad';
+      ctx.font = 'bold 42px Georgia, serif';
+      ctx.fillText('FIRE SPICE', 172, headerY + 42);
+
+      ctx.fillStyle = '#d4af37';
+      ctx.font = '600 15px "Segoe UI", Arial, sans-serif';
+      ctx.fillText('HAUTE GASTRONOMIE  •  OFFICIAL VIP DINING PASS', 172, headerY + 72);
+
+      // Right side: Pass Code badge & Tier
+      const codeText = reservation.code || 'FSP-VIP';
+      ctx.font = 'bold 24px Consolas, monospace';
+      const codeWidth = Math.max(230, ctx.measureText(codeText).width + 48);
+      const badgeX = W - 68 - codeWidth;
+      drawRoundRect(badgeX, headerY + 4, codeWidth, 50, 10);
+      ctx.fillStyle = 'rgba(212, 175, 55, 0.16)';
+      ctx.fill();
+      ctx.strokeStyle = '#d4af37';
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+
+      ctx.fillStyle = '#faebad';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(codeText, badgeX + codeWidth / 2, headerY + 29);
+
+      const tierLabel = reservation.vipTier || (currentUser && currentUser.tierBadge) || 'Verified VIP Patron';
+      ctx.fillStyle = '#e5c365';
+      ctx.font = '600 13px "Segoe UI", Arial, sans-serif';
+      ctx.textAlign = 'right';
+      ctx.fillText(`✦ ${tierLabel.toUpperCase()}`, W - 68, headerY + 74);
+
+      // Divider line
+      ctx.strokeStyle = 'rgba(212, 175, 55, 0.28)';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(68, 186);
+      ctx.lineTo(W - 68, 186);
+      ctx.stroke();
+
+      // 2x2 Details Grid
+      const details = [
+        { key: 'GUEST NAME', val: reservation.guestName || 'Honored Guest' },
+        { key: 'PARTY SIZE & OCCASION', val: `${reservation.guests} Guests (${reservation.occasion || 'Dining'})` },
+        { key: 'DATE & SERVICE', val: `${reservation.dateFormatted} • ${(reservation.timeFormatted || '').split(' ')[0]}` },
+        { key: 'TABLE & SANCTUARY ZONE', val: `${reservation.tableId} • ${reservation.zone}` }
+      ];
+
+      const colW = (W - 160) / 2;
+      const cellH = 112;
+      details.forEach((item, idx) => {
+        const col = idx % 2;
+        const row = Math.floor(idx / 2);
+        const cx = 68 + col * (colW + 24);
+        const cy = 212 + row * (cellH + 18);
+
+        drawRoundRect(cx, cy, colW, cellH, 14);
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.035)';
+        ctx.fill();
+        ctx.strokeStyle = 'rgba(212, 175, 55, 0.22)';
+        ctx.lineWidth = 1;
+        ctx.stroke();
+
+        ctx.textAlign = 'left';
+        ctx.textBaseline = 'alphabetic';
+        ctx.fillStyle = '#d4af37';
+        ctx.font = '600 13px "Segoe UI", Arial, sans-serif';
+        ctx.fillText(item.key, cx + 22, cy + 36);
+
+        ctx.fillStyle = '#ffffff';
+        ctx.font = '600 24px "Segoe UI", Arial, sans-serif';
+        let displayVal = String(item.val || '');
+        while (ctx.measureText(displayVal).width > colW - 44 && displayVal.length > 4) {
+          displayVal = displayVal.slice(0, -2) + '…';
+        }
+        ctx.fillText(displayVal, cx + 22, cy + 78);
+      });
+
+      let footerTop = 478;
+
+      // Payment Verification Bar if paid
+      if (reservation.paymentId) {
+        drawRoundRect(68, 474, W - 136, 86, 14);
+        ctx.fillStyle = 'rgba(74, 222, 128, 0.08)';
+        ctx.fill();
+        ctx.strokeStyle = 'rgba(74, 222, 128, 0.38)';
+        ctx.lineWidth = 1.2;
+        ctx.stroke();
+
+        ctx.textAlign = 'left';
+        ctx.fillStyle = '#4ade80';
+        ctx.font = 'bold 17px "Segoe UI", Arial, sans-serif';
+        ctx.fillText('✓  GUARANTEE DEPOSIT PAID VIA GOOGLE PAY', 92, 508);
+
+        ctx.fillStyle = '#eac775';
+        ctx.font = '14px Consolas, monospace';
+        const refText = `GPay UPI Ref: ${reservation.paymentId}${reservation.orderId ? `  •  ${reservation.orderId}` : ''}`;
+        ctx.fillText(refText, 92, 538);
+
+        // Amount pill
+        const amtText = `₹${reservation.total} PAID`;
+        ctx.font = 'bold 18px "Segoe UI", Arial, sans-serif';
+        const amtW = ctx.measureText(amtText).width + 36;
+        drawRoundRect(W - 92 - amtW, 494, amtW, 44, 10);
+        ctx.fillStyle = 'rgba(74, 222, 128, 0.16)';
+        ctx.fill();
+        ctx.strokeStyle = 'rgba(74, 222, 128, 0.5)';
+        ctx.stroke();
+        ctx.fillStyle = '#4ade80';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(amtText, W - 92 - amtW / 2, 516);
+
+        footerTop = 588;
+      }
+
+      // Footer QR + Arrival Rules
+      const qrSize = 156;
+      const qrX = 68;
+      const qrY = footerTop;
+      drawRoundRect(qrX, qrY, qrSize, qrSize, 14);
+      ctx.fillStyle = '#060608';
+      ctx.fill();
+      ctx.strokeStyle = '#d4af37';
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+
+      if (canvasRef.current) {
+        ctx.save();
+        drawRoundRect(qrX + 6, qrY + 6, qrSize - 12, qrSize - 12, 10);
+        ctx.clip();
+        ctx.drawImage(canvasRef.current, qrX + 6, qrY + 6, qrSize - 12, qrSize - 12);
+        ctx.restore();
+      }
+
+      ctx.textAlign = 'left';
+      ctx.textBaseline = 'alphabetic';
+      ctx.fillStyle = '#faebad';
+      ctx.font = 'bold 18px "Segoe UI", Arial, sans-serif';
+      ctx.fillText('DRESS CODE: ELEGANT EVENING ATTIRE', qrX + qrSize + 28, qrY + 38);
+
+      ctx.fillStyle = '#c8c4ba';
+      ctx.font = '17px "Segoe UI", Arial, sans-serif';
+      ctx.fillText('Please present this VIP Pass to our Maître d\' upon arrival at', qrX + qrSize + 28, qrY + 74);
+      ctx.fillText('450 Golden Pavilion Way. Tables are held for up to 15 minutes.', qrX + qrSize + 28, qrY + 102);
+
+      ctx.fillStyle = '#d4af37';
+      ctx.font = '600 14px "Segoe UI", Arial, sans-serif';
+      ctx.fillText('CONCIERGE VERIFIED  •  VALID FOR ADMISSION', qrX + qrSize + 28, qrY + 138);
+
+      const fileName = `FIRESPICE-VIP-Pass-${reservation.code}.png`;
+
+      const blob = await new Promise((resolve) => {
+        if (passCanvas.toBlob) {
+          passCanvas.toBlob((b) => resolve(b), 'image/png');
+        } else {
+          resolve(null);
+        }
+      });
+
+      if (blob) {
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = fileName;
+        link.style.display = 'none';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        setTimeout(() => URL.revokeObjectURL(url), 4000);
+      } else {
+        const dataUrl = passCanvas.toDataURL('image/png');
+        const link = document.createElement('a');
+        link.href = dataUrl;
+        link.download = fileName;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      }
+
+      setPassSavedMsg(`✓ VIP Pass downloaded as ${fileName}`);
+    } catch (err) {
+      console.error('[FIRE SPICE] VIP Pass download failed:', err);
+      setPassSavedMsg('Could not generate pass file. Please try again.');
+    } finally {
+      setPassDownloading(false);
+    }
   };
 
   return (
@@ -2028,9 +2308,9 @@ function StepConfirmedPass({ reservation, onReset, onReturnHome, onSound, curren
         </div>
 
         <div className="pass-actions">
-          <button className="btn-glass btn-glass-gold" onClick={() => { alert('VIP Pass saved to device.'); onSound('select'); }}>
+          <button className="btn-glass btn-glass-gold" onClick={downloadVipPass} disabled={passDownloading}>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-            Download VIP Pass
+            {passDownloading ? 'Generating Pass...' : 'Download VIP Pass'}
           </button>
           <button className="btn-glass btn-glass-secondary" onClick={downloadIcs}>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
@@ -2047,6 +2327,11 @@ function StepConfirmedPass({ reservation, onReset, onReturnHome, onSound, curren
             </button>
           )}
         </div>
+        {passSavedMsg && (
+          <div style={{ marginTop: '12px', fontSize: '0.82rem', color: 'var(--gold-300)', textAlign: 'center', letterSpacing: '0.5px' }}>
+            {passSavedMsg}
+          </div>
+        )}
       </div>
     </div>
   );
@@ -2106,55 +2391,6 @@ function MenuShowcase({ onSound }) {
         ))}
       </div>
     </section>
-  );
-}
-
-/* ==========================================================================
-   Component: Ambiance Controller (Protected UX)
-   ========================================================================== */
-function AmbianceController({ speed, setSpeed, dim, setDim, onSound, onReplayCooking }) {
-  const [collapsed, setCollapsed] = useState(true);
-
-  return (
-    <aside className={`ambient-controller-pill ${collapsed ? 'collapsed' : ''}`} aria-label="Ambiance Background Controls">
-      <button
-        className="btn-glass btn-glass-sm btn-glass-pill ambiance-toggle-btn"
-        onClick={() => { setCollapsed(!collapsed); onSound('click'); }}
-        title="Toggle Background Atmosphere Settings"
-      >
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"></circle><polygon points="10 8 16 12 10 16 10 8"></polygon></svg>
-        <span>{collapsed ? 'Ambiance' : '✕ Close'}</span>
-      </button>
-
-      <div className="ambiance-controls-drawer">
-        <div className="ctrl-label">
-          <span>Speed:</span>
-        </div>
-        <button className={`btn-glass btn-glass-sm btn-glass-pill ${speed === 'slow' ? 'active' : ''}`} onClick={() => { setSpeed('slow'); onSound('click'); }}>Gentle</button>
-        <button className={`btn-glass btn-glass-sm btn-glass-pill ${speed === 'normal' ? 'active' : ''}`} onClick={() => { setSpeed('normal'); onSound('click'); }}>Majestic</button>
-        <button className={`btn-glass btn-glass-sm btn-glass-pill ${speed === 'paused' ? 'active' : ''}`} onClick={() => { setSpeed('paused'); onSound('click'); }}>⏸ Pause</button>
-
-        <span className="ctrl-sep" style={{ color: 'rgba(212, 175, 55, 0.3)' }}>|</span>
-
-        <button className={`btn-glass btn-glass-sm btn-glass-pill ${dim === 'rich' ? 'active' : ''}`} onClick={() => { setDim('rich'); onSound('click'); }}>Rich</button>
-        <button className={`btn-glass btn-glass-sm btn-glass-pill ${dim === 'comfort' ? 'active' : ''}`} onClick={() => { setDim('comfort'); onSound('click'); }}>Comfort</button>
-        <button className={`btn-glass btn-glass-sm btn-glass-pill ${dim === 'deep' ? 'active' : ''}`} onClick={() => { setDim('deep'); onSound('click'); }}>Deep</button>
-
-        {onReplayCooking && (
-          <>
-            <span className="ctrl-sep" style={{ color: 'rgba(212, 175, 55, 0.3)' }}>|</span>
-            <button
-              className="btn-glass btn-glass-sm btn-glass-pill"
-              style={{ borderColor: 'rgba(235, 94, 28, 0.55)', color: '#ffb703', fontWeight: 600 }}
-              onClick={() => { onReplayCooking(); onSound('click'); }}
-              title="Replay Haute Gastronomie Cooking Animation"
-            >
-              🍳 Cooking Animation
-            </button>
-          </>
-        )}
-      </div>
-    </aside>
   );
 }
 
@@ -3067,7 +3303,7 @@ function DatabaseModal({ isOpen, onClose, onSound }) {
 
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '16px', paddingTop: '12px', borderTop: '1px solid rgba(212, 175, 55, 0.15)', flexWrap: 'wrap', gap: '8px' }}>
           <div style={{ fontSize: '0.74rem', color: 'var(--text-muted)' }}>
-            Storage: <code style={{ color: 'var(--gold-300)' }}>database/users.db</code> • CLI inspection: <code style={{ color: 'var(--gold-400)' }}>node db-cli.js users</code>
+            Storage: <code style={{ color: 'var(--gold-300)' }}>database/users.db</code> • CLI inspection: <code style={{ color: 'var(--gold-400)' }}>node scripts/db-cli.js users</code>
           </div>
           {lastRefreshed && (
             <div style={{ fontSize: '0.72rem', color: 'var(--text-dim)' }}>
@@ -3083,8 +3319,10 @@ function DatabaseModal({ isOpen, onClose, onSound }) {
 /* ==========================================================================
    Component: InstallModal (Progressive Web App Native Installation)
    ========================================================================== */
-function InstallModal({ isOpen, onClose, onInstall, isIos, onSound }) {
+function InstallModal({ isOpen, onClose, onInstall, canPromptInstall, isIos, onSound }) {
   if (!isOpen) return null;
+
+  const latestApkUrl = 'https://github.com/lohithvelsakthi-arch/Fire-Spice/releases/latest/download/FireSpice-latest.apk';
 
   return (
     <div className="modal-backdrop open" onClick={(e) => e.target.classList.contains('modal-backdrop') && onClose()}>
@@ -3155,20 +3393,10 @@ function InstallModal({ isOpen, onClose, onInstall, isIos, onSound }) {
           </div>
         ) : (
           <div style={{ marginTop: '16px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
-            <button
-              className="btn-glass btn-glass-gold btn-glass-lg"
-              style={{ width: '100%', padding: '13px 22px', fontSize: '0.96rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px' }}
-              onClick={() => {
-                onInstall();
-                onSound('confirm');
-              }}
-            >
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-              <span>1-Click Install App (PWA)</span>
-            </button>
+
 
             <a
-              href="https://github.com/lohithvelsakthi-arch/Fire-Spice/releases/latest/download/FireSpice-v1.0.2.apk"
+              href="https://github.com/lohithvelsakthi-arch/Fire-Spice/releases/latest/download/FireSpice-latest.apk"
               target="_blank"
               rel="noopener noreferrer"
               className="btn-glass btn-glass-secondary"
@@ -3262,6 +3490,90 @@ function PageTransitionOverlay({ transition }) {
         <div className="transition-badge">
           <span className="transition-dot"></span>
           <span>In-Page Simulation</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ==========================================================================
+   Component: BookingPassRevealOverlay
+   Cinematic waiter-handing-pass video transition before VIP Pass display
+   ========================================================================== */
+function BookingPassRevealOverlay({ isActive, onFinished }) {
+  const videoRef = useRef(null);
+  const [phase, setPhase] = useState('idle'); // idle | playing | fading
+
+  useEffect(() => {
+    if (isActive && phase === 'idle') {
+      setPhase('playing');
+    }
+  }, [isActive, phase]);
+
+  useEffect(() => {
+    if (phase === 'playing' && videoRef.current) {
+      videoRef.current.currentTime = 0;
+      videoRef.current.muted = true;
+      videoRef.current.play().catch(() => {});
+    }
+  }, [phase]);
+
+  // Reset when overlay closes
+  useEffect(() => {
+    if (!isActive) setPhase('idle');
+  }, [isActive]);
+
+  const handleVideoEnd = useCallback(() => {
+    setPhase('fading');
+    setTimeout(() => {
+      if (onFinished) onFinished();
+    }, 600);
+  }, [onFinished]);
+
+  // Fallback: if video stalls or is too long, auto-advance after 5s
+  useEffect(() => {
+    if (phase !== 'playing') return;
+    const timer = setTimeout(() => {
+      setPhase('fading');
+      setTimeout(() => { if (onFinished) onFinished(); }, 600);
+    }, 5000);
+    return () => clearTimeout(timer);
+  }, [phase, onFinished]);
+
+  if (!isActive && phase === 'idle') return null;
+
+  return (
+    <div className={`booking-reveal-overlay ${phase === 'fading' ? 'booking-reveal-fading' : ''}`}>
+      <video
+        ref={videoRef}
+        src="booking-pass-reveal.mp4"
+        className="booking-reveal-video"
+        muted
+        playsInline
+        webkit-playsinline="true"
+        preload="auto"
+        onEnded={handleVideoEnd}
+      />
+      <div className="booking-reveal-scrim"></div>
+      <div className="booking-reveal-content">
+        <div className="booking-reveal-crest">
+          <img src="icons/icon-192.png" alt="FIRE SPICE" className="booking-reveal-logo" />
+        </div>
+        <div className="booking-reveal-badge">
+          <span className="gold-diamond"></span>
+          <span>✦ YOUR TABLE SANCTUARY IS SECURED ✦</span>
+          <span className="gold-diamond"></span>
+        </div>
+        <h2 className="booking-reveal-title">
+          PREPARING YOUR <span className="gold-gradient-text">VIP PASS</span>
+        </h2>
+        <div className="booking-reveal-steps">
+          <div className="booking-reveal-step active">✦ Payment Verified & Receipt Generated</div>
+          <div className="booking-reveal-step active">✦ Table Allocated & Sommelier Assigned</div>
+          <div className="booking-reveal-step pulse">✦ Generating Cryptographic VIP Pass...</div>
+        </div>
+        <div className="booking-reveal-progress-wrap">
+          <div className="booking-reveal-progress-bar"></div>
         </div>
       </div>
     </div>
@@ -3396,6 +3708,8 @@ function App() {
   const [isStandalone, setIsStandalone] = useState(false);
   const [installModalOpen, setInstallModalOpen] = useState(false);
   const [isIos, setIsIos] = useState(false);
+  const [bookingRevealActive, setBookingRevealActive] = useState(false);
+  const [pendingPassNavigation, setPendingPassNavigation] = useState(null);
 
   useEffect(() => {
     // Detect standalone mode (already installed PWA)
@@ -3441,9 +3755,6 @@ function App() {
       setInstallModalOpen(true);
     }
   };
-
-  const [speed, setSpeed] = useState('normal'); // Majestic (default)
-  const [dim, setDim] = useState('rich');       // Rich (default)
 
   const [booking, setBooking] = useState({
     guests: 2,
@@ -3679,18 +3990,19 @@ function App() {
 
     setConfirmedReservation(res);
 
-    // ✦ Interactive Transition: Moving to Another Page Simulation & Showing Pass!
-    navigateToPage('pass', {
-      title: 'TABLE SANCTUARY SECURED',
-      stepsSequence: [
-        '✦ Verifying Google Pay (GPay) Transaction & Instant Receipt...',
-        '✦ Allocating Table & Assigning Dedicated Sommelier...',
-        '✦ Generating Cryptographic VIP Pass & Maître d\' Seal...',
-        '✦ Confirmation Email Dispatched • Moving to Official Pass Page...'
-      ],
-      step: 5
-    });
+    // ✦ Show cinematic waiter video transition before revealing the VIP Pass
+    setBookingRevealActive(true);
+    setPendingPassNavigation(true);
   };
+
+  // Callback: when the booking reveal video finishes, navigate to the VIP pass page
+  const handleBookingRevealFinished = useCallback(() => {
+    setBookingRevealActive(false);
+    setPendingPassNavigation(null);
+    setActiveView('pass');
+    setStep(5);
+    window.scrollTo({ top: 0, behavior: 'instant' });
+  }, []);
 
   const [slideDir, setSlideDir] = useState('forward');
 
@@ -3727,7 +4039,7 @@ function App() {
 
   return (
     <div className="app-wrapper">
-      <RollingBackground speed={speed} dim={dim} />
+      <RollingBackground speed="normal" dim="rich" />
 
       {/* Haute Gastronomie Chef's Cooking Animation Overlay */}
       <CookingEntranceOverlay
@@ -3739,6 +4051,12 @@ function App() {
       />
 
       <PageTransitionOverlay transition={pageTransition} />
+
+      {/* Cinematic Waiter Video Transition Before VIP Pass */}
+      <BookingPassRevealOverlay
+        isActive={bookingRevealActive}
+        onFinished={handleBookingRevealFinished}
+      />
 
       <Header
         onNav={(s) => navigateToPage('reserve', { step: s })}
@@ -3953,16 +4271,6 @@ function App() {
         onInstall={handleInstallClick}
         isIos={isIos}
         onSound={onSound}
-      />
-
-      {/* Floating Atmosphere Controller with Cooking Replay */}
-      <AmbianceController
-        speed={speed}
-        setSpeed={setSpeed}
-        dim={dim}
-        setDim={setDim}
-        onSound={onSound}
-        onReplayCooking={handleReplayCooking}
       />
 
       <footer className="luxury-footer">
